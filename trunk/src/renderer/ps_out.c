@@ -407,6 +407,7 @@ Boolean PsInit(unsigned int     w,
                          "    /savematrix mtrx currentmatrix def\n"
                          "    x y translate\n"
                          "    xdia 2 div ydia 2 div scale\n"
+                         "    1 -1 scale\n"
                          "    0 0 1 startangle endangle arc\n"
                          "    savematrix setmatrix\n"
                          "} def\n");

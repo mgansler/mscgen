@@ -25,7 +25,7 @@ all-cygwin all-w32-mingw:
 
 srcdist:
 	$(MAKE) distclean
-	(cd ../.. && tar -cv mscgen | gzip -9 - > mscgen-src-$(MSCGEN_VER).tar.gz)
+	(cd ../.. && tar -cv mscgen --exclude=.svn | gzip -9 - > mscgen-src-$(MSCGEN_VER).tar.gz)
 	cp -f ../../mscgen-src-$(MSCGEN_VER).tar.gz ../dist/mscgen-src-$(MSCGEN_VER).tar.gz
 	openssl md5 ../dist/mscgen-src-$(MSCGEN_VER).tar.gz > ../dist/mscgen-src-$(MSCGEN_VER).tar.gz.md5
 
@@ -56,9 +56,9 @@ clean:
 	(cd renderer && $(MAKE) $@)
 	rm -f test0.png test0.svg \
 	test1.png test1.svg \
-	test2.png test2.svg test2.ismap \
+	test2.png test2.svg test2.ismap test2.eps \
 	test3.png test3.svg \
-	test4.png test4.svg \
+	test4.png test4.svg test4.eps \
 	test5.png test5.svg \
 	test5.png test5.svg test5.eps \
 	test6.png test6.svg \
@@ -76,10 +76,12 @@ test:
 	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput2.msc -o test2.png -p
 	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput2.msc -o test2.svg -p
 	$(VALGRIND) ../bin/mscgen -T ismap -i parser/testinput2.msc -o test2.ismap -p
+	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput2.msc -o test2.eps -p
 	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput3.msc -o test3.png -p
 	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput3.msc -o test3.svg -p
 	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput4.msc -o test4.png -p
 	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput4.msc -o test4.svg -p
+	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput4.msc -o test4.eps -p
 	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput5.msc -o test5.svg -p
 	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput5.msc -o test5.png -p
 	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput5.msc -o test5.eps -p
