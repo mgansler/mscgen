@@ -1288,10 +1288,6 @@ int main(const int argc, const char *argv[])
             startCol = 0;
             endCol   = MscGetNumEntities(m) - 1;
         }
-        else if(isBoxArc(arcType))
-        {
-            entityBox(m, row, startCol, endCol, arcType, entColourRef);
-        }
         else
         {
             /* Check that the start and end columns are known */
@@ -1311,8 +1307,12 @@ int main(const int argc, const char *argv[])
                 return EXIT_FAILURE;
             }
 
-            /* Check if it is a discontinunity arc or not */
-            if(arcType == MSC_ARC_DISCO)
+            /* Check if it is a box, discontinunity arc etc... */
+            if(isBoxArc(arcType))
+            {
+                entityBox(m, row, startCol, endCol, arcType, entColourRef);
+            }
+            else if(arcType == MSC_ARC_DISCO)
             {
                 entityLines(m, row, TRUE /* dotted */, entColourRef);
             }
