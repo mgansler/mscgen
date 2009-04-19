@@ -1,0 +1,18 @@
+# testinput5.msc : Sample msc input file utilising the colours
+
+# Example fictional MSC
+msc {
+  hscale="1.5";
+
+  a [label="TASK_A"], b [label="TASK_B"];
+
+  a->b [ label = "red", textcolour="red", linecolour="red"] ;
+  a->b [ label = "orange", textcolour="orange", linecolour="orange"] ;
+  a->b [ label = "yellow", textcolour="yellow", linecolour="yellow"] ;
+  a->b [ label = "green", textcolour="green", linecolour="green"] ;
+  a->b [ label = "blue", textcolour="blue", linecolour="blue"] ;
+  a->b [ label = "indigo", textcolour="indigo", linecolour="indigo"] ;
+  a->b [ label = "violet", textcolour="violet", linecolour="violet"] ;
+
+}
+

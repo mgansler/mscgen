@@ -1,0 +1,23 @@
+# testinput4.msc : Sample msc input file
+
+# Example fictional MSC
+msc {
+  hscale="1.5";
+
+  a [label="TASK_A\n(priority=45)", textcolour="red"],
+  "b" [label = "TASK_B\n(priority=60)", URL="www.dilbert.com", linecolour="green"],
+  c [label = "TASK_C\n(priority=61)", ID="5", IDURL="www.slashdot.org"] ;
+
+  a->b [ label = "Message 1", linecolour="red"] ;
+  b->c [ label = "Message 1 + a" ] ;
+  a<=c [ label = "Response", textcolour="red"];
+  a->c [ label = "Line 1\nLine 2", linecolour="green", textcolour="red" ];
+  a<-c [ label = "Line One\n\"Line Two\"", ID="6", IDURL="www.slashdot.org"];
+  a->b [ label = "Linky", URL="www.google.co.uk"];
+  *<:b [ label = "Double Linky", URL="www.google.co.uk", textcolour="#ff7f7f"];
+  c:>b [ label = "Double"];
+  a:>a [ label = "" ];
+  c<:c;
+
+}
+
