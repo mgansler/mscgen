@@ -189,6 +189,7 @@ typedef struct ADrawTag
     /** Draw an arc.
      * This draws an arc centred at (cx,cy) which fits in a box of \a w by \a h.
      * The arc is drawn from \a s degrees to \a e degrees.
+     * \note 0 degrees points east on the page and 90 degrees is south.
      *
      */
     void         (*arc)           (struct ADrawTag *ctx,

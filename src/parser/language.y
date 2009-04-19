@@ -58,7 +58,8 @@ void yyerror(const char *str)
                                       "TOK_SPECIAL_ARC",
                                       "TOK_STRING",           "TOK_QSTRING",
                                       "TOK_OPT_HSCALE",       "TOK_ASTERISK",
-                                      "TOK_OPT_WIDTH" };
+                                      "TOK_OPT_WIDTH",        "TOK_ARC_BOX",
+                                      "TOK_ARC_ABOX",         "TOK_ARC_RBOX" };
 
     static const char *tokRepl[] =  { "{",             "}",
                                       "[",             "]",
@@ -73,9 +74,10 @@ void yyerror(const char *str)
                                       "idurl",         "id",
                                       "linecolour",    "textcolour",
                                       "'...', '---'",
-                                      "string",      "quoted string",
+                                      "string",        "quoted string",
                                       "hscale",        "'*'",
-                                      "width"};
+                                      "width",         "box",
+                                      "abox",          "rbox" };
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 
     char *s;
@@ -190,6 +192,8 @@ Msc MscParse(FILE *in)
        TOK_REL_RETVAL_TO   TOK_REL_RETVAL_FROM
        TOK_REL_DOUBLE_TO   TOK_REL_DOUBLE_FROM
        TOK_REL_CALLBACK_TO TOK_REL_CALLBACK_FROM
+       TOK_REL_BOX         TOK_REL_ABOX
+       TOK_REL_RBOX
        TOK_SPECIAL_ARC     TOK_OPT_HSCALE
        TOK_OPT_WIDTH       TOK_OPT_ARCGRADIENT
        TOK_ASTERISK
@@ -216,10 +220,11 @@ Msc MscParse(FILE *in)
 %type <arclist>    arclist
 %type <entity>     entity
 %type <entitylist> entitylist
-%type <arctype>    relation_to relation_from
+%type <arctype>    relation_bi relation_to relation_from
                    TOK_REL_SIG_TO TOK_REL_METHOD_TO TOK_REL_RETVAL_TO TOK_REL_CALLBACK_TO
                    TOK_REL_SIG_FROM TOK_REL_METHOD_FROM TOK_REL_RETVAL_FROM TOK_REL_CALLBACK_FROM
                    TOK_REL_DOUBLE_TO TOK_REL_DOUBLE_FROM TOK_SPECIAL_ARC
+                   TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX
 %type <attrib>     attrlist attr
 %type <attribType> attrval TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR;
 %type <string>     string TOK_STRING TOK_QSTRING
@@ -294,6 +299,10 @@ arcrel:       TOK_SPECIAL_ARC
 {
     $$ = MscAllocArc(NULL, NULL, $1);
 }
+            | string relation_bi string
+{
+    $$ = MscAllocArc($1, $3, $2);
+}
             | string relation_to string
 {
     $$ = MscAllocArc($1, $3, $2);
@@ -311,6 +320,7 @@ arcrel:       TOK_SPECIAL_ARC
     $$ = MscAllocArc($3, "*", $2);
 };
 
+relation_bi:   TOK_REL_BOX | TOK_REL_ABOX | TOK_REL_RBOX;
 relation_to:   TOK_REL_SIG_TO | TOK_REL_METHOD_TO | TOK_REL_RETVAL_TO | TOK_REL_CALLBACK_TO | TOK_REL_DOUBLE_TO;
 relation_from: TOK_REL_SIG_FROM | TOK_REL_METHOD_FROM | TOK_REL_RETVAL_FROM | TOK_REL_CALLBACK_FROM | TOK_REL_DOUBLE_FROM;
 

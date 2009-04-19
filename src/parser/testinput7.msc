@@ -1,0 +1,22 @@
+# testinput7.msc : Sample msc input file
+ 
+msc {
+
+   # The entities
+   A, B, C, "D";
+
+   # The relations  
+   |||;
+   A box A [label="box"];
+   B box B [label="box"];
+   C rbox C [label="rbox"];
+   D abox D [label="abox"];   
+   
+   --- [label="multispan"];
+   A rbox D [label="rbox"];
+   |||;
+   B abox C [label="abox"];
+   |||;
+}
+
+/* END OF FILE */

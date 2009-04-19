@@ -60,6 +60,15 @@ typedef struct GlobalOptionsTag
      */
     int arcGradient;
 
+    /** Gap between adjacent boxes. */
+    unsigned int boxSpacing;
+
+    /** Radius of rounded box corner arcs. */
+    unsigned int rboxArc;
+
+    /** Anguluar box slope in pixels. */
+    unsigned int aboxSlope;
+
     /** Horizontal width of the arrow heads. */
     unsigned int arrowWidth;
 
@@ -113,6 +122,9 @@ static GlobalOptions gOpts =
     20,     /* entityHeadGap */
     25,     /* arcSpacing */
     0,      /* arcGradient */
+    8,      /* boxSpacing */
+    6,      /* rboxArc */
+    6,      /* aboxSlope */
 
     /* Arrow options */
     10, 6,
@@ -241,6 +253,14 @@ static char *getLine(const char        *string,
 Boolean isBroadcastArc(const char *entity)
 {
     return entity != NULL && (strcmp(entity, "*") == 0);
+}
+
+
+/** Check if some arc type indicates a box.
+ */
+Boolean isBoxArc(const MscArcType a)
+{
+    return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  || a == MSC_ARC_ABOX;
 }
 
 
@@ -471,9 +491,10 @@ static void entityText(Msc               m,
 /** Draw vertical lines stemming from entites.
  * This function will draw a single segment of the vertical line that
  * drops from an entity.
- * \param m      The \a Msc for which the lines are drawn
- * \param row    The row number indentifying the segment
- * \param dotted If #TRUE, produce a dotted line, otherwise solid.
+ * \param m          The \a Msc for which the lines are drawn
+ * \param row        The row number indentifying the segment
+ * \param dotted     If #TRUE, produce a dotted line, otherwise solid.
+ * \param colourRefs Colour references for each entity.
  */
 static void entityLines(Msc                m,
                         unsigned int       row,
@@ -502,6 +523,106 @@ static void entityLines(Msc                m,
 
     drw.setPen(&drw, ADRAW_COL_BLACK);
 
+}
+
+
+
+/** Draw vertical lines and boxes stemming from entites.
+ * \param m          The \a Msc for which the lines are drawn
+ * \param row        The row number indentifying the segment
+ * \param boxStart   Column in which the box starts.
+ * \param boxEnd     Column in which the box ends.
+ * \param boxType    The type of box to draw, MSC_ARC_BOX, MSC_ARC_RBOX etc.
+ * \param colourRefs Colour references for each entity.
+ */
+static void entityBox(Msc                m,
+                      unsigned int       row,
+                      unsigned int       boxStart,
+                      unsigned int       boxEnd,
+                      MscArcType         boxType,
+                      const ADrawColour *colourRefs)
+{
+    const unsigned int ymin = (gOpts.arcSpacing * row) + gOpts.entityHeadGap;
+    unsigned int       ymax = ymin + gOpts.arcSpacing;
+    unsigned int t;
+
+    /* Ensure the start is less than or equal to the end */
+    if(boxStart > boxEnd)
+    {
+        t = boxEnd;
+        boxEnd = boxStart;
+        boxStart = t;
+    }
+
+    /* Draw lines where there is no entity */
+    for(t = 0; t < MscGetNumEntities(m); t++)
+    {
+        unsigned int x = (gOpts.entitySpacing / 2) + (gOpts.entitySpacing * t);
+
+        drw.setPen(&drw, colourRefs[t]);
+
+        /* Draw normal lines for entities outside the box */
+        if(t < boxStart || t > boxEnd)
+        {
+            drw.line(&drw, x, ymin, x, ymax);
+        }
+        else
+        {
+            /* Tiny line part at the bottom of the box */
+            drw.line(&drw, x, ymax - 1, x, ymax);
+        }
+    }
+
+    drw.setPen(&drw, ADRAW_COL_BLACK);
+
+    /* Now draw the box */
+    ymax--;
+
+    unsigned int x1 = (gOpts.entitySpacing * boxStart) + gOpts.boxSpacing;
+    unsigned int x2 = gOpts.entitySpacing * (boxEnd + 1) - gOpts.boxSpacing;
+    unsigned int ymid = (ymin + ymax) / 2;
+
+    switch(boxType)
+    {
+        case MSC_ARC_BOX:
+            drw.line(&drw, x1, ymin, x2, ymin);
+            drw.line(&drw, x1, ymax, x2, ymax);
+            drw.line(&drw, x1, ymin, x1, ymax);
+            drw.line(&drw, x2, ymin, x2, ymax);
+            break;
+
+        case MSC_ARC_RBOX:
+            drw.line(&drw, x1 + gOpts.rboxArc, ymin, x2 - gOpts.rboxArc, ymin);
+            drw.line(&drw, x1 + gOpts.rboxArc, ymax, x2 - gOpts.rboxArc, ymax);
+            drw.line(&drw, x1, ymin + gOpts.rboxArc, x1, ymax - gOpts.rboxArc);
+            drw.line(&drw, x2, ymin + gOpts.rboxArc, x2, ymax - gOpts.rboxArc);
+
+            drw.arc(&drw, x1 + gOpts.rboxArc,
+                    ymin + gOpts.rboxArc, gOpts.rboxArc * 2, gOpts.rboxArc * 2,
+                    180, 270);
+            drw.arc(&drw, x2 - gOpts.rboxArc,
+                    ymin + gOpts.rboxArc, gOpts.rboxArc * 2, gOpts.rboxArc * 2,
+                    270, 0);
+            drw.arc(&drw, x2 - gOpts.rboxArc,
+                    ymax - gOpts.rboxArc, gOpts.rboxArc * 2, gOpts.rboxArc * 2,
+                    0, 90);
+            drw.arc(&drw, x1 + gOpts.rboxArc,
+                    ymax - gOpts.rboxArc, gOpts.rboxArc * 2, gOpts.rboxArc * 2,
+                    90, 180);
+            break;
+
+        case MSC_ARC_ABOX:
+            drw.line(&drw, x1 + gOpts.aboxSlope, ymin, x2 - gOpts.aboxSlope, ymin);
+            drw.line(&drw, x1 + gOpts.aboxSlope, ymax, x2 - gOpts.aboxSlope, ymax);
+            drw.line(&drw, x1 + gOpts.aboxSlope, ymin, x1, ymid);
+            drw.line(&drw, x1 + gOpts.aboxSlope, ymax, x1, ymid);
+            drw.line(&drw, x2 - gOpts.aboxSlope, ymin, x2, ymid);
+            drw.line(&drw, x2 - gOpts.aboxSlope, ymax, x2, ymid);
+            break;
+
+        default:
+            assert(0);
+    }
 }
 
 
@@ -553,12 +674,13 @@ static void arcText(Msc               m,
          *  label is above the rendered arc (or horizontally in the
          *  centre of a non-straight arc).
          */
-        if(arcType == MSC_ARC_DISCO || arcType == MSC_ARC_DIVIDER)
+        if(arcType == MSC_ARC_DISCO || arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE ||
+           isBoxArc(arcType))
         {
             y += drw.textHeight(&drw) / 2;
         }
 
-        if(startCol != endCol)
+        if(startCol != endCol || isBoxArc(arcType))
         {
             /* Produce central aligned text */
             x -= width / 2;
@@ -1116,7 +1238,7 @@ int main(const int argc, const char *argv[])
         int                startCol, endCol;
 
         /* Get the entitiy indices */
-        if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER)
+        if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
         {
             startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
             endCol   = MscGetEntityIndex(m, MscGetCurrentArcDest(m));
@@ -1143,7 +1265,7 @@ int main(const int argc, const char *argv[])
 
             /* Ensure startCol is valid */
             if(startCol == -1)
-           {
+            {
                fprintf(stderr,
                        "Unknown source entity '%s'\n",
                        MscGetCurrentArcSource(m));
@@ -1165,6 +1287,10 @@ int main(const int argc, const char *argv[])
             /* Fix up the start/end columns to span chart */
             startCol = 0;
             endCol   = MscGetNumEntities(m) - 1;
+        }
+        else if(isBoxArc(arcType))
+        {
+            entityBox(m, row, startCol, endCol, arcType, entColourRef);
         }
         else
         {
@@ -1190,7 +1316,7 @@ int main(const int argc, const char *argv[])
             {
                 entityLines(m, row, TRUE /* dotted */, entColourRef);
             }
-            else if (arcType == MSC_ARC_DIVIDER)
+            else if (arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
             {
                 entityLines(m, row, FALSE, entColourRef);
             }
