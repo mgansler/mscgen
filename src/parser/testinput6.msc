@@ -1,0 +1,15 @@
+# testinput6.msc : Sample msc input file utilising the colours
+
+# Example fictional MSC
+msc {
+
+  r [label="red", arctextcolour="red", arclinecolour="red"],
+  g [label="green", arctextcolour="green", arclinecolour="green"],
+  b [label="blue", arctextcolour="blue", arclinecolour="blue"],
+  e [label="consume"];
+
+  r->e;
+  g->e;
+  b->e;
+}
+
