@@ -144,7 +144,7 @@ static void arcPoint(unsigned int cx,
 
     /* Compute point, noting this is for SVG co-ordinate system */
     *x = cx + ((w / 2.0f) * cos(rad));
-    *y = cy + ((h / 2.0f) * -sin(rad));
+    *y = cy + ((h / 2.0f) * sin(rad));
 }
 
 /***************************************************************************
@@ -271,7 +271,7 @@ void SvgArc(struct ADrawTag *ctx,
     arcPoint(cx, cy, w, h, e, &ex, &ey);
 
     fprintf(getSvgFile(ctx),
-            "<path d=\"M %u %u A%u,%u 0 0,0 %u,%u\" stroke=\"%s\" fill=\"none\"/>",
+            "<path d=\"M %u %u A%u,%u 0 0,1 %u,%u\" stroke=\"%s\" fill=\"none\"/>",
             sx, sy, w / 2, h / 2,  ex, ey, getSvgPen(ctx));
 }
 
@@ -291,7 +291,7 @@ void SvgDottedArc(struct ADrawTag *ctx,
     arcPoint(cx, cy, w, h, e, &ex, &ey);
 
     fprintf(getSvgFile(ctx),
-            "<path d=\"M %u %u A%u,%u 0 0,0 %u,%u\" stroke=\"%s\" fill=\"none\" stroke-dasharray=\"2,2\"/>",
+            "<path d=\"M %u %u A%u,%u 0 0,1 %u,%u\" stroke=\"%s\" fill=\"none\" stroke-dasharray=\"2,2\"/>",
             sx, sy, w / 2, h / 2,  ex, ey, getSvgPen(ctx));
 }
 

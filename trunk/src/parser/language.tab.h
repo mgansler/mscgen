@@ -68,11 +68,14 @@
      TOK_REL_DOUBLE_FROM = 284,
      TOK_REL_CALLBACK_TO = 285,
      TOK_REL_CALLBACK_FROM = 286,
-     TOK_SPECIAL_ARC = 287,
-     TOK_OPT_HSCALE = 288,
-     TOK_OPT_WIDTH = 289,
-     TOK_OPT_ARCGRADIENT = 290,
-     TOK_ASTERISK = 291
+     TOK_REL_BOX = 287,
+     TOK_REL_ABOX = 288,
+     TOK_REL_RBOX = 289,
+     TOK_SPECIAL_ARC = 290,
+     TOK_OPT_HSCALE = 291,
+     TOK_OPT_WIDTH = 292,
+     TOK_OPT_ARCGRADIENT = 293,
+     TOK_ASTERISK = 294
    };
 #endif
 /* Tokens.  */
@@ -105,18 +108,21 @@
 #define TOK_REL_DOUBLE_FROM 284
 #define TOK_REL_CALLBACK_TO 285
 #define TOK_REL_CALLBACK_FROM 286
-#define TOK_SPECIAL_ARC 287
-#define TOK_OPT_HSCALE 288
-#define TOK_OPT_WIDTH 289
-#define TOK_OPT_ARCGRADIENT 290
-#define TOK_ASTERISK 291
+#define TOK_REL_BOX 287
+#define TOK_REL_ABOX 288
+#define TOK_REL_RBOX 289
+#define TOK_SPECIAL_ARC 290
+#define TOK_OPT_HSCALE 291
+#define TOK_OPT_WIDTH 292
+#define TOK_OPT_ARCGRADIENT 293
+#define TOK_ASTERISK 294
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 198 "language.y"
+#line 202 "language.y"
 {
     char         *string;
     Msc           msc;
@@ -131,7 +137,7 @@ typedef union YYSTYPE
     MscAttribType attribType;
 }
 /* Line 1489 of yacc.c.  */
-#line 135 "language.tab.h"
+#line 141 "language.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

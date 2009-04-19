@@ -1,3 +1,11 @@
+0.14: 27/02/2009
+      Added state description boxes into the entity lines.
+      Use command "<entity> box <entity> [label="..."];" for state boxes. 
+       "abox" and "rbox" also work for rounded and angular boxes.
+      Fix arc drawing for SVG which was un-noticably mirrored.
+      Add all-freebsd target.
+       [Thanks to Titus von Boxberg for the initial state box support]
+
 0.13: 27/10/2008
       Fix colour output for postscript.
       Fix scaling for Postscript bounding box; now matches image scaling.

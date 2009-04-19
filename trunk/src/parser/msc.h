@@ -67,6 +67,10 @@ typedef enum
     MSC_ARC_DOUBLE,
     MSC_ARC_DISCO,      /* ... Discontinuity in time line */
     MSC_ARC_DIVIDER,    /* --- Divider */
+    MSC_ARC_SPACE,      /* ||| */
+    MSC_ARC_BOX,
+    MSC_ARC_ABOX,
+    MSC_ARC_RBOX,
 
     MSC_INVALID_ARC_TYPE
 }

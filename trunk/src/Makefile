@@ -1,6 +1,6 @@
 # Build normally for Linux/Unix
 
-export MSCGEN_VER=0.13
+export MSCGEN_VER=0.14
 
 all:
 	(cd parser && $(MAKE))
@@ -8,6 +8,12 @@ all:
 
 all-osx:
 	(export OS=osx; $(MAKE))
+
+all-freebsd:
+	(export OS=freebsd; \
+	 export CFLAGS="-I /usr/local/include $(CFLAGS)"; \
+	 export LDFLAGS="-L /usr/local/lib $(LDFLAGS)"; \
+	 $(MAKE))
 
 # Build for cygwin, or win32-mingw.
 #  Both are the same and produce a native Win32 binary.
@@ -54,7 +60,9 @@ clean:
 	test3.png test3.svg \
 	test4.png test4.svg \
 	test5.png test5.svg \
-	test6.png test6.svg
+	test5.png test5.svg test5.eps \
+	test6.png test6.svg \
+	test7.png test7.svg test7.eps
 
 %:
 	(cd parser && $(MAKE) $@)
@@ -77,6 +85,9 @@ test:
 	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput5.msc -o test5.eps -p
 	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput6.msc -o test6.svg -p
 	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput6.msc -o test6.png -p
+	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput7.msc -o test7.svg -p
+	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput7.msc -o test7.png -p
+	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput7.msc -o test7.eps -p
 
 
 .PHONY: test bindist winbindist srcdist clean distclean

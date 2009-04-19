@@ -5,8 +5,6 @@ Add entity shapes.
 
 Add in the autotools patches.
 
-Add entity boxes for showing state changes.
-
 Add arrowsize option (global and with per-arc overrides).
 
 Add option to change broadcast arc representation.
