@@ -1,0 +1,12 @@
+#testinput8.msc : Sample msc input file for escapes
+# Thanks to braeuer.jens for this test
+ 
+msc {
+
+   # The entities
+   A, B;
+   ... [ label = "1234567890<A & B>" ];
+   A=>B [ label = "\"magic\" happens" ];
+   A<<B [ label = "answer is '42'" ];
+
+}
