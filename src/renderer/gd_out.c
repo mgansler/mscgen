@@ -116,6 +116,9 @@ static int getColourRef(GdoContext *context, ADrawColour col)
                                                       (col & 0x00ff00) >>  8,
                                                       (col & 0x0000ff) >>  0);
         context->colourCount++;
+
+        /* Return the new colour reference */
+        return context->colour[t].ref;
     }
     else
     {
