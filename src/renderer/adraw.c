@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include "adraw_int.h"
 
@@ -68,11 +69,11 @@ ADrawColour ADrawGetColour(const char *colour)
     /* Check if an RGB value has been specified */
     if(*colour == '#')
     {
-        ADrawColour c = ADRAW_COL_BLACK;
+        unsigned int c = ADRAW_COL_BLACK;
 
         if(sscanf(&colour[1], "%x", &c) == 1)
         {
-            return c;
+            return (ADrawColour)c;
         }
     }
     else /* Check for name matches */
@@ -105,7 +106,7 @@ ADrawColour ADrawGetColour(const char *colour)
             { "AQUA",         ADRAW_COL_AQUA }
         };
 
-        int t;
+        unsigned int t;
 
         for(t = 0; t < sizeof(colourMap) / sizeof(colourMap[0]); t++)
         {

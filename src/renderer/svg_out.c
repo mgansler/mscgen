@@ -372,11 +372,11 @@ void SvgSetFontSize(struct ADrawTag *ctx,
     switch(size)
     {
         case ADRAW_FONT_TINY:
-            getSvgCtx(ctx)->fontPoints = 8;
+            context->fontPoints = 8;
             break;
 
         case ADRAW_FONT_SMALL:
-            getSvgCtx(ctx)->fontPoints = 10;
+            context->fontPoints = 10;
             break;
 
         default:
@@ -405,8 +405,8 @@ Boolean SvgClose(struct ADrawTag *ctx)
 
 
 
-Boolean SvgInit(unsigned int     w,
-                unsigned int     h,
+Boolean SvgInit(unsigned int     w UNUSED,
+                unsigned int     h UNUSED,
                 const char      *file,
                 struct ADrawTag *outContext)
 {

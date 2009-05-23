@@ -27,104 +27,104 @@
  * API Functions
  ***************************************************************************/
 
-static unsigned int NullTextWidth(struct ADrawTag *ctx,
-                                  const char *string)
+static unsigned int NullTextWidth(struct ADrawTag *ctx UNUSED,
+                                  const char *string UNUSED)
 {
     return 0;
 }
 
 
-static int NullTextHeight(struct ADrawTag *ctx)
+static int NullTextHeight(struct ADrawTag *ctx UNUSED)
 {
     return 0;
 }
 
 
-static void NullLine(struct ADrawTag *ctx,
-                     unsigned int     x1,
-                     unsigned int     y1,
-                     unsigned int     x2,
-                     unsigned int     y2)
+static void NullLine(struct ADrawTag *ctx UNUSED,
+                     unsigned int     x1 UNUSED,
+                     unsigned int     y1 UNUSED,
+                     unsigned int     x2 UNUSED,
+                     unsigned int     y2 UNUSED)
 {
 }
 
-static void NullDottedLine(struct ADrawTag *ctx,
-                           unsigned int     x1,
-                           unsigned int     y1,
-                           unsigned int     x2,
-                           unsigned int     y2)
-{
-}
-
-
-static void NullTextR(struct ADrawTag *ctx,
-                      unsigned int     x,
-                      unsigned int     y,
-                      const char      *string)
+static void NullDottedLine(struct ADrawTag *ctx UNUSED,
+                           unsigned int     x1 UNUSED,
+                           unsigned int     y1 UNUSED,
+                           unsigned int     x2 UNUSED,
+                           unsigned int     y2 UNUSED)
 {
 }
 
 
-static void NullTextL(struct ADrawTag *ctx,
-                      unsigned int     x,
-                      unsigned int     y,
-                      const char      *string)
-{
-}
-
-static void NullTextC(struct ADrawTag *ctx,
-                      unsigned int     x,
-                      unsigned int     y,
-                      const char      *string)
-{
-}
-
-static void NullFilledTriangle(struct ADrawTag *ctx,
-                               unsigned int x1,
-                               unsigned int y1,
-                               unsigned int x2,
-                               unsigned int y2,
-                               unsigned int x3,
-                               unsigned int y3)
+static void NullTextR(struct ADrawTag *ctx UNUSED,
+                      unsigned int     x UNUSED,
+                      unsigned int     y UNUSED,
+                      const char      *string UNUSED)
 {
 }
 
 
-static void NullArc(struct ADrawTag *ctx,
-                    unsigned int cx,
-                    unsigned int cy,
-                    unsigned int w,
-                    unsigned int h,
-                    unsigned int s,
-                    unsigned int e)
+static void NullTextL(struct ADrawTag *ctx UNUSED,
+                      unsigned int     x UNUSED,
+                      unsigned int     y UNUSED,
+                      const char      *string UNUSED)
+{
+}
+
+static void NullTextC(struct ADrawTag *ctx UNUSED,
+                      unsigned int     x UNUSED,
+                      unsigned int     y UNUSED,
+                      const char      *string UNUSED)
+{
+}
+
+static void NullFilledTriangle(struct ADrawTag *ctx UNUSED,
+                               unsigned int x1 UNUSED,
+                               unsigned int y1 UNUSED,
+                               unsigned int x2 UNUSED,
+                               unsigned int y2 UNUSED,
+                               unsigned int x3 UNUSED,
+                               unsigned int y3 UNUSED)
 {
 }
 
 
-static void NullDottedArc(struct ADrawTag *ctx,
-                          unsigned int cx,
-                          unsigned int cy,
-                          unsigned int w,
-                          unsigned int h,
-                          unsigned int s,
-                          unsigned int e)
+static void NullArc(struct ADrawTag *ctx UNUSED,
+                    unsigned int cx UNUSED,
+                    unsigned int cy UNUSED,
+                    unsigned int w UNUSED,
+                    unsigned int h UNUSED,
+                    unsigned int s UNUSED,
+                    unsigned int e UNUSED)
 {
 }
 
 
-static void NullSetPen (struct ADrawTag *ctx,
-                        ADrawColour      col)
+static void NullDottedArc(struct ADrawTag *ctx UNUSED,
+                          unsigned int cx UNUSED,
+                          unsigned int cy UNUSED,
+                          unsigned int w UNUSED,
+                          unsigned int h UNUSED,
+                          unsigned int s UNUSED,
+                          unsigned int e UNUSED)
 {
 }
 
 
-static void NullSetFontSize(struct ADrawTag *ctx,
-                            ADrawFontSize    size)
+static void NullSetPen (struct ADrawTag *ctx UNUSED,
+                        ADrawColour      col UNUSED)
 {
 }
 
 
-static Boolean NullClose(struct ADrawTag *ctx)
+static void NullSetFontSize(struct ADrawTag *ctx UNUSED,
+                            ADrawFontSize    size UNUSED)
+{
+}
+
+
+static Boolean NullClose(struct ADrawTag *ctx UNUSED)
 {
     return TRUE;
 }

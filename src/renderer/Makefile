@@ -1,7 +1,7 @@
 # Makefile for mscgen program
 
 CC=gcc
-CFLAGS+=-I../parser -DPACKAGE_VERSION="\"$(MSCGEN_VER)\"" -O2
+CFLAGS+=-Wall -Wextra -I../parser -DPACKAGE_VERSION="\"$(MSCGEN_VER)\"" -O2
 LIBS=../parser/libparser.a
 OBJS=main.o null_out.o gd_out.o ps_out.o svg_out.o cmdparse.o adraw.o
 

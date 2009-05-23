@@ -136,7 +136,7 @@ int yywrap()
 }
 
 
-const char *removeEscapes(const char *in)
+char *removeEscapes(const char *in)
 {
     const uint16_t l = strlen(in);
     char          *r = malloc(l + 1);
