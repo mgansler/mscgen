@@ -386,7 +386,6 @@ static void arrowL(unsigned int x,
 
 /** Render some entity text.
  * Draw the text for some entity.
- * \param  m         The Msc for which the text is being rendered.
  * \param  ismap     If not \a NULL, write an ismap description here.
  * \param  x         The x position at which the entity text should be centered.
  * \param  y         The y position where the text should be placed
@@ -400,8 +399,7 @@ static void arrowL(unsigned int x,
  * \param  entColour The text colour name or specification for the entity text.
  *                    If NULL, use default colouring scheme.
  */
-static void entityText(Msc               m,
-                       FILE             *ismap,
+static void entityText(FILE             *ismap,
                        unsigned int      x,
                        unsigned int      y,
                        const char       *entLabel,
@@ -628,40 +626,41 @@ static void entityBox(Msc                m,
 
 /** Render text on an arc.
  * Draw the text on some arc.
- * \param  m              The Msc for which the text is being rendered.
- * \param  ismap          If not \a NULL, write an ismap description here.
- * \param  outwidth       Width of the output image.
- * \param  row            The row on which the text should be placed.
- * \param  startCol       The column at which the arc being labelled starts.
- * \param  endCol         The column at which the arc being labelled ends.
- * \param  arcLabel       The label to render.
- * \param  arcUrl         The URL for rendering the label as a hyperlink.  This
- *                         maybe \a NULL if not required.
- * \param  arcId          The text identifier for the arc.
- * \param  arcIdUrl       The URL for rendering the test identifier as a hyperlink.
- *                         This maybe \a NULL if not required.
- * \param  arcTextColour  Colout for the arc text, or NULL to use default.
- * \param  arcType        The type of arc, used to control output semantics.
+ * \param m              The Msc for which the text is being rendered.
+ * \param ismap          If not \a NULL, write an ismap description here.
+ * \param outwidth       Width of the output image.
+ * \param row            The row on which the text should be placed.
+ * \param startCol       The column at which the arc being labelled starts.
+ * \param endCol         The column at which the arc being labelled ends.
+ * \param arcLabel       The label to render.
+ * \param arcLabelLines  Count of lines of text in arcLabel.
+ * \param arcUrl         The URL for rendering the label as a hyperlink.  This
+ *                        maybe \a NULL if not required.
+ * \param arcId          The text identifier for the arc.
+ * \param arcIdUrl       The URL for rendering the test identifier as a hyperlink.
+ *                        This maybe \a NULL if not required.
+ * \param arcTextColour  Colout for the arc text, or NULL to use default.
+ * \param arcType        The type of arc, used to control output semantics.
  */
-static void arcText(Msc               m,
-                    FILE             *ismap,
-                    unsigned int      outwidth,
-                    unsigned int      row,
-                    unsigned int      startCol,
-                    unsigned int      endCol,
-                    const char       *arcLabel,
-                    const char       *arcUrl,
-                    const char       *arcId,
-                    const char       *arcIdUrl,
-                    const char       *arcTextColour,
-                    const char       *arcLineColour,
-                    const MscArcType  arcType)
+static void arcText(Msc                m,
+                    FILE              *ismap,
+                    unsigned int       outwidth,
+                    unsigned int       row,
+                    unsigned int       startCol,
+                    unsigned int       endCol,
+                    const char        *arcLabel,
+                    const unsigned int arcLabelLines,
+                    const char        *arcUrl,
+                    const char        *arcId,
+                    const char        *arcIdUrl,
+                    const char        *arcTextColour,
+                    const char        *arcLineColour,
+                    const MscArcType   arcType)
 {
-    unsigned int lines = countLines(arcLabel);
-    unsigned int l;
     char         lineBuffer[1024];
+    unsigned int l;
 
-    for(l = 0; l < lines; l++)
+    for(l = 0; l < arcLabelLines; l++)
     {
         char *lineLabel = getLine(arcLabel, l, lineBuffer, sizeof(lineBuffer));
         unsigned int y = (gOpts.arcSpacing * row) +
@@ -1201,8 +1200,7 @@ int main(const int argc, const char *argv[])
         const char  *line;
 
         /* Titles */
-        entityText(m,
-                   ismap,
+        entityText(ismap,
                    x,
                    gOpts.entityHeadGap - (drw.textHeight(&drw) / 2),
                    MscGetCurrentEntAttrib(m, MSC_ATTR_LABEL),
@@ -1235,6 +1233,7 @@ int main(const int argc, const char *argv[])
         const char        *arcIdUrl      = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
         const char        *arcTextColour = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
         const char        *arcLineColour = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
+        const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) : 1;
         int                startCol, endCol;
 
         /* Get the entitiy indices */
@@ -1278,7 +1277,7 @@ int main(const int argc, const char *argv[])
             /* Draw arcs to each entity */
             for(t = 0; t < MscGetNumEntities(m); t++)
             {
-                if(t != startCol)
+                if((signed)t != startCol)
                 {
                     arcLine(m, row, startCol, t, arcLineColour, arcType);
                 }
@@ -1331,7 +1330,7 @@ int main(const int argc, const char *argv[])
         if(arcLabel)
         {
             arcText(m, ismap, w, row,
-                    startCol, endCol, arcLabel,
+                    startCol, endCol, arcLabel, arcLabelLines,
                     arcUrl, arcId, arcIdUrl,
                     arcTextColour, arcLineColour, arcType);
         }

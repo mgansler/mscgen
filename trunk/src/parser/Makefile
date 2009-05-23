@@ -5,7 +5,7 @@ LEX=flex
 
 LDFLAGS+=
 CC=gcc
-CFLAGS+=-O2 -I. -Wall
+CFLAGS+=-O2 -I. -Wall -Wextra
 OBJS  =language.tab.o lex.yy.o msc.o
 
 libparser.a: $(OBJS)

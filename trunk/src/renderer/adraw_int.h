@@ -22,6 +22,23 @@
 
 #include "adraw.h"
 
+/***************************************************************************
+ * Preprocessor Macros
+ ***************************************************************************/
+
+/* Define macro to supress unused parameter warnings */
+#ifndef UNUSED
+# ifdef __GNUC__
+#  define UNUSED __attribute__((unused))
+# else
+#  define UNUSED
+# endif
+#endif
+
+/***************************************************************************
+ * Functions
+ ***************************************************************************/
+
 Boolean NullInit(struct ADrawTag *outContext);
 
 Boolean GdoInit(unsigned int     w,
