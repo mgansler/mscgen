@@ -31,7 +31,7 @@ test: parsertest
 	cat testinput6.msc | ./parsertest
 
 clean: FORCE
-	rm -f libparser.a language.tab.c lex.yy.c parsertest.o language.output $(OBJS)
+	rm -f libparser.a language.tab.c language.tab.h lex.yy.c parsertest.o language.output $(OBJS)
 
 distclean: clean
 	rm -f parsertest parsertest.exe
