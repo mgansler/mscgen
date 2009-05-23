@@ -62,7 +62,8 @@ clean:
 	test5.png test5.svg \
 	test5.png test5.svg test5.eps \
 	test6.png test6.svg \
-	test7.png test7.svg test7.eps
+	test7.png test7.svg test7.eps \
+	test8.png test8.svg test8.eps
 
 %:
 	(cd parser && $(MAKE) $@)
@@ -90,6 +91,9 @@ test:
 	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput7.msc -o test7.svg -p
 	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput7.msc -o test7.png -p
 	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput7.msc -o test7.eps -p
+	$(VALGRIND) ../bin/mscgen -T png -i parser/testinput8.msc -o test8.png -p
+	$(VALGRIND) ../bin/mscgen -T svg -i parser/testinput8.msc -o test8.svg -p	
+	$(VALGRIND) ../bin/mscgen -T eps -i parser/testinput8.msc -o test8.eps -p
 
 
 .PHONY: test bindist winbindist srcdist clean distclean

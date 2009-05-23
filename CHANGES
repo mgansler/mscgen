@@ -1,3 +1,7 @@
+0.x: 23/05/2009
+      Escape special characters for SVG output.
+       [Bug #1, thanks braeuer.jens]
+
 0.14: 27/02/2009
       Added state description boxes into the entity lines.
       Use command "<entity> box <entity> [label="..."];" for state boxes. 

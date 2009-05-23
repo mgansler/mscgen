@@ -147,6 +147,28 @@ static void arcPoint(unsigned int cx,
     *y = cy + ((h / 2.0f) * sin(rad));
 }
 
+
+/** Write out a line of text, escaping special characters.
+ */
+static void writeEscaped(struct ADrawTag *ctx, const char *string)
+{
+    FILE *f = getSvgFile(ctx);
+
+    while(*string != '\0')
+    {
+        switch(*string)
+        {
+            case '<': fprintf(f, "&lt;"); break;
+            case '>': fprintf(f, "&gt;"); break;
+            case '"': fprintf(f, "&quot;"); break;
+            case '&': fprintf(f, "&amp;"); break;
+            default:  fputc(*string, f); break;
+        }
+
+        string++;
+    }
+}
+
 /***************************************************************************
  * API Functions
  ***************************************************************************/
@@ -204,8 +226,10 @@ void SvgTextR(struct ADrawTag *ctx,
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
-            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\">\n%s\n</text>\n",
-            x - 1, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName, string);
+            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\">\n",
+            x - 1, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
+    writeEscaped(ctx, string);
+    fprintf(getSvgFile(ctx), "\n</text>\n");
 }
 
 
@@ -219,8 +243,11 @@ void SvgTextL(struct ADrawTag *ctx,
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
-            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"end\">\n%s\n</text>\n",
-            x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName, string);
+            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"end\">\n",
+            x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
+    writeEscaped(ctx, string);
+    fprintf(getSvgFile(ctx), "\n</text>\n");
+
 
 }
 
@@ -234,8 +261,10 @@ void SvgTextC(struct ADrawTag *ctx,
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
-            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"middle\">\n%s\n</text>\n",
-            x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName, string);
+            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"middle\">\n\n",
+            x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
+    writeEscaped(ctx, string);
+    fprintf(getSvgFile(ctx), "\n</text>\n");
 }
 
 void SvgFilledTriangle(struct ADrawTag *ctx,
