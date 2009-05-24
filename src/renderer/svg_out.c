@@ -162,7 +162,26 @@ static void writeEscaped(struct ADrawTag *ctx, const char *string)
             case '>': fprintf(f, "&gt;"); break;
             case '"': fprintf(f, "&quot;"); break;
             case '&': fprintf(f, "&amp;"); break;
-            default:  fputc(*string, f); break;
+            default:
+                /* Check for single character UTF-8 */
+                if((*string & 0xe0) == 0xc0)
+                {
+                    unsigned int v = ((string[0] & 0x1f) << 6) | (string[1] & 0x3f);
+                    fprintf(f, "&#x%x;", v);
+                    string++;
+                }
+                else if((*string & 0xf0) == 0xe0)
+                {
+                    unsigned int v = ((*string & 0x0f) << 12) | ((string[1] & 0x3f) << 6) | (string[2] & 0x3f);
+                    fprintf(f, "&#x%x;", v);
+                    string += 2;
+                }
+                else
+                {
+                    fputc(*string, f);
+                }
+                break;
+
         }
 
         string++;
@@ -180,7 +199,12 @@ unsigned int SvgTextWidth(struct ADrawTag *ctx,
 
     while(*string != '\0')
     {
-        width += SvgHelvetica.widths[(int)*string];
+        int           i = *string & 0xff;
+        unsigned long w = SvgHelvetica.widths[i];
+
+        /* Ignore undefined characters */
+        width += w > 0 ? w : 0;
+
         string++;
     }
 
@@ -422,8 +446,8 @@ Boolean SvgClose(struct ADrawTag *ctx)
 
 
 
-Boolean SvgInit(unsigned int     w UNUSED,
-                unsigned int     h UNUSED,
+Boolean SvgInit(unsigned int     w,
+                unsigned int     h,
                 const char      *file,
                 struct ADrawTag *outContext)
 {
@@ -454,9 +478,11 @@ Boolean SvgInit(unsigned int     w UNUSED,
     fprintf(context->of, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n"
                          " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
 
-    fprintf(context->of, "<svg width=\"100%%\" height=\"100%%\" version=\"1.1\"\n"
+    fprintf(context->of, "<svg width=\"%upx\" height=\"%upx\" version=\"1.1\"\n"
+                         " viewbox=\"0 0 %u %u\"\n"
                          " xmlns=\"http://www.w3.org/2000/svg\" shape-rendering=\"crispEdges\"\n"
-                         " stroke-width=\"1\" text-rendering=\"geometricPrecision\">\n");
+                         " stroke-width=\"1\" text-rendering=\"geometricPrecision\">\n",
+                         w, h, w, h);
 
     /* Now fill in the function pointers */
     outContext->line            = SvgLine;

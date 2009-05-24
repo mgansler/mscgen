@@ -526,19 +526,15 @@ static void entityLines(Msc                m,
 
 
 /** Draw vertical lines and boxes stemming from entites.
- * \param m          The \a Msc for which the lines are drawn
  * \param row        The row number indentifying the segment
  * \param boxStart   Column in which the box starts.
  * \param boxEnd     Column in which the box ends.
  * \param boxType    The type of box to draw, MSC_ARC_BOX, MSC_ARC_RBOX etc.
- * \param colourRefs Colour references for each entity.
  */
-static void entityBox(Msc                m,
-                      unsigned int       row,
+static void entityBox(unsigned int       row,
                       unsigned int       boxStart,
                       unsigned int       boxEnd,
-                      MscArcType         boxType,
-                      const ADrawColour *colourRefs)
+                      MscArcType         boxType)
 {
     const unsigned int ymin = (gOpts.arcSpacing * row) + gOpts.entityHeadGap;
     unsigned int       ymax = ymin + gOpts.arcSpacing;
@@ -1311,7 +1307,7 @@ int main(const int argc, const char *argv[])
                     {
                         entityLines(m, row, FALSE, entColourRef);
                     }
-                    entityBox(m, row, startCol, endCol, arcType, entColourRef);
+                    entityBox(row, startCol, endCol, arcType);
                 }
                 else if(arcType == MSC_ARC_DISCO && addLines)
                 {
