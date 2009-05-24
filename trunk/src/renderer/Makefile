@@ -3,7 +3,7 @@
 CC=gcc
 CFLAGS+=-Wall -Wextra -I../parser -DPACKAGE_VERSION="\"$(MSCGEN_VER)\"" -O2
 LIBS=../parser/libparser.a
-OBJS=main.o null_out.o gd_out.o ps_out.o svg_out.o cmdparse.o adraw.o
+OBJS=main.o null_out.o gd_out.o ps_out.o svg_out.o cmdparse.o adraw.o utf8.o
 
 ifeq ($(OS),win32)
 

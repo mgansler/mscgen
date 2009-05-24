@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "adraw_int.h"
+#include "utf8.h"
 
 /***************************************************************************
  * Local types
@@ -156,6 +157,8 @@ static void writeEscaped(struct ADrawTag *ctx, const char *string)
 
     while(*string != '\0')
     {
+        unsigned int code, bytes;
+
         switch(*string)
         {
             case '<': fprintf(f, "&lt;"); break;
@@ -163,18 +166,10 @@ static void writeEscaped(struct ADrawTag *ctx, const char *string)
             case '"': fprintf(f, "&quot;"); break;
             case '&': fprintf(f, "&amp;"); break;
             default:
-                /* Check for single character UTF-8 */
-                if((*string & 0xe0) == 0xc0)
+                if(Utf8Decode(string, &code, &bytes))
                 {
-                    unsigned int v = ((string[0] & 0x1f) << 6) | (string[1] & 0x3f);
-                    fprintf(f, "&#x%x;", v);
-                    string++;
-                }
-                else if((*string & 0xf0) == 0xe0)
-                {
-                    unsigned int v = ((*string & 0x0f) << 12) | ((string[1] & 0x3f) << 6) | (string[2] & 0x3f);
-                    fprintf(f, "&#x%x;", v);
-                    string += 2;
+                    fprintf(f, "&#x%x;", code);
+                    string += bytes - 1;
                 }
                 else
                 {
