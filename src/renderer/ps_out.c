@@ -164,6 +164,7 @@ void PsLine(struct ADrawTag *ctx,
 
 }
 
+
 void PsDottedLine(struct ADrawTag *ctx,
                    unsigned int     x1,
                    unsigned int     y1,
@@ -204,6 +205,7 @@ void PsTextL(struct ADrawTag *ctx,
             x, -y - getSpace(ctx, PsHelvetica.descender), string);
 }
 
+
 void PsTextC(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
@@ -219,6 +221,28 @@ void PsTextC(struct ADrawTag *ctx,
                 "show\n",
                 x, -y - getSpace(ctx, PsHelvetica.descender), string);
 }
+
+
+void PsFilledRectangle(struct ADrawTag *ctx,
+                       unsigned int x1,
+                       unsigned int y1,
+                       unsigned int x2,
+                       unsigned int y2)
+{
+    fprintf(getPsFile(ctx),
+            "newpath "
+            "%d %d moveto "
+            "%d %d lineto "
+            "%d %d lineto "
+            "%d %d lineto "
+            "closepath "
+            "fill\n",
+            x1, -y1,
+            x2, -y1,
+            x2, -y2,
+            x1, -y2);
+}
+
 
 void PsFilledTriangle(struct ADrawTag *ctx,
                        unsigned int x1,
@@ -416,19 +440,20 @@ Boolean PsInit(unsigned int     w,
     context->penColour = ADRAW_COL_BLACK;
 
     /* Now fill in the function pointers */
-    outContext->line           = PsLine;
-    outContext->dottedLine     = PsDottedLine;
-    outContext->textL          = PsTextL;
-    outContext->textC          = PsTextC;
-    outContext->textR          = PsTextR;
-    outContext->textWidth      = PsTextWidth;
-    outContext->textHeight     = PsTextHeight;
-    outContext->filledTriangle = PsFilledTriangle;
-    outContext->arc            = PsArc;
-    outContext->dottedArc      = PsDottedArc;
-    outContext->setPen         = PsSetPen;
-    outContext->setFontSize    = PsSetFontSize;
-    outContext->close          = PsClose;
+    outContext->line            = PsLine;
+    outContext->dottedLine      = PsDottedLine;
+    outContext->textL           = PsTextL;
+    outContext->textC           = PsTextC;
+    outContext->textR           = PsTextR;
+    outContext->textWidth       = PsTextWidth;
+    outContext->textHeight      = PsTextHeight;
+    outContext->filledRectangle = PsFilledRectangle;
+    outContext->filledTriangle  = PsFilledTriangle;
+    outContext->arc             = PsArc;
+    outContext->dottedArc       = PsDottedArc;
+    outContext->setPen          = PsSetPen;
+    outContext->setFontSize     = PsSetFontSize;
+    outContext->close           = PsClose;
 
     return TRUE;
 }

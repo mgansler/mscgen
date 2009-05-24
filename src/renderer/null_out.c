@@ -48,6 +48,7 @@ static void NullLine(struct ADrawTag *ctx UNUSED,
 {
 }
 
+
 static void NullDottedLine(struct ADrawTag *ctx UNUSED,
                            unsigned int     x1 UNUSED,
                            unsigned int     y1 UNUSED,
@@ -72,12 +73,23 @@ static void NullTextL(struct ADrawTag *ctx UNUSED,
 {
 }
 
+
 static void NullTextC(struct ADrawTag *ctx UNUSED,
                       unsigned int     x UNUSED,
                       unsigned int     y UNUSED,
                       const char      *string UNUSED)
 {
 }
+
+
+static void NullFilledRectangle(struct ADrawTag *ctx UNUSED,
+                               unsigned int x1 UNUSED,
+                               unsigned int y1 UNUSED,
+                               unsigned int x2 UNUSED,
+                               unsigned int y2 UNUSED)
+{
+}
+
 
 static void NullFilledTriangle(struct ADrawTag *ctx UNUSED,
                                unsigned int x1 UNUSED,
@@ -130,23 +142,23 @@ static Boolean NullClose(struct ADrawTag *ctx UNUSED)
 }
 
 
-
 Boolean NullInit(struct ADrawTag *outContext)
 {
     /* Fill in the function pointers */
-    outContext->line           = NullLine;
-    outContext->dottedLine     = NullDottedLine;
-    outContext->textL          = NullTextL;
-    outContext->textC          = NullTextC;
-    outContext->textR          = NullTextR;
-    outContext->textWidth      = NullTextWidth;
-    outContext->textHeight     = NullTextHeight;
-    outContext->filledTriangle = NullFilledTriangle;
-    outContext->arc            = NullArc;
-    outContext->dottedArc      = NullDottedArc;
-    outContext->setPen         = NullSetPen;
-    outContext->setFontSize    = NullSetFontSize;
-    outContext->close          = NullClose;
+    outContext->line            = NullLine;
+    outContext->dottedLine      = NullDottedLine;
+    outContext->textL           = NullTextL;
+    outContext->textC           = NullTextC;
+    outContext->textR           = NullTextR;
+    outContext->textWidth       = NullTextWidth;
+    outContext->textHeight      = NullTextHeight;
+    outContext->filledRectangle = NullFilledRectangle;
+    outContext->filledTriangle  = NullFilledTriangle;
+    outContext->arc             = NullArc;
+    outContext->dottedArc       = NullDottedArc;
+    outContext->setPen          = NullSetPen;
+    outContext->setFontSize     = NullSetFontSize;
+    outContext->close           = NullClose;
 
     return TRUE;
 }

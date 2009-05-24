@@ -267,6 +267,23 @@ void SvgTextC(struct ADrawTag *ctx,
     fprintf(getSvgFile(ctx), "\n</text>\n");
 }
 
+
+void SvgFilledRectangle(struct ADrawTag *ctx,
+                       unsigned int x1,
+                       unsigned int y1,
+                       unsigned int x2,
+                       unsigned int y2)
+{
+
+    fprintf(getSvgFile(ctx),
+            "<polygon fill=\"%s\" points=\"%u,%u %u,%u %u,%u %u,%u\"/>\n",
+            getSvgPen(ctx),
+            x1, y1,
+            x2, y1,
+            x2, y2,
+            x1, y2);
+}
+
 void SvgFilledTriangle(struct ADrawTag *ctx,
                        unsigned int x1,
                        unsigned int y1,
@@ -442,19 +459,20 @@ Boolean SvgInit(unsigned int     w UNUSED,
                          " stroke-width=\"1\" text-rendering=\"geometricPrecision\">\n");
 
     /* Now fill in the function pointers */
-    outContext->line           = SvgLine;
-    outContext->dottedLine     = SvgDottedLine;
-    outContext->textL          = SvgTextL;
-    outContext->textC          = SvgTextC;
-    outContext->textR          = SvgTextR;
-    outContext->textWidth      = SvgTextWidth;
-    outContext->textHeight     = SvgTextHeight;
-    outContext->filledTriangle = SvgFilledTriangle;
-    outContext->arc            = SvgArc;
-    outContext->dottedArc      = SvgDottedArc;
-    outContext->setPen         = SvgSetPen;
-    outContext->setFontSize    = SvgSetFontSize;
-    outContext->close          = SvgClose;
+    outContext->line            = SvgLine;
+    outContext->dottedLine      = SvgDottedLine;
+    outContext->textL           = SvgTextL;
+    outContext->textC           = SvgTextC;
+    outContext->textR           = SvgTextR;
+    outContext->textWidth       = SvgTextWidth;
+    outContext->textHeight      = SvgTextHeight;
+    outContext->filledRectangle = SvgFilledRectangle;
+    outContext->filledTriangle  = SvgFilledTriangle;
+    outContext->arc             = SvgArc;
+    outContext->dottedArc       = SvgDottedArc;
+    outContext->setPen          = SvgSetPen;
+    outContext->setFontSize     = SvgSetFontSize;
+    outContext->close           = SvgClose;
 
     return TRUE;
 }

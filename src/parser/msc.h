@@ -68,6 +68,7 @@ typedef enum
     MSC_ARC_DISCO,      /* ... Discontinuity in time line */
     MSC_ARC_DIVIDER,    /* --- Divider */
     MSC_ARC_SPACE,      /* ||| */
+    MSC_ARC_PARALLEL,   /* Comma instead of semicolon */
     MSC_ARC_BOX,
     MSC_ARC_ABOX,
     MSC_ARC_RBOX,
@@ -158,6 +159,8 @@ void          MscPrint(Msc m);
 unsigned int  MscGetNumEntities(Msc m);
 
 unsigned int  MscGetNumArcs(Msc m);
+
+unsigned int  MscGetNumParallelArcs(Msc m);
 
 unsigned int  MscGetNumOpts(Msc m);
 

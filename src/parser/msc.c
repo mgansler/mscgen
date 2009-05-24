@@ -54,6 +54,7 @@ struct MscArcTag
 struct MscArcListTag
 {
     unsigned int         elements;
+    unsigned int         parElements;
     struct MscArcTag    *head, *tail;
 };
 
@@ -311,6 +312,14 @@ struct MscArcListTag *MscLinkArc(struct MscArcListTag *list,
 
     /* Increment count of elements */
     list->elements++;
+    if(elem->type == MSC_ARC_PARALLEL)
+    {
+        /* A parallel arc is a place holder, and indicates the next arc
+         *  is on the same line.  It also needs to account itself, so subtract
+         *  two here.
+         */
+        list->parElements += 2;
+    }
 
     return list;
 }
@@ -468,7 +477,8 @@ void MscPrint(struct MscTag *m)
     printf("Option list (%d options)\n", MscGetNumOpts(m));
     MscPrintOptList(m->optList);
 
-    printf("Entity list (%d entities)\n", MscGetNumEntities(m));
+    printf("Entity list (%d entities, %d parallel)\n",
+           MscGetNumEntities(m), MscGetNumParallelArcs(m));
     MscPrintEntityList(m->entityList);
 
     printf("\nArc list (%d arcs)\n", MscGetNumArcs(m));
@@ -483,6 +493,11 @@ unsigned int MscGetNumEntities(struct MscTag *m)
 unsigned int MscGetNumArcs(Msc m)
 {
     return m->arcList->elements;
+}
+
+unsigned int MscGetNumParallelArcs(Msc m)
+{
+    return m->arcList->parElements;
 }
 
 unsigned int MscGetNumOpts(Msc m)
