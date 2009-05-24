@@ -22,13 +22,7 @@ parsertest: parsertest.o libparser.a
 
 
 test: parsertest
-	cat testinput0.msc | ./parsertest
-	cat testinput1.msc | ./parsertest
-	cat testinput2.msc | ./parsertest
-	cat testinput3.msc | ./parsertest
-	cat testinput4.msc | ./parsertest
-	cat testinput5.msc | ./parsertest
-	cat testinput6.msc | ./parsertest
+	cd ../test && ./parsercheck.sh
 
 clean: FORCE
 	rm -f libparser.a language.tab.c language.tab.h lex.yy.c parsertest.o language.output $(OBJS)

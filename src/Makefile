@@ -61,6 +61,7 @@ clean:
 	(cd renderer && $(MAKE) $@)
 
 test:
-	$(MAKE) -C test	
-
+	(cd test && ./parsercheck.sh)
+	(cd test && ./renderercheck.sh)
+	
 .PHONY: test bindist winbindist srcdist clean distclean
