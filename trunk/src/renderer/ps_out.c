@@ -127,6 +127,43 @@ static int getSpace(struct ADrawTag *ctx, long thousanths)
     return (thousanths * getPsCtx(ctx)->fontPoints) / 1000;
 }
 
+/** Write out a line of text, escaping special characters.
+ */
+static void writeEscaped(struct ADrawTag *ctx, const char *string)
+{
+    FILE *f = getPsFile(ctx);
+
+    while(*string != '\0')
+    {
+        switch(*string)
+        {
+            case '(': fprintf(f, "\\("); break;
+            case ')': fprintf(f, "\\)"); break;
+            default:
+                /* Check for single character UTF-8 */
+                if((*string & 0xe0) == 0xc0)
+                {
+                    unsigned int v = ((*string & 0x3) << 6) | (string[1] & 0x3f);
+                    fprintf(f, "\\%o", v);
+                    string++;
+                }
+                else if((*string & 0xf0) == 0xe0)
+                {
+                    unsigned int v = ((*string & 0x0f) << 12) | ((string[1] & 0x3f) << 6) | (string[2] & 0x3f);
+                    fprintf(f, "\\%o", v);
+                    string += 2;
+                }
+                else
+                {
+                    fputc(*string, f);
+                }
+                break;
+        }
+
+        string++;
+    }
+}
+
 /***************************************************************************
  * API Functions
  ***************************************************************************/
@@ -138,7 +175,12 @@ unsigned int PsTextWidth(struct ADrawTag *ctx,
 
     while(*string != '\0')
     {
-        width += PsHelvetica.widths[(int)*string];
+        int           i = *string & 0xff;
+        unsigned long w = PsHelvetica.widths[i];
+
+        /* Ignore undefined characters */
+        width += w > 0 ? w : 0;
+
         string++;
     }
 
@@ -183,9 +225,10 @@ void PsTextR(struct ADrawTag *ctx,
               const char      *string)
 {
     fprintf(getPsFile(ctx),
-            "%d %d moveto (%s) show\n",
-            x, -y - getSpace(ctx, PsHelvetica.descender), string);
-
+            "%d %d moveto (",
+            x, -y - getSpace(ctx, PsHelvetica.descender));
+    writeEscaped(ctx, string);
+    fprintf(getPsFile(ctx), ") show\n");
 }
 
 
@@ -196,13 +239,16 @@ void PsTextL(struct ADrawTag *ctx,
 {
     fprintf(getPsFile(ctx),
             "%d %d moveto "
-            "(%s) dup stringwidth "
+            "(",
+            x, -y - getSpace(ctx, PsHelvetica.descender));
+    writeEscaped(ctx, string);
+    fprintf(getPsFile(ctx),
+            ") dup stringwidth "
             "pop "  /* Ignore y value */
             "neg "  /* Invert x value */
             "0 "
             "rmoveto "
-            "show\n",
-            x, -y - getSpace(ctx, PsHelvetica.descender), string);
+            "show\n");
 }
 
 
@@ -212,14 +258,17 @@ void PsTextC(struct ADrawTag *ctx,
               const char      *string)
 {
     fprintf(getPsFile(ctx),
-                "%d %d moveto "
-                "(%s) dup stringwidth "
-                "pop "        /* Ignore y value */
-                "2 div neg "  /* Invert and halve x value */
-                "0 "
-                "rmoveto "
-                "show\n",
-                x, -y - getSpace(ctx, PsHelvetica.descender), string);
+            "%d %d moveto "
+            "(",
+            x, -y - getSpace(ctx, PsHelvetica.descender));
+    writeEscaped(ctx, string);
+    fprintf(getPsFile(ctx),
+            ") dup stringwidth "
+            "pop "        /* Ignore y value */
+            "2 div neg "  /* Invert and halve x value */
+            "0 "
+            "rmoveto "
+            "show\n");
 }
 
 
