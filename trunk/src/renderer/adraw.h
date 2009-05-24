@@ -176,7 +176,17 @@ typedef struct ADrawTag
     unsigned int (*textWidth)     (struct ADrawTag *ctx,
                                    const char *string);
 
+    /** Determine the height of text in the current font.
+     * \param ctx    The drawing context.
+     *
+     */
              int (*textHeight)    (struct ADrawTag *ctx);
+
+    void         (*filledRectangle)(struct ADrawTag *ctx,
+                                    unsigned int x1,
+                                    unsigned int y1,
+                                    unsigned int x2,
+                                    unsigned int y2);
 
     void         (*filledTriangle)(struct ADrawTag *ctx,
                                    unsigned int x1,

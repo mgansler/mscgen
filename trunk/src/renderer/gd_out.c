@@ -222,6 +222,22 @@ void gdoTextC(struct ADrawTag *ctx,
     gdoTextR(ctx, x - (gdoTextWidth(ctx, string) / 2), y, string);
 }
 
+void gdoFilledRectangle(struct ADrawTag *ctx,
+                        unsigned int x1,
+                        unsigned int y1,
+                        unsigned int x2,
+                        unsigned int y2)
+{
+    gdPoint p[4];
+
+    p[0].x = x1; p[0].y = y1;
+    p[1].x = x2; p[1].y = y1;
+    p[2].x = x2; p[2].y = y2;
+    p[3].x = x1; p[3].y = y2;
+
+    gdImageFilledPolygon(getGdoImg(ctx), p, 4, getGdoPen(ctx));
+}
+
 void gdoFilledTriangle(struct ADrawTag *ctx,
                        unsigned int x1,
                        unsigned int y1,
@@ -352,19 +368,20 @@ Boolean GdoInit(unsigned int     w,
     context->font = gdFontGetSmall();
 
     /* Now fill in the function pointers */
-    outContext->line           = gdoLine;
-    outContext->dottedLine     = gdoDottedLine;
-    outContext->textL          = gdoTextL;
-    outContext->textC          = gdoTextC;
-    outContext->textR          = gdoTextR;
-    outContext->textWidth      = gdoTextWidth;
-    outContext->textHeight     = gdoTextHeight;
-    outContext->filledTriangle = gdoFilledTriangle;
-    outContext->arc            = gdoArc;
-    outContext->dottedArc      = gdoDottedArc;
-    outContext->setPen         = gdoSetPen;
-    outContext->setFontSize    = gdoSetFontSize;
-    outContext->close          = gdoClose;
+    outContext->line            = gdoLine;
+    outContext->dottedLine      = gdoDottedLine;
+    outContext->textL           = gdoTextL;
+    outContext->textC           = gdoTextC;
+    outContext->textR           = gdoTextR;
+    outContext->textWidth       = gdoTextWidth;
+    outContext->textHeight      = gdoTextHeight;
+    outContext->filledRectangle = gdoFilledRectangle;
+    outContext->filledTriangle  = gdoFilledTriangle;
+    outContext->arc             = gdoArc;
+    outContext->dottedArc       = gdoDottedArc;
+    outContext->setPen          = gdoSetPen;
+    outContext->setFontSize     = gdoSetFontSize;
+    outContext->close           = gdoClose;
 
     return TRUE;
 }

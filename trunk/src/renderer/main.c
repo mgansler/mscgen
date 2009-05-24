@@ -552,27 +552,6 @@ static void entityBox(Msc                m,
         boxStart = t;
     }
 
-    /* Draw lines where there is no entity */
-    for(t = 0; t < MscGetNumEntities(m); t++)
-    {
-        unsigned int x = (gOpts.entitySpacing / 2) + (gOpts.entitySpacing * t);
-
-        drw.setPen(&drw, colourRefs[t]);
-
-        /* Draw normal lines for entities outside the box */
-        if(t < boxStart || t > boxEnd)
-        {
-            drw.line(&drw, x, ymin, x, ymax);
-        }
-        else
-        {
-            /* Tiny line part at the bottom of the box */
-            drw.line(&drw, x, ymax - 1, x, ymax);
-        }
-    }
-
-    drw.setPen(&drw, ADRAW_COL_BLACK);
-
     /* Now draw the box */
     ymax--;
 
@@ -580,6 +559,12 @@ static void entityBox(Msc                m,
     unsigned int x2 = gOpts.entitySpacing * (boxEnd + 1) - gOpts.boxSpacing;
     unsigned int ymid = (ymin + ymax) / 2;
 
+    /* Draw a while box to overwrite the entity lines */
+    drw.setPen(&drw, ADRAW_COL_WHITE);
+    drw.filledRectangle(&drw, x1, ymin, x2, ymax);
+    drw.setPen(&drw, ADRAW_COL_BLACK);
+
+    /* Draw the outline */
     switch(boxType)
     {
         case MSC_ARC_BOX:
@@ -997,7 +982,8 @@ int main(const int argc, const char *argv[])
     ADrawColour     *entColourRef;
     char            *outImage;
     Msc              m;
-    unsigned int     w, h, row, col;
+    unsigned int     w, h, row, col, arc;
+    Boolean          addLines;
     float            f;
 
     /* Parse the command line options */
@@ -1176,7 +1162,7 @@ int main(const int argc, const char *argv[])
 
     /* Work out the width and height of the canvas */
     w = MscGetNumEntities(m) * gOpts.entitySpacing;
-    h = (MscGetNumArcs(m) * gOpts.arcSpacing) +
+    h = ((MscGetNumArcs(m) - MscGetNumParallelArcs(m)) * gOpts.arcSpacing) +
         gOpts.entityHeadGap;
 
     /* Close the temporary output file */
@@ -1224,7 +1210,9 @@ int main(const int argc, const char *argv[])
     }
 
     /* Draw the arcs */
-    for(row = 0; row < MscGetNumArcs(m); row++)
+    addLines = TRUE;
+    row = 0; arc = 0;
+    while(arc < MscGetNumArcs(m))
     {
         const MscArcType   arcType       = MscGetCurrentArcType(m);
         const char        *arcUrl        = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
@@ -1236,106 +1224,128 @@ int main(const int argc, const char *argv[])
         const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) : 1;
         int                startCol, endCol;
 
-        /* Get the entitiy indices */
-        if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
+        if(arcType == MSC_ARC_PARALLEL)
         {
-            startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
-            endCol   = MscGetEntityIndex(m, MscGetCurrentArcDest(m));
-
-            /* Check for entity arc colouring if not set explicity on the arc */
-            if(arcTextColour == NULL)
-            {
-                arcTextColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_TEXT_COLOUR);
-                arcLineColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_LINE_COLOUR);
-            }
-
+            row--;
+            addLines = FALSE;
         }
         else
         {
-            /* Discontinuity arc spans whole chart */
-            startCol = 0;
-            endCol   = MscGetNumEntities(m) - 1;
-        }
-
-        /* Check if this is a broadcast message */
-        if(isBroadcastArc(MscGetCurrentArcDest(m)))
-        {
-            unsigned int t;
-
-            /* Ensure startCol is valid */
-            if(startCol == -1)
+            /* Get the entitiy indices */
+            if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
             {
-               fprintf(stderr,
-                       "Unknown source entity '%s'\n",
-                       MscGetCurrentArcSource(m));
-               return EXIT_FAILURE;
-            }
+                startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
+                endCol   = MscGetEntityIndex(m, MscGetCurrentArcDest(m));
 
-            /* Add in the entity lines */
-            entityLines(m, row, FALSE, entColourRef);
-
-            /* Draw arcs to each entity */
-            for(t = 0; t < MscGetNumEntities(m); t++)
-            {
-                if((signed)t != startCol)
+                /* Check for entity arc colouring if not set explicity on the arc */
+                if(arcTextColour == NULL)
                 {
-                    arcLine(m, row, startCol, t, arcLineColour, arcType);
+                    arcTextColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_TEXT_COLOUR);
+                    arcLineColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_LINE_COLOUR);
                 }
-            }
 
-            /* Fix up the start/end columns to span chart */
-            startCol = 0;
-            endCol   = MscGetNumEntities(m) - 1;
-        }
-        else
-        {
-            /* Check that the start and end columns are known */
-            if(startCol == -1)
-            {
-                fprintf(stderr,
-                        "Unknown source entity '%s'\n",
-                        MscGetCurrentArcSource(m));
-                return EXIT_FAILURE;
-            }
-
-            if(endCol == -1)
-            {
-                fprintf(stderr,
-                        "Unknown destination entity '%s'\n",
-                        MscGetCurrentArcDest(m));
-                return EXIT_FAILURE;
-            }
-
-            /* Check if it is a box, discontinunity arc etc... */
-            if(isBoxArc(arcType))
-            {
-                entityBox(m, row, startCol, endCol, arcType, entColourRef);
-            }
-            else if(arcType == MSC_ARC_DISCO)
-            {
-                entityLines(m, row, TRUE /* dotted */, entColourRef);
-            }
-            else if (arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
-            {
-                entityLines(m, row, FALSE, entColourRef);
             }
             else
             {
-                entityLines(m, row, FALSE, entColourRef);
-                arcLine    (m, row, startCol, endCol, arcLineColour, arcType);
+                /* Discontinuity or parallel arc spans whole chart */
+                startCol = 0;
+                endCol   = MscGetNumEntities(m) - 1;
             }
-        }
 
-        /* All may have text */
-        if(arcLabel)
-        {
-            arcText(m, ismap, w, row,
-                    startCol, endCol, arcLabel, arcLabelLines,
-                    arcUrl, arcId, arcIdUrl,
-                    arcTextColour, arcLineColour, arcType);
+            /* Check if this is a broadcast message */
+            if(isBroadcastArc(MscGetCurrentArcDest(m)))
+            {
+                unsigned int t;
+
+                /* Ensure startCol is valid */
+                if(startCol == -1)
+                {
+                   fprintf(stderr,
+                           "Unknown source entity '%s'\n",
+                           MscGetCurrentArcSource(m));
+                   return EXIT_FAILURE;
+                }
+
+                /* Add in the entity lines */
+                if(addLines)
+                {
+                    entityLines(m, row, FALSE, entColourRef);
+                }
+
+                /* Draw arcs to each entity */
+                for(t = 0; t < MscGetNumEntities(m); t++)
+                {
+                    if((signed)t != startCol)
+                    {
+                        arcLine(m, row, startCol, t, arcLineColour, arcType);
+                    }
+                }
+
+                /* Fix up the start/end columns to span chart */
+                startCol = 0;
+                endCol   = MscGetNumEntities(m) - 1;
+            }
+            else
+            {
+                /* Check that the start and end columns are known */
+                if(startCol == -1)
+                {
+                    fprintf(stderr,
+                            "Unknown source entity '%s'\n",
+                            MscGetCurrentArcSource(m));
+                    return EXIT_FAILURE;
+                }
+
+                if(endCol == -1)
+                {
+                    fprintf(stderr,
+                            "Unknown destination entity '%s'\n",
+                            MscGetCurrentArcDest(m));
+                    return EXIT_FAILURE;
+                }
+
+                /* Check if it is a box, discontinunity arc etc... */
+                if(isBoxArc(arcType))
+                {
+                    if(addLines)
+                    {
+                        entityLines(m, row, FALSE, entColourRef);
+                    }
+                    entityBox(m, row, startCol, endCol, arcType, entColourRef);
+                }
+                else if(arcType == MSC_ARC_DISCO && addLines)
+                {
+                    entityLines(m, row, TRUE /* dotted */, entColourRef);
+                }
+                else if ((arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE) && addLines)
+                {
+                    entityLines(m, row, FALSE, entColourRef);
+                }
+                else
+                {
+                    if(addLines)
+                    {
+                        entityLines(m, row, FALSE, entColourRef);
+                    }
+                    arcLine    (m, row, startCol, endCol, arcLineColour, arcType);
+                }
+            }
+
+            /* All may have text */
+            if(arcLabel)
+            {
+                arcText(m, ismap, w, row,
+                        startCol, endCol, arcLabel, arcLabelLines,
+                        arcUrl, arcId, arcIdUrl,
+                        arcTextColour, arcLineColour, arcType);
+            }
+
+            row++;
+            addLines = TRUE;
         }
 
         MscNextArc(m);
+        arc++;
     }
 
     /* Close the image map if needed */

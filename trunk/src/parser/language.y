@@ -285,7 +285,13 @@ arclist:      arc
               | arclist TOK_SEMICOLON arc
 {
     $$ = MscLinkArc($1, $3);     /* Add to existing list */
+}
+              | arclist TOK_COMMA arc
+{
+    /* Add a special 'parallel' arc */
+    $$ = MscLinkArc(MscLinkArc($1, MscAllocArc(NULL, NULL, MSC_ARC_PARALLEL)), $3);
 };
+;
 
 
 
