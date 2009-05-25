@@ -42,7 +42,11 @@ ifndef done
 # dependencies).  Instead the libs can be listed manually for a static
 # link:
 
-LDFLAGS+=-lgd -fontconfig -lpng12 -lz -lm
+LDFLAGS+=-lgd
+
+ifeq ($(STATIC),-static)
+LDFLAGS+=-fontconfig -lpng12 -lz -lm
+endif
 
 # Linux, assume that the gd-devel libs are already installed and link
 #  against them.  Note that version 2.0.22 is needed for the new
@@ -63,6 +67,7 @@ distclean: clean
 
 clean:
 	rm -f $(OBJS)
+	rm -f ../test/*.png ../test/*.eps ../test/*.svg ../test/*.ismap
 
 ifeq ($(OS),win32)
 dllcheck:
@@ -77,4 +82,7 @@ dllcheck:
 endif
 endif
 
-.PHONY: clean distclean dllcheck
+test:
+	(cd ../test && ./renderercheck.sh)
+
+.PHONY: clean distclean test dllcheck

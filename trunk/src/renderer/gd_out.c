@@ -201,7 +201,7 @@ void gdoTextR(struct ADrawTag *ctx,
                   getGdoCtx(ctx)->font,
                   x,
                   y - gdoTextHeight(ctx),
-                  (char *)string,
+                  (unsigned char *)string,
                   getGdoPen(ctx));
 }
 
