@@ -49,6 +49,10 @@ bindist: all
 	openssl md5 ../dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz > ../dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz.md5
 
 distclean: clean
+	$(MAKE) -C test $@
+	$(MAKE) -C parser $@
+	$(MAKE) -C renderer $@	
+	$()
 	rm -f ../dist/*.gz ../dist/*.md5 ../dist/*.zip ../bin/mscgen.exe ../bin/mscgen ../bin/bgd.dll
 
 clean:
