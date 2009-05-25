@@ -1,6 +1,6 @@
 # Build normally for Linux/Unix
 
-export MSCGEN_VER=0.14
+export MSCGEN_VER=0.15
 
 all:
 	(cd parser && $(MAKE))
@@ -49,14 +49,12 @@ bindist: all
 	openssl md5 ../dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz > ../dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz.md5
 
 distclean: clean
-	$(MAKE) -C test $@
 	$(MAKE) -C parser $@
 	$(MAKE) -C renderer $@	
 	$()
 	rm -f ../dist/*.gz ../dist/*.md5 ../dist/*.zip ../bin/mscgen.exe ../bin/mscgen ../bin/bgd.dll
 
 clean:
-	$(MAKE) -C test $@
 	$(MAKE) -C parser $@
 	$(MAKE) -C renderer $@	
 
@@ -65,7 +63,7 @@ clean:
 	(cd renderer && $(MAKE) $@)
 
 test:
-	(cd test && ./parsercheck.sh)
-	(cd test && ./renderercheck.sh)
+	$(MAKE) -C parser $@
+	$(MAKE) -C renderer $@
 	
 .PHONY: test bindist winbindist srcdist clean distclean

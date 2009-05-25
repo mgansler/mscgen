@@ -32,7 +32,7 @@ static unsigned long lex_linenum = 1;
 %}
 
 /* Not used, so prevent compiler warning */
-%option nounput
+%option nounput noinput
 
 %%
 
