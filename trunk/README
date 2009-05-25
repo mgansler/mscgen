@@ -24,10 +24,7 @@ Change to the src directory and type:
 
 This should produce mscgen.exe in the bin directory, together with a copy of
 the supporting GD DLL (from this source package).  The binary will be a
-Win32 native executable that does not rely on Cygwin or the Cygwin DLL - the
-last step of the build process should call objdump to list the depended DLLs.
-[If objdump is not installed, you may wish to run make with the '-k' option
- such that this step does not cause make to fail]
+Win32 native executable that does not rely on Cygwin or the Cygwin DLL.  
 
   Note: On Win2k systems, running symlinks under Cygwin can cause a Windows
         error whereby a dialog appears stating:
@@ -85,15 +82,24 @@ Change to the src directory and type:
 Installation
 ============
 
-The built executable is placed in the bin directory.  The executable should be
-copied to your prefered location, noting that Win32 also requires the
-supporting DLL to be copied too.  You can then run mscgen as you wish!
+The built executable is placed in the bin directory.  You can then either
+manually copy it to a location of your choosing, or execute the install
+step:
 
-A man page is also supplied (mscgen.1), and can be coppied to a suitable
-location on Unix systems, such as /usr/man/man1/ or /usr/share/man/man1/.
+  $ sudo make install
 
-If you have problems, contacting Michael.McTernan.2001@cs.bris.ac.uk would
-be welcomed such that I can either help, or improve this hasty guide.
+This will copy the executable and man page into /usr/bin and 
+/usr/share/man/man1 respectively.  For a native windows build under
+Cygwin, bgd.dll will also be copied to /usr/bin.
+
+Bugs
+====
+
+An issue tracker is available at the following location:
+
+  http://code.google.com/p/mscgen/issues/list
+  
+You may also email me directly at Michael.McTernan.2001@cs.bris.ac.uk.  
 
 
 END OF FILE

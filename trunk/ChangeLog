@@ -1,6 +1,10 @@
-0.x: 23/05/2009
+0.15: 23/05/2009
       Escape special characters for SVG output.
-       [Bug #1, thanks braeuer.jens]
+      Better UTF8 support in SVG and PS output.
+      Add Wall Wextra and fixup warnings.
+      Add ability to place multiple boxes on the same line using "," 
+       instead of ";".
+      Clean up Makefiles a little and add install target.
 
 0.14: 27/02/2009
       Added state description boxes into the entity lines.

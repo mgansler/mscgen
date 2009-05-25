@@ -3,8 +3,8 @@
 export MSCGEN_VER=0.15
 
 all:
-	(cd parser && $(MAKE))
-	(cd renderer && $(MAKE) && $(MAKE) dllcheck)
+	$(MAKE) -C parser
+	$(MAKE) -C renderer
 
 all-osx:
 	(export OS=osx; $(MAKE))
@@ -22,6 +22,17 @@ all-cygwin all-w32-mingw:
 	 export LDFLAGS="-mno-cygwin $(LDFLAGS)"; \
 	 export OS=win32; \
 	 $(MAKE))
+
+install:
+	if [ -e ../bin/mscgen.exe ] ; then \
+  		install -m 0755 ../bin/mscgen.exe /usr/bin; \
+  		[ -r ../bin/bgd.dll ] && install -m 0755 ../bin/bgd.dll /usr/bin || true; \
+	fi
+	install -m 0755 ../bin/mscgen /usr/bin 
+	install -m 0644  man/mscgen.1 /usr/share/man/man1
+
+uninstall:
+	rm -f /usr/bin/mscgen /usr/bin/mscgen.exe /usr/bin/bgd.dll /usr/share/man/man1/mscgen.1
 
 srcdist:
 	$(MAKE) distclean
@@ -48,6 +59,9 @@ bindist: all
 	mv -f /tmp/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz ../dist
 	openssl md5 ../dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz > ../dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz.md5
 
+dllcheck:
+	$(MAKE) -C renderer $@
+
 distclean: clean
 	$(MAKE) -C parser $@
 	$(MAKE) -C renderer $@	
@@ -58,12 +72,8 @@ clean:
 	$(MAKE) -C parser $@
 	$(MAKE) -C renderer $@	
 
-%:
-	(cd parser && $(MAKE) $@)
-	(cd renderer && $(MAKE) $@)
-
 test:
 	$(MAKE) -C parser $@
 	$(MAKE) -C renderer $@
 	
-.PHONY: test bindist winbindist srcdist clean distclean
+.PHONY: test bindist winbindist srcdist install uninstall clean distclean
