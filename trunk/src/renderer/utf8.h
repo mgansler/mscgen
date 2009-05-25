@@ -1,7 +1,6 @@
 /***************************************************************************
  * utf8.h: UTF8 decode routine interface.
- * Copyright (C) 2009 Michael C McTernan,
- *    Michael.McTernan.2001@cs.bris.ac.uk
+ * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
