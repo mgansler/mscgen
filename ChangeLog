@@ -2,13 +2,14 @@
       Escape special characters for SVG output.
       Better UTF8 support in SVG and PS output.
       Add Wall Wextra and fixup warnings.
-      Add ability to place multiple boxes on the same line using "," 
+      Add ability to place multiple boxes on the same line using ","
        instead of ";".
       Clean up Makefiles a little and add install target.
+      Update libgd to 2.0.34.
 
 0.14: 27/02/2009
       Added state description boxes into the entity lines.
-      Use command "<entity> box <entity> [label="..."];" for state boxes. 
+      Use command "<entity> box <entity> [label="..."];" for state boxes.
        "abox" and "rbox" also work for rounded and angular boxes.
       Fix arc drawing for SVG which was un-noticably mirrored.
       Add all-freebsd target.
