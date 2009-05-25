@@ -7,14 +7,16 @@ OBJS=main.o null_out.o gd_out.o ps_out.o svg_out.o cmdparse.o adraw.o utf8.o
 
 ifeq ($(OS),win32)
 
-CFLAGS+=-I../../gdwin32
+GDWIN32=../../gdwin32
+CFLAGS+=-I$(GDWIN32)/include
+
 
 # On win32, use the binary package that is a part of the mscgen
 #  distribution.  This makes the probability if the build succeeding
 #  much higher in a tricky environment.
 ../../bin/mscgen: $(OBJS) $(LIBS)
-	$(CC) $(LDFLAGS) -o $@ $^ ../../gdwin32/libbgd.a
-	cp ../../gdwin32/bgd.dll ../../bin
+	$(CC) $(LDFLAGS) -o $@ $^ $(GDWIN32)/lib/bgd.lib
+	cp $(GDWIN32)/bin/bgd.dll ../../bin
 	chmod a+x ../../bin/bgd.dll
 
 done=1
