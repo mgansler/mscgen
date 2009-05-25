@@ -29,7 +29,7 @@ all:
 	$(VALGRIND) ../../bin/mscgen -T svg -i testinput9.msc -o test9.svg -p	
 	$(VALGRIND) ../../bin/mscgen -T eps -i testinput9.msc -o test9.eps -p
 
-clean:
+distclean clean:
 	rm -f test0.png test0.svg \
 	test1.png test1.svg \
 	test2.png test2.svg test2.ismap test2.eps \
@@ -42,4 +42,4 @@ clean:
 	test8.png test8.svg test8.eps \
 	test9.png test9.svg test9.eps
 	
-.PHONY: clean all
+.PHONY: clean distclean all
