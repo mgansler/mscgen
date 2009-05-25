@@ -14,7 +14,7 @@ libparser.a: $(OBJS)
 language.tab.c language.tab.h: language.y
 	$(YACC) -d $^
 
-lex.yy.c: language.l
+lex.yy.c: language.l language.tab.h
 	$(LEX) $^
 
 parsertest: parsertest.o libparser.a
