@@ -31,10 +31,6 @@ noinst_HEADERS=
 ## To reduce name clash.
 include_HEADERS += msc.h bool.h
 
-#noinst_LTLIBRARIES = libtmp.la
-#libtmp_la_SOURCES = language.y 
-#libtmp_la_LDFLAGS =  -release $(VERSION) -no-undefined
-
 ## The source-files required to build libparser.{so,a,la}
 libparser_la_SOURCES = parser.y scanner.l msc.c
 
@@ -43,8 +39,8 @@ libparser_la_SOURCES = parser.y scanner.l msc.c
 ## dll-files.
 libparser_la_LDFLAGS = -release $(VERSION) -no-undefined
 
-BUILT_SOURCES = parser.c parser.h scanner.c scanner.h
+BUILT_SOURCES = parser.c parser.h scanner.c 
 
 ## Does not handle lang.c too well in distcheck
-## so just remov them.
-DISTCLEANFILES = language.h language.c
+## so just remove them.
+DISTCLEANFILES = parser.c parser.h scanner.c

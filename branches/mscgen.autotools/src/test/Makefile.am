@@ -8,7 +8,7 @@ parsertest_LDADD = ../parser/libparser.la
 parsertest_CPPFLAGS= -I$(srcdir)/../parser/
 
 clean-local:
-	-rm -f *.png *
+	-rm -f *.png *.eps
 
 EXTRA_DIST =  parsercheck.sh renderercheck.sh
 
