@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "msc.h"
-#include "language.tab.h"  /* Token definitions from Yacc/Bison */
+#include "parser.h"  /* Token definitions from Yacc/Bison */
 
 /* Counter for error reporting */
 static unsigned long lex_linenum = 1;

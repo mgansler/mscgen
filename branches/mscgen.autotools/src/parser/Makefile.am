@@ -25,25 +25,26 @@ nobase_include_HEADERS=
 ## Private/Internal headers that should not be installed.
 noinst_HEADERS=
 
-
 ## Perhaps consider to move them into a sub-folder src/mscgen/
 ## refer to them as mscgen/[header] in the sources +here and
 ## use the variable "nobase_include_HEADER" instead
 ## To reduce name clash.
 include_HEADERS += msc.h bool.h
 
+#noinst_LTLIBRARIES = libtmp.la
+#libtmp_la_SOURCES = language.y 
+#libtmp_la_LDFLAGS =  -release $(VERSION) -no-undefined
+
 ## The source-files required to build libparser.{so,a,la}
-libparser_la_SOURCES = language.y language.l msc.c
+libparser_la_SOURCES = parser.y scanner.l msc.c
 
 ## Linker flags requried. The "-release [version] -no-undefined" are for libtool
 ## Setting the "version" of the library and the -no-undefined is required to crossbuild
 ## dll-files.
 libparser_la_LDFLAGS = -release $(VERSION) -no-undefined
 
-BUILT_SOURCES = language.h language.c language.tab.h
+BUILT_SOURCES = parser.c parser.h scanner.c scanner.h
 
 ## Does not handle lang.c too well in distcheck
-## so just remove them.
-DISTCLEANFILES = lang.c language.h language.c
-
-## END
+## so just remov them.
+DISTCLEANFILES = language.h language.c
