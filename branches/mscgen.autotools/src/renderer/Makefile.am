@@ -25,8 +25,8 @@ mscgen_LDFLAGS =
 
 if USE_WIN32_GD
 ## Add the required extra flags...
-mscgen_CPPFLAGS+= -I$(srcdir)/../../gdwin32/include/
-mscgen_LDFLAGS += -L$(srcdir)/../../gdwin32/lib/ -L$(srcdir)/../../gdwin32/bin/  -lbgd
+mscgen_CPPFLAGS+=-I"$(srcdir)/../../gdwin32/include/"
+mscgen_LDFLAGS +=-L"$(srcdir)/../../gdwin32/lib/" -L"$(srcdir)/../../gdwin32/bin/"  -lbgd
 else
 ## Specify linker flags.
 ## NB: automake figures the linker flags to handle libparser.la
