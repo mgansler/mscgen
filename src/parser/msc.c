@@ -296,7 +296,6 @@ struct MscArcListTag *MscLinkArc(struct MscArcListTag *list,
     if(list == NULL)
     {
         list = calloc(sizeof(struct MscArcListTag), 1);
-
     }
 
     /* Check for an empty list */
@@ -593,19 +592,26 @@ const char *MscGetEntAttrib(Msc m, unsigned int entIdx, MscAttribType a)
         entIdx--;
     }
 
-    /* Search the attribute list */
-    r = findAttrib(entity->attr, a);
-
-    /* If the entity label was sought but not found, return entity name */
-    if(r == NULL && a == MSC_ATTR_LABEL)
+    /* Search the attribute list if the entity was found */
+    if(entity)
     {
-        return m->nextEntity->label;
+        r = findAttrib(entity->attr, a);
+
+        /* If the entity label was sought but not found, return entity name */
+        if(r == NULL && a == MSC_ATTR_LABEL)
+        {
+            return m->nextEntity->label;
+        }
+        else
+        {
+            return r;
+        }
     }
     else
     {
-        return r;
+        /* Entity was not found */
+        return NULL;
     }
-
 }
 
 

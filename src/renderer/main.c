@@ -1234,6 +1234,24 @@ int main(const int argc, const char *argv[])
                 startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
                 endCol   = MscGetEntityIndex(m, MscGetCurrentArcDest(m));
 
+                /* Check that the start column is known */
+                if(startCol == -1)
+                {
+                    fprintf(stderr,
+                            "Unknown source entity '%s'\n",
+                            MscGetCurrentArcSource(m));
+                    return EXIT_FAILURE;
+                }
+
+                /* Check that the end column is known, or it's a broadcast arc */
+                if(endCol == -1 && !isBroadcastArc(MscGetCurrentArcDest(m)))
+                {
+                    fprintf(stderr,
+                            "Unknown destination entity '%s'\n",
+                            MscGetCurrentArcDest(m));
+                    return EXIT_FAILURE;
+                }
+
                 /* Check for entity arc colouring if not set explicity on the arc */
                 if(arcTextColour == NULL)
                 {
@@ -1253,15 +1271,6 @@ int main(const int argc, const char *argv[])
             if(isBroadcastArc(MscGetCurrentArcDest(m)))
             {
                 unsigned int t;
-
-                /* Ensure startCol is valid */
-                if(startCol == -1)
-                {
-                   fprintf(stderr,
-                           "Unknown source entity '%s'\n",
-                           MscGetCurrentArcSource(m));
-                   return EXIT_FAILURE;
-                }
 
                 /* Add in the entity lines */
                 if(addLines)
@@ -1284,23 +1293,6 @@ int main(const int argc, const char *argv[])
             }
             else
             {
-                /* Check that the start and end columns are known */
-                if(startCol == -1)
-                {
-                    fprintf(stderr,
-                            "Unknown source entity '%s'\n",
-                            MscGetCurrentArcSource(m));
-                    return EXIT_FAILURE;
-                }
-
-                if(endCol == -1)
-                {
-                    fprintf(stderr,
-                            "Unknown destination entity '%s'\n",
-                            MscGetCurrentArcDest(m));
-                    return EXIT_FAILURE;
-                }
-
                 /* Check if it is a box, discontinunity arc etc... */
                 if(isBoxArc(arcType))
                 {
