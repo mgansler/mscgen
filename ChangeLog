@@ -1,3 +1,7 @@
+      Fix for spaces (|||) and dividers (---) on lineswhich have ","
+       at the end causing an assert to fail.
+       [Thanks to Neils and jahagirdar.gopal for reporting]
+
 0.15: 23/05/2009
       Escape special characters for SVG output.
       Better UTF8 support in SVG and PS output.
