@@ -1306,9 +1306,12 @@ int main(const int argc, const char *argv[])
                 {
                     entityLines(m, row, TRUE /* dotted */, entColourRef);
                 }
-                else if ((arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE) && addLines)
+                else if(arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
                 {
-                    entityLines(m, row, FALSE, entColourRef);
+                    if(addLines)
+                    {
+                        entityLines(m, row, FALSE, entColourRef);
+                    }
                 }
                 else
                 {

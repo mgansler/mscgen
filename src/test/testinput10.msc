@@ -1,0 +1,26 @@
+# Example MSC using boxes
+
+msc {
+
+   # The entities
+   A, B, C;
+
+   # The relations
+   |||;
+   # Next three on same line due to ','
+   A box A [label="box"],
+   B rbox B [label="rbox"],
+   C abox C [label="abox"],
+   |||;
+   A abox B [label="abox"];
+   |||;
+   B rbox C [label="rbox"];
+   |||;
+   A box A [label="box"],
+   B rbox B [label="rbox"],
+   C abox C [label="abox"],
+   ---;
+   ---;
+}
+
+
