@@ -56,7 +56,7 @@ void yyerror(const char *str)
                                       "TOK_ATTR_LABEL",       "TOK_ATTR_URL",
                                       "TOK_ATTR_IDURL",       "TOK_ATTR_ID",
                                       "TOK_ATTR_LINE_COLOUR", "TOK_ATTR_TEXT_COLOUR",
-                                      "TOK_SPECIAL_ARC",
+                                      "TOK_SPECIAL_ARC",      "TOK_UNKNOWN",
                                       "TOK_STRING",           "TOK_QSTRING",
                                       "TOK_OPT_HSCALE",       "TOK_ASTERISK",
                                       "TOK_OPT_WIDTH",        "TOK_ARC_BOX",
@@ -74,7 +74,7 @@ void yyerror(const char *str)
                                       "label",         "url",
                                       "idurl",         "id",
                                       "linecolour",    "textcolour",
-                                      "'...', '---'",
+                                      "'...', '---'",  "characters",
                                       "string",        "quoted string",
                                       "hscale",        "'*'",
                                       "width",         "box",
@@ -133,7 +133,7 @@ void yyerror(const char *str)
 
 int yywrap()
 {
-        return 1;
+    return 1;
 }
 
 
@@ -197,7 +197,7 @@ Msc MscParse(FILE *in)
        TOK_REL_RBOX
        TOK_SPECIAL_ARC     TOK_OPT_HSCALE
        TOK_OPT_WIDTH       TOK_OPT_ARCGRADIENT
-       TOK_ASTERISK
+       TOK_ASTERISK        TOK_UNKNOWN
 
 %union
 {

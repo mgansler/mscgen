@@ -1,7 +1,7 @@
 %{
 /***************************************************************************
  * language.l : Mscgen language lexer definition.
- * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk 
+ * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This file is part of msclib.
  *
@@ -36,7 +36,7 @@ static unsigned long lex_linenum = 1;
 
 %%
 
-\n                                lex_linenum++;
+\r\n|\r|\n                        lex_linenum++;
 
 #.*$                              /* Ignore lines after '#' */
 \/\/.*$                           /* Ignore lines after '//' */
@@ -71,7 +71,7 @@ box                               yylval.arctype = MSC_ARC_BOX;      return TOK_
 abox                              yylval.arctype = MSC_ARC_ABOX;     return TOK_REL_ABOX;           /* abox */
 rbox                              yylval.arctype = MSC_ARC_RBOX;     return TOK_REL_RBOX;           /* rbox */
 [A-Za-z0-9_]+                     yylval.string = strdup(yytext); return TOK_STRING;
-\"(\\\"|[^\"])*\"  		  yylval.string = strdup(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
+\"(\\\"|[^\"])*\"         yylval.string = strdup(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
 =                                 return TOK_EQUAL;
 ,                                 return TOK_COMMA;
 \;                                return TOK_SEMICOLON;
@@ -81,6 +81,7 @@ rbox                              yylval.arctype = MSC_ARC_RBOX;     return TOK_
 \]                                return TOK_CSBRACKET;
 \*                                return TOK_ASTERISK;
 [ \t]+                            /* ignore whitespace */;
+<*>.|\n                           return TOK_UNKNOWN;
 %%
 
 unsigned long lex_getlinenum(void)

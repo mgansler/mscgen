@@ -15,7 +15,7 @@ language.tab.c language.tab.h: language.y
 	$(YACC) -d $^
 
 lex.yy.c: language.l language.tab.h
-	$(LEX) $^
+	$(LEX) -s $^
 
 parsertest: parsertest.o libparser.a
 	$(CC) $(LDFLAGS) -o $@ $^

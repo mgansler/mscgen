@@ -1,3 +1,9 @@
+      Replace flex default rule so that it will not echo unknown characters.
+       Instead it returns an unknown token to the parser which then stops
+       and warns about the erroneous input line.  
+      Match \r\n, \r and \n line endings to count input line numbers.
+       [Both thanks to Neils]
+      Fix error in GPL address for utf8.c/h.
       Fix for spaces (|||) and dividers (---) on lineswhich have ","
        at the end causing an assert to fail.
        [Thanks to Neils and jahagirdar.gopal for reporting]
