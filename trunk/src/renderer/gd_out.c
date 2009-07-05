@@ -32,6 +32,8 @@
 
 #define MAX_COLOURS 128
 
+#define FONT "helvetica"
+
 /***************************************************************************
  * Local types
  ***************************************************************************/
@@ -39,7 +41,7 @@
 typedef struct GdoContextTag
 {
     gdImagePtr  img;
-    float       fontPoints;
+    double      fontPoints;
 
     /** Array of colours and GD references. */
     struct
@@ -150,16 +152,21 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
 {
     GdoContext *context = getGdoCtx(ctx);
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    const char *r;
 
-    gdImageStringFT(NULL,
-                    rect,
-                    context->pen,
-                    "helvetica",
-                    context->fontPoints,
-                    0,
-                    0,
-                    0,
-                    (char *)string);
+    r = gdImageStringFT(NULL,
+                        rect,
+                        context->pen,
+                        FONT,
+                        context->fontPoints,
+                        0,
+                        0, 0,
+                        (char *)string);
+    if(r)
+    {
+        fprintf(stderr, "Error: gdoTextWidth: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+        exit(EXIT_FAILURE);
+    }
 
     /* Remove 1 pixel since there is usually an uneven gap at
      *  the right of the last character for the fixed width
@@ -173,16 +180,21 @@ int gdoTextHeight(struct ADrawTag *ctx)
 {
     GdoContext *context = getGdoCtx(ctx);
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    const char *r;
 
-    gdImageStringFT(NULL,
-                    rect,
-                    context->pen,
-                    "helvetica",
-                    context->fontPoints,
-                    0,
-                    0,
-                    0,
-                    "gHELLO");
+    r = gdImageStringFT(NULL,
+                        rect,
+                        context->pen,
+                        FONT,
+                        context->fontPoints,
+                        0,
+                        0, 0,
+                        "gHELLO");
+    if(r)
+    {
+        fprintf(stderr, "Error: gdoTextHeight: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+        exit(EXIT_FAILURE);
+    }
 
     return (-rect[5]) + 2;
 }
@@ -218,6 +230,7 @@ void gdoTextR(struct ADrawTag *ctx,
 {
     GdoContext *context = getGdoCtx(ctx);
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    const char *r;
 
     gdImageFilledRectangle(getGdoImg(ctx),
                            x,
@@ -226,15 +239,19 @@ void gdoTextR(struct ADrawTag *ctx,
                            y - 2,
                            getColourRef(context, ADRAW_COL_WHITE));
 
-    gdImageStringFT(getGdoImg(ctx),
-                    rect,
-                    context->pen,
-                    "helvetica",
-                    context->fontPoints,
-                    0,
-                    x,
-                    y - 2,
-                    (char *)string);
+    r = gdImageStringFT(getGdoImg(ctx),
+                        rect,
+                        context->pen,
+                        FONT,
+                        context->fontPoints,
+                        0,
+                        x, y - 2,
+                       (char *)string);
+    if(r)
+    {
+        fprintf(stderr, "Error: gdoTextR: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+        exit(EXIT_FAILURE);
+    }
 }
 
 
@@ -329,11 +346,11 @@ void gdoSetFontSize(struct ADrawTag *ctx,
     switch(size)
     {
         case ADRAW_FONT_TINY:
-            getGdoCtx(ctx)->fontPoints = 8.0f;
+            getGdoCtx(ctx)->fontPoints = 8.0;
             break;
 
         case ADRAW_FONT_SMALL:
-            getGdoCtx(ctx)->fontPoints = 12.0f;
+            getGdoCtx(ctx)->fontPoints = 12.0;
             break;
 
         default:
@@ -369,6 +386,7 @@ Boolean GdoInit(unsigned int     w,
 {
     GdoContext *context;
 
+    /* Request that we use font config strings */
     gdFTUseFontConfig(1);
 
     /* Create context */
