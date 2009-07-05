@@ -412,7 +412,7 @@ void SvgSetFontSize(struct ADrawTag *ctx,
             break;
 
         case ADRAW_FONT_SMALL:
-            context->fontPoints = 10;
+            context->fontPoints = 12;
             break;
 
         default:
@@ -467,8 +467,8 @@ Boolean SvgInit(unsigned int     w,
     /* Set the initial pen state */
     SvgSetPen(outContext, ADRAW_COL_BLACK);
 
-    /* Default to 10 point font */
-    context->fontPoints = 10;
+    /* Default to small font */
+    SvgSetFontSize(outContext, ADRAW_FONT_SMALL);
 
     fprintf(context->of, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n"
                          " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
