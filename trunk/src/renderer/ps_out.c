@@ -381,7 +381,7 @@ void PsSetFontSize(struct ADrawTag *ctx,
             break;
 
         case ADRAW_FONT_SMALL:
-            getPsCtx(ctx)->fontPoints = 10;
+            getPsCtx(ctx)->fontPoints = 12;
             break;
 
         default:
@@ -457,8 +457,8 @@ Boolean PsInit(unsigned int     w,
     fprintf(context->of, "10 scalefont\n");
     fprintf(context->of, "setfont\n");
 
-    /* Default to 10 point font */
-    context->fontPoints = 10;
+    /* Get the default font size */
+    PsSetFontSize(outContext, ADRAW_FONT_SMALL);
 
     /* Translate up by the height, y-axis will be inverted */
     fprintf(context->of, "0 %d translate\n", h);
