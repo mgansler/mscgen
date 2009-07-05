@@ -23,9 +23,9 @@
 
 for F in `ls *.msc` ; do
     echo "$F"
-    ../../bin/mscgen -T png -o $F.png -i $F || exit $?
-    ../../bin/mscgen -T svg -o $F.svg -i $F || exit $?
-    ../../bin/mscgen -T eps -o $F.eps -i $F || exit $?
+    $VALGRIND ../../bin/mscgen -T png -o $F.png -i $F || exit $?
+    $VALGRIND ../../bin/mscgen -T svg -o $F.svg -i $F || exit $?
+    $VALGRIND ../../bin/mscgen -T eps -o $F.eps -i $F || exit $?
 done
 
 # END OF SCRIPT

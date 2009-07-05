@@ -372,7 +372,7 @@ Boolean GdoInit(unsigned int     w,
     gdFTUseFontConfig(1);
 
     /* Create context */
-    context = outContext->internal = malloc(sizeof(GdoContext));
+    context = outContext->internal = calloc(sizeof(GdoContext), 1);
     if(context == NULL)
     {
         return FALSE;
@@ -389,17 +389,12 @@ Boolean GdoInit(unsigned int     w,
 
     /* Allocate the image */
     context->img = gdImageCreateTrueColor(w, h);
+
+    /* Allocate first colour and clear background */
     gdImageFilledRectangle(context->img,
                            0, 0,
                            w, h,
                            getColourRef(context, ADRAW_COL_WHITE));
-
-
-    /* Clear the count of colours */
-    context->colourCount = 0;
-
-    /* First allocation is background colour */
-    getColourRef(context, ADRAW_COL_WHITE);
 
     /* Set pen colour to black */
     context->pen = getColourRef(context, ADRAW_COL_BLACK);
