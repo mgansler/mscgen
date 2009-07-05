@@ -149,7 +149,7 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
                           const char *string)
 {
     GdoContext *context = getGdoCtx(ctx);
-    int         rect[8];
+    int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     gdImageStringFT(NULL,
                     rect,
@@ -172,7 +172,7 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
 int gdoTextHeight(struct ADrawTag *ctx)
 {
     GdoContext *context = getGdoCtx(ctx);
-    int         rect[8];
+    int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     gdImageStringFT(NULL,
                     rect,
@@ -216,8 +216,8 @@ void gdoTextR(struct ADrawTag *ctx,
               unsigned int     y,
               const char      *string)
 {
-    GdoContext      *context = getGdoCtx(ctx);
-    int              rect[8];
+    GdoContext *context = getGdoCtx(ctx);
+    int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     gdImageFilledRectangle(getGdoImg(ctx),
                            x,
