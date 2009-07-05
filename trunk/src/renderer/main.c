@@ -595,9 +595,9 @@ static void entityBox(unsigned int       row,
             drw.line(&drw, x1 + gOpts.aboxSlope, ymin, x2 - gOpts.aboxSlope, ymin);
             drw.line(&drw, x1 + gOpts.aboxSlope, ymax, x2 - gOpts.aboxSlope, ymax);
             drw.line(&drw, x1 + gOpts.aboxSlope, ymin, x1, ymid);
-            drw.line(&drw, x1 + gOpts.aboxSlope, ymax, x1, ymid);
+            drw.line(&drw, x1, ymid, x1 + gOpts.aboxSlope, ymax);
             drw.line(&drw, x2 - gOpts.aboxSlope, ymin, x2, ymid);
-            drw.line(&drw, x2 - gOpts.aboxSlope, ymax, x2, ymid);
+            drw.line(&drw, x2, ymid, x2 - gOpts.aboxSlope, ymax);
             break;
 
         default:
