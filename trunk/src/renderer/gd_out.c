@@ -24,6 +24,10 @@
 #include <string.h>
 #include <assert.h>
 #include "gd.h"
+#ifndef USE_FREETYPE
+#include "gdfontt.h"  /* Tiny font */
+#include "gdfonts.h"  /* Small font */
+#endif
 #include "adraw_int.h"
 
 /***************************************************************************
@@ -32,7 +36,9 @@
 
 #define MAX_COLOURS 128
 
+#ifndef FONT
 #define FONT "helvetica"
+#endif
 
 /***************************************************************************
  * Local types
@@ -41,7 +47,11 @@
 typedef struct GdoContextTag
 {
     gdImagePtr  img;
+#ifdef USE_FREETYPE
     double      fontPoints;
+#else
+    gdFontPtr    font;
+#endif
 
     /** Array of colours and GD references. */
     struct
@@ -150,6 +160,13 @@ static void setStyle(struct ADrawTag *ctx)
 unsigned int gdoTextWidth(struct ADrawTag *ctx,
                           const char *string)
 {
+#ifndef USE_FREETYPE
+    /* Remove 1 pixel since there is usually an uneven gap at
+     *  the right of the last character for the fixed width
+     *  font.
+     */
+    return (getGdoCtx(ctx)->font->w * strlen(string)) - 1;
+#else
     GdoContext *context = getGdoCtx(ctx);
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     const char *r;
@@ -173,11 +190,15 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
      *  font.
      */
     return rect[2] - 1;
+#endif
 }
 
 
 int gdoTextHeight(struct ADrawTag *ctx)
 {
+#ifndef USE_FREETYPE
+    return getGdoCtx(ctx)->font->h;
+#else
     GdoContext *context = getGdoCtx(ctx);
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     const char *r;
@@ -197,6 +218,7 @@ int gdoTextHeight(struct ADrawTag *ctx)
     }
 
     return (-rect[5]) + 2;
+#endif
 }
 
 
@@ -229,8 +251,10 @@ void gdoTextR(struct ADrawTag *ctx,
               const char      *string)
 {
     GdoContext *context = getGdoCtx(ctx);
+#ifdef USE_FREETYPE
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     const char *r;
+#endif
 
     gdImageFilledRectangle(getGdoImg(ctx),
                            x,
@@ -239,6 +263,7 @@ void gdoTextR(struct ADrawTag *ctx,
                            y - 2,
                            getColourRef(context, ADRAW_COL_WHITE));
 
+#ifdef USE_FREETYPE
     r = gdImageStringFT(getGdoImg(ctx),
                         rect,
                         context->pen,
@@ -247,11 +272,21 @@ void gdoTextR(struct ADrawTag *ctx,
                         0,
                         x, y - 2,
                        (char *)string);
+
     if(r)
     {
         fprintf(stderr, "Error: gdoTextR: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
         exit(EXIT_FAILURE);
     }
+#else
+    gdImageString(getGdoImg(ctx),
+                  getGdoCtx(ctx)->font,
+                  x,
+                  y - gdoTextHeight(ctx),
+                  (unsigned char *)string,
+                  getGdoPen(ctx));
+#endif
+
 }
 
 
@@ -345,14 +380,23 @@ void gdoSetFontSize(struct ADrawTag *ctx,
 {
     switch(size)
     {
+#ifdef USE_FREETYPE
         case ADRAW_FONT_TINY:
-            getGdoCtx(ctx)->fontPoints = 8.0;
+            getGdoCtx(ctx)->fontPoints = 9.0;
             break;
 
         case ADRAW_FONT_SMALL:
-            getGdoCtx(ctx)->fontPoints = 12.0;
+            getGdoCtx(ctx)->fontPoints = 11.0;
+            break;
+#else
+        case ADRAW_FONT_TINY:
+            getGdoCtx(ctx)->font = gdFontGetTiny();
             break;
 
+        case ADRAW_FONT_SMALL:
+            getGdoCtx(ctx)->font = gdFontGetSmall();
+            break;
+#endif
         default:
             assert(0);
     }
@@ -386,9 +430,10 @@ Boolean GdoInit(unsigned int     w,
 {
     GdoContext *context;
 
+#ifdef USE_FREETYPE
     /* Request that we use font config strings */
     gdFTUseFontConfig(1);
-
+#endif
     /* Create context */
     context = outContext->internal = calloc(sizeof(GdoContext), 1);
     if(context == NULL)
