@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "adraw_int.h"
+#include "safe.h"
 #include "utf8.h"
 
 /***************************************************************************
@@ -449,7 +450,7 @@ Boolean SvgInit(unsigned int     w,
     SvgContext *context;
 
     /* Create context */
-    context = outContext->internal = malloc(sizeof(SvgContext));
+    context = outContext->internal = malloc_s(sizeof(SvgContext));
     if(context == NULL)
     {
         return FALSE;

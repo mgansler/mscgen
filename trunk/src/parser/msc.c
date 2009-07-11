@@ -25,6 +25,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include "safe.h"
 #include "msc.h"
 
 /***************************************************************************
@@ -121,7 +122,7 @@ static const char *findAttrib(const struct MscAttribTag *attr, MscAttribType a)
 struct MscOptTag *MscAllocOpt(MscOptType  type,
                               char       *value)
 {
-    struct MscOptTag *a = malloc(sizeof(struct MscOptTag));
+    struct MscOptTag *a = malloc_s(sizeof(struct MscOptTag));
 
     a->type  = type;
     a->value = value;
@@ -203,7 +204,7 @@ void MscPrintOptList(struct MscOptTag *list)
  */
 struct MscEntityTag *MscAllocEntity(char *entityName)
 {
-    struct MscEntityTag *e = malloc(sizeof(struct MscEntityListTag));
+    struct MscEntityTag *e = malloc_s(sizeof(struct MscEntityListTag));
 
     e->label = entityName;
     e->attr  = NULL;
@@ -222,7 +223,7 @@ struct MscEntityListTag *MscLinkEntity(struct MscEntityListTag *list,
     /* Check if the list has been allocated or not */
     if(list == NULL)
     {
-        list = calloc(sizeof(struct MscEntityListTag), 1);
+        list = zalloc_s(sizeof(struct MscEntityListTag));
 
     }
 
@@ -268,7 +269,7 @@ struct MscArcTag *MscAllocArc(char       *srcEntity,
                               char       *dstEntity,
                               MscArcType  type)
 {
-    struct MscArcTag *a = malloc(sizeof(struct MscArcTag));
+    struct MscArcTag *a = malloc_s(sizeof(struct MscArcTag));
 
     /* A discontinuity arcs are not between entities */
     if(type == MSC_ARC_DISCO)
@@ -295,7 +296,7 @@ struct MscArcListTag *MscLinkArc(struct MscArcListTag *list,
     /* Check if the list has been allocated or not */
     if(list == NULL)
     {
-        list = calloc(sizeof(struct MscArcListTag), 1);
+        list = zalloc_s(sizeof(struct MscArcListTag));
     }
 
     /* Check for an empty list */
@@ -352,7 +353,7 @@ void MscPrintArcList(struct MscArcListTag *list)
 struct MscAttribTag *MscAllocAttrib(MscAttribType  type,
                                     char          *value)
 {
-    struct MscAttribTag *a = malloc(sizeof(struct MscAttribTag));
+    struct MscAttribTag *a = malloc_s(sizeof(struct MscAttribTag));
 
     a->type  = type;
     a->value = value;
@@ -458,7 +459,7 @@ struct MscTag *MscAlloc(struct MscOptTag        *optList,
                         struct MscEntityListTag *entityList,
                         struct MscArcListTag    *arcList)
 {
-    struct MscTag *m = malloc(sizeof(struct MscTag));
+    struct MscTag *m = malloc_s(sizeof(struct MscTag));
 
     /* Copy the lists */
     m->optList    = optList;

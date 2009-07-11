@@ -29,6 +29,7 @@
 #include "gdfonts.h"  /* Small font */
 #endif
 #include "adraw_int.h"
+#include "safe.h"
 
 /***************************************************************************
  * Manifest Constants
@@ -435,7 +436,7 @@ Boolean GdoInit(unsigned int     w,
     gdFTUseFontConfig(1);
 #endif
     /* Create context */
-    context = outContext->internal = calloc(sizeof(GdoContext), 1);
+    context = outContext->internal = zalloc_s(sizeof(GdoContext));
     if(context == NULL)
     {
         return FALSE;

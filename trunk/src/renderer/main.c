@@ -28,6 +28,7 @@
 #include <assert.h>
 #include "cmdparse.h"
 #include "adraw.h"
+#include "safe.h"
 #include "msc.h"
 
 /***************************************************************************
@@ -1223,7 +1224,7 @@ int main(const int argc, const char *argv[])
     }
 
     /* Allocate storage for entity heading colours */
-    entColourRef = malloc(MscGetNumEntities(m) * sizeof(ADrawColour));
+    entColourRef = malloc_s(MscGetNumEntities(m) * sizeof(ADrawColour));
 
     /* Draw the entity headings */
     MscResetEntityIterator(m);
