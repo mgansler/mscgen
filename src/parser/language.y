@@ -1,6 +1,9 @@
 %{
 /***************************************************************************
- * language.y : Grammar and parser for the mscgen language.
+ *
+ * $Id$
+ *
+ * Grammar and parser for the mscgen language.
  * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This file is part of msclib.

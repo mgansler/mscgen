@@ -1,4 +1,7 @@
 /***************************************************************************
+ *
+ * $Id$
+ *
  * This file is part of mscgen, a message sequence chart renderer.
  * Copyright (C) 2005 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
