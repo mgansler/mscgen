@@ -21,6 +21,12 @@ msc {
    A rbox D [label="rbox"];
    B abox C [label="abox"];
    B abox C [label="1\n2\n3"];
+   B abox C [label="Line 1\nLine 2\nLine 3"],
+   A box A [label="Line1"];
+   |||;
+   |||;
+   |||;
+   |||;
    |||;
 }
 
