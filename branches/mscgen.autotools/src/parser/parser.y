@@ -1,6 +1,9 @@
 %{
 /***************************************************************************
- * language.y : Grammar and parser for the mscgen language.
+ *
+ * $Id: language.y 48 2009-07-11 18:17:38Z Michael.McTernan $
+ *
+ * Grammar and parser for the mscgen language.
  * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This file is part of msclib.
@@ -25,7 +28,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <msc.h>
+#include "safe.h"
+#include "msc.h"
 
 /* Lexer prototype to prevent compiler warning */
 int yylex(void);
@@ -35,6 +39,8 @@ int yylex(void);
 
 /* Name of parameter that is passed to yyparse() */
 #define YYPARSE_PARAM yyparse_result
+
+#define YYMALLOC malloc_s
 
 unsigned long lex_getlinenum(void);
 
@@ -56,7 +62,7 @@ void yyerror(const char *str)
                                       "TOK_ATTR_LABEL",       "TOK_ATTR_URL",
                                       "TOK_ATTR_IDURL",       "TOK_ATTR_ID",
                                       "TOK_ATTR_LINE_COLOUR", "TOK_ATTR_TEXT_COLOUR",
-                                      "TOK_SPECIAL_ARC",
+                                      "TOK_SPECIAL_ARC",      "TOK_UNKNOWN",
                                       "TOK_STRING",           "TOK_QSTRING",
                                       "TOK_OPT_HSCALE",       "TOK_ASTERISK",
                                       "TOK_OPT_WIDTH",        "TOK_ARC_BOX",
@@ -74,7 +80,7 @@ void yyerror(const char *str)
                                       "label",         "url",
                                       "idurl",         "id",
                                       "linecolour",    "textcolour",
-                                      "'...', '---'",
+                                      "'...', '---'",  "characters",
                                       "string",        "quoted string",
                                       "hscale",        "'*'",
                                       "width",         "box",
@@ -140,7 +146,7 @@ int yywrap()
 char *removeEscapes(const char *in)
 {
     const uint16_t l = strlen(in);
-    char          *r = malloc(l + 1);
+    char          *r = malloc_s(l + 1);
     uint16_t       t, u;
 
     if(r != NULL)
@@ -197,7 +203,7 @@ Msc MscParse(FILE *in)
        TOK_REL_RBOX
        TOK_SPECIAL_ARC     TOK_OPT_HSCALE
        TOK_OPT_WIDTH       TOK_OPT_ARCGRADIENT
-       TOK_ASTERISK
+       TOK_ASTERISK        TOK_UNKNOWN
 
 %union
 {

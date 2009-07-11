@@ -1,4 +1,7 @@
 /***************************************************************************
+ *
+ * $Id$
+ *
  * This file is part of mscgen, a message sequence chart renderer.
  * Copyright (C) 2005 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
@@ -22,6 +25,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "adraw_int.h"
+#include "safe.h"
 #include "utf8.h"
 
 /***************************************************************************
@@ -412,7 +416,7 @@ void SvgSetFontSize(struct ADrawTag *ctx,
             break;
 
         case ADRAW_FONT_SMALL:
-            context->fontPoints = 10;
+            context->fontPoints = 12;
             break;
 
         default:
@@ -449,7 +453,7 @@ Boolean SvgInit(unsigned int     w,
     SvgContext *context;
 
     /* Create context */
-    context = outContext->internal = malloc(sizeof(SvgContext));
+    context = outContext->internal = malloc_s(sizeof(SvgContext));
     if(context == NULL)
     {
         return FALSE;
@@ -467,8 +471,8 @@ Boolean SvgInit(unsigned int     w,
     /* Set the initial pen state */
     SvgSetPen(outContext, ADRAW_COL_BLACK);
 
-    /* Default to 10 point font */
-    context->fontPoints = 10;
+    /* Default to small font */
+    SvgSetFontSize(outContext, ADRAW_FONT_SMALL);
 
     fprintf(context->of, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n"
                          " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");

@@ -1,20 +1,32 @@
-# testinput7.msc : Sample msc input file
- 
+# testinput7.msc : Sample msc using boxes
+#
+# This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
+# transmitted, used, modified, built upon, or otherwise exploited by
+# anyone for any purpose, commercial or non-commercial, and in any way,
+# including by methods that have not yet been invented or conceived.
+#
+
 msc {
 
    # The entities
    A, B, C, "D";
 
-   # The relations  
+   # The relations
    |||;
    A box A [label="box"], B box B [label="box"];
    C rbox C [label="rbox"];
-   D abox D [label="abox"];   
-   
+   D abox D [label="abox"];
+
    --- [label="multispan"];
    A rbox D [label="rbox"];
    B abox C [label="abox"];
    B abox C [label="1\n2\n3"];
+   B abox C [label="Line 1\nLine 2\nLine 3"],
+   A box A [label="Line1"];
+   |||;
+   |||;
+   |||;
+   |||;
    |||;
 }
 

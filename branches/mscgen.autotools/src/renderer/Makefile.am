@@ -11,7 +11,7 @@ AM_CPPFLAGS = -DHAVE_CONFIG_H -I..
 nobase_include_HEADERS =
 
 ## Internal header files that should not be installed.
-noinst_HEADERS  =  bool.h adraw.h adraw_int.h utf8.h cmdparse.h
+noinst_HEADERS  = adraw.h adraw_int.h utf8.h cmdparse.h
 
 ## Add mscgen to the list of programs to be made and installed in $prefix/bin
 bin_PROGRAMS    = mscgen
@@ -39,8 +39,8 @@ mscgen_LDADD     = ../parser/libparser.la
 
 ## Add the -I to get the headers from ../parser/
 ## Use the $(srcdir) since we need the "source-folder" and not the
-## build folder. 
-## 
-## NB: headers from yacc/bison may be in the build folder! 
+## build folder.
+##
+## NB: headers from yacc/bison may be in the build folder!
 mscgen_CPPFLAGS += $(AM_CPPFLAGS) -I$(srcdir)/../parser/ -I../parser
 

@@ -32,14 +32,14 @@ noinst_HEADERS=
 include_HEADERS += msc.h bool.h
 
 ## The source-files required to build libparser.{so,a,la}
-libparser_la_SOURCES = parser.y scanner.l msc.c
+libparser_la_SOURCES = parser.y scanner.l msc.c safe.c
 
 ## Linker flags requried. The "-release [version] -no-undefined" are for libtool
 ## Setting the "version" of the library and the -no-undefined is required to crossbuild
 ## dll-files.
 libparser_la_LDFLAGS = -release $(VERSION) -no-undefined
 
-BUILT_SOURCES = parser.c parser.h scanner.c 
+BUILT_SOURCES = parser.c parser.h scanner.c
 
 ## Does not handle lang.c too well in distcheck
 ## so just remove them.
