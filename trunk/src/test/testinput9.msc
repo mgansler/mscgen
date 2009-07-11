@@ -2,30 +2,30 @@
 #
 # Original file by Markus Kuhn, adapted for HTML by Martin Dürst, now
 #  converted to an msc.
-# 
+#
 # UTF-8 encoded sample file for Postscript plain-text file formatters
 # -------------------------------------------------------------------
-# 
-# Markus Kuhn <mkuhn@acm.org> — 1999-09-15
-# 
+#
+# Markus Kuhn <mkuhn@acm.org> (C) 1999-09-15
+#
 # The following 271 Unicode characters are a minimum repertoire that any
 # modern Postscript printer driver receiving plaintext should be able to
 # render using the default Postscript fonts (Adobe Courier, etc.). This
 # repertoire contains all characters of ISO 8859-1, ISO 8859-2, and
 # Microsoft Code Page 1252.
-# 
+#
 # The following table contains in its three columns
-# 
+#
 #   - the hexadecimal Unicode value
 #   - the Unicode character itself (UTF-8 encoded)
 #   - the Unicode name for the character
-# 
+#
 # The ASCII compatible UTF-8 encoding of ISO 10646 and Unicode
 # plain-text files is defined in RFC 2279 and in ISO 10646-1 Annex R.
-# 
+#
 # For further information that might be useful to extend a Postscript
 # driver to display these character, please consult
-# 
+#
 #   http://partners.adobe.com/asn/developer/typeforum/unicodegn.html
 #   http://partners.adobe.com/asn/developer/typeforum/glyphlist.txt
 #   ftp://ftp.unicode.org/Public/MAPPINGS/VENDORS/ADOBE/
@@ -33,14 +33,14 @@
 #   http://www.cl.cam.ac.uk/~mgk25/ucs/ISO-10646-UTF-8.html
 #   http://www.cl.cam.ac.uk/~mgk25/unicode.html
 #   http://www.dcs.ed.ac.uk/home/jec/programs/ogonkify/
- 
- 
- 
+#
+
+
 msc {
 
    # The entities
    A, B;
-   
+
    A->B [label="  SPACE"];
    A->B [label="! EXCLAMATION MARK"];
    A->B [label="\" QUOTATION MARK"];
