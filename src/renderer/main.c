@@ -487,21 +487,73 @@ static void entityText(FILE             *ismap,
 }
 
 
+/** Compute the output canvas size required for some MSC.
+ * \param[in]     m    The MSC to analyse.
+ * \param[in,out] w    Pointer to be filled with the output width.
+ * \param[in,out] h    Pointer to be filled with the output height.
+ */
+static void computeCanvasSize(Msc m,
+                              unsigned int *w,
+                              unsigned int *h)
+{
+    const unsigned int textHeight = drw.textHeight(&drw);
+    unsigned int nextYmin, ymin, ymax;
+    Boolean      addLines = TRUE;
+
+    nextYmin = ymin = gOpts.entityHeadGap;
+    ymax = gOpts.entityHeadGap + gOpts.arcSpacing;
+
+    MscResetArcIterator(m);
+    do
+    {
+        const MscArcType   arcType       = MscGetCurrentArcType(m);
+        const char        *arcLabel      = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
+        const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) : 1;
+
+        if(arcType == MSC_ARC_PARALLEL)
+        {
+            addLines = FALSE;
+        }
+        else
+        {
+            if(addLines)
+            {
+                ymin = nextYmin;
+                ymax = ymin + (gOpts.arcSpacing - 1);
+
+                if(arcLabelLines > 2)
+                {
+                    ymax += (arcLabelLines - 1) * textHeight;
+                }
+            }
+
+            addLines = TRUE;
+            nextYmin = ymax + 1;
+        }
+    }
+    while(MscNextArc(m));
+
+    /* Set the return values */
+    *w = MscGetNumEntities(m) * gOpts.entitySpacing;
+    *h = ymax + 1;
+}
+
+
 /** Draw vertical lines stemming from entites.
  * This function will draw a single segment of the vertical line that
  * drops from an entity.
  * \param m          The \a Msc for which the lines are drawn
- * \param row        The row number indentifying the segment
+ * \param ymin       Top of the row.
+ * \param ymax       Bottom of the row.
  * \param dotted     If #TRUE, produce a dotted line, otherwise solid.
  * \param colourRefs Colour references for each entity.
  */
 static void entityLines(Msc                m,
-                        unsigned int       row,
+                        const unsigned int ymin,
+                        const unsigned int ymax,
                         Boolean            dotted,
                         const ADrawColour *colourRefs)
 {
-    const unsigned int ymin = (gOpts.arcSpacing * row) + gOpts.entityHeadGap;
-    const unsigned int ymax = ymin + gOpts.arcSpacing;
     unsigned int t;
 
     for(t = 0; t < MscGetNumEntities(m); t++)
@@ -527,18 +579,18 @@ static void entityLines(Msc                m,
 
 
 /** Draw vertical lines and boxes stemming from entites.
- * \param row        The row number indentifying the segment
- * \param boxStart   Column in which the box starts.
- * \param boxEnd     Column in which the box ends.
- * \param boxType    The type of box to draw, MSC_ARC_BOX, MSC_ARC_RBOX etc.
+ * \param ymin          Top of the row.
+ * \param ymax          Bottom of the row.
+ * \param boxStart      Column in which the box starts.
+ * \param boxEnd        Column in which the box ends.
+ * \param boxType       The type of box to draw, MSC_ARC_BOX, MSC_ARC_RBOX etc.
  */
-static void entityBox(unsigned int       row,
+static void entityBox(unsigned int       ymin,
+                      unsigned int       ymax,
                       unsigned int       boxStart,
                       unsigned int       boxEnd,
                       MscArcType         boxType)
 {
-    const unsigned int ymin = (gOpts.arcSpacing * row) + gOpts.entityHeadGap;
-    unsigned int       ymax = ymin + gOpts.arcSpacing;
     unsigned int t;
 
     /* Ensure the start is less than or equal to the end */
@@ -611,7 +663,7 @@ static void entityBox(unsigned int       row,
  * \param m              The Msc for which the text is being rendered.
  * \param ismap          If not \a NULL, write an ismap description here.
  * \param outwidth       Width of the output image.
- * \param row            The row on which the text should be placed.
+ * \param ymin           Co-ordinate of the row on which the text should be placed.
  * \param startCol       The column at which the arc being labelled starts.
  * \param endCol         The column at which the arc being labelled ends.
  * \param arcLabel       The label to render.
@@ -627,7 +679,7 @@ static void entityBox(unsigned int       row,
 static void arcText(Msc                m,
                     FILE              *ismap,
                     unsigned int       outwidth,
-                    unsigned int       row,
+                    unsigned int       ymin,
                     unsigned int       startCol,
                     unsigned int       endCol,
                     const char        *arcLabel,
@@ -645,8 +697,7 @@ static void arcText(Msc                m,
     for(l = 0; l < arcLabelLines; l++)
     {
         char *lineLabel = getLine(arcLabel, l, lineBuffer, sizeof(lineBuffer));
-        unsigned int y = (gOpts.arcSpacing * row) +
-                          gOpts.entityHeadGap + (gOpts.arcSpacing / 2) +
+        unsigned int y = ymin + (gOpts.arcSpacing / 2) +
                           (l * drw.textHeight(&drw)) - l;
         unsigned int width = drw.textWidth(&drw, lineLabel);
         int x = ((startCol + endCol + 1) * gOpts.entitySpacing) / 2;
@@ -778,20 +829,21 @@ static void arcText(Msc                m,
  * noting that if the start and end column are the same, an arc is
  * rendered.
  * \param  m        The Msc for which the text is being rendered.
- * \param  row      Row in the output at which the arc should be rendered.
+ * \param  ymin     Top of row.
+ * \param  ymax     Bottom of row.
  * \param  startCol Starting column for the arc.
  * \param  endCol   Column at which the arc terminates.
  * \param  arcType  The type of the arc, which dictates its rendered style.
  */
 static void arcLine(Msc               m,
-                    unsigned int      row,
+                    unsigned int      ymin,
+                    unsigned int      ymax,
                     unsigned int      startCol,
                     unsigned int      endCol,
                     const char       *arcLineCol,
                     const MscArcType  arcType)
 {
-    const unsigned int y  = (gOpts.arcSpacing * row) +
-                             gOpts.entityHeadGap + (gOpts.arcSpacing / 2);
+    const unsigned int y  = (ymin + ymax) / 2;
     const unsigned int sx = (startCol * gOpts.entitySpacing) +
                              (gOpts.entitySpacing / 2);
     const unsigned int dx = (endCol * gOpts.entitySpacing) +
@@ -979,7 +1031,7 @@ int main(const int argc, const char *argv[])
     ADrawColour     *entColourRef;
     char            *outImage;
     Msc              m;
-    unsigned int     w, h, row, col, arc;
+    unsigned int     ymin, ymax, nextYmin, w, h, col;
     Boolean          addLines;
     float            f;
 
@@ -1158,9 +1210,7 @@ int main(const int argc, const char *argv[])
     }
 
     /* Work out the width and height of the canvas */
-    w = MscGetNumEntities(m) * gOpts.entitySpacing;
-    h = ((MscGetNumArcs(m) - MscGetNumParallelArcs(m)) * gOpts.arcSpacing) +
-        gOpts.entityHeadGap;
+    computeCanvasSize(m, &w , &h);
 
     /* Close the temporary output file */
     drw.close(&drw);
@@ -1208,8 +1258,11 @@ int main(const int argc, const char *argv[])
 
     /* Draw the arcs */
     addLines = TRUE;
-    row = 0; arc = 0;
-    while(arc < MscGetNumArcs(m))
+    nextYmin = ymin = gOpts.entityHeadGap;
+    ymax = gOpts.entityHeadGap + gOpts.arcSpacing;
+
+    MscResetArcIterator(m);
+    do
     {
         const MscArcType   arcType       = MscGetCurrentArcType(m);
         const char        *arcUrl        = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
@@ -1223,11 +1276,22 @@ int main(const int argc, const char *argv[])
 
         if(arcType == MSC_ARC_PARALLEL)
         {
-            row--;
             addLines = FALSE;
         }
         else
         {
+            /* Advance position */
+            if(addLines)
+            {
+                ymin = nextYmin;
+                ymax = ymin + (gOpts.arcSpacing - 1);
+
+                if(arcLabelLines > 2)
+                {
+                    ymax += ((arcLabelLines - 1) * drw.textHeight(&drw));
+                }
+            }
+
             /* Get the entitiy indices */
             if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
             {
@@ -1275,7 +1339,7 @@ int main(const int argc, const char *argv[])
                 /* Add in the entity lines */
                 if(addLines)
                 {
-                    entityLines(m, row, FALSE, entColourRef);
+                    entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                 }
 
                 /* Draw arcs to each entity */
@@ -1283,7 +1347,7 @@ int main(const int argc, const char *argv[])
                 {
                     if((signed)t != startCol)
                     {
-                        arcLine(m, row, startCol, t, arcLineColour, arcType);
+                        arcLine(m, ymin, ymax, startCol, t, arcLineColour, arcType);
                     }
                 }
 
@@ -1298,47 +1362,45 @@ int main(const int argc, const char *argv[])
                 {
                     if(addLines)
                     {
-                        entityLines(m, row, FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                     }
-                    entityBox(row, startCol, endCol, arcType);
+                    entityBox(ymin, ymax, startCol, endCol, arcType);
                 }
                 else if(arcType == MSC_ARC_DISCO && addLines)
                 {
-                    entityLines(m, row, TRUE /* dotted */, entColourRef);
+                    entityLines(m, ymin, ymax + 1, TRUE /* dotted */, entColourRef);
                 }
                 else if(arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
                 {
                     if(addLines)
                     {
-                        entityLines(m, row, FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                     }
                 }
                 else
                 {
                     if(addLines)
                     {
-                        entityLines(m, row, FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                     }
-                    arcLine    (m, row, startCol, endCol, arcLineColour, arcType);
+                    arcLine(m, ymin, ymax, startCol, endCol, arcLineColour, arcType);
                 }
             }
 
             /* All may have text */
             if(arcLabel)
             {
-                arcText(m, ismap, w, row,
+                arcText(m, ismap, w, ymin,
                         startCol, endCol, arcLabel, arcLabelLines,
                         arcUrl, arcId, arcIdUrl,
                         arcTextColour, arcLineColour, arcType);
             }
 
-            row++;
             addLines = TRUE;
+            nextYmin = ymax + 1;
         }
-
-        MscNextArc(m);
-        arc++;
     }
+    while(MscNextArc(m));
 
     /* Close the image map if needed */
     if(ismap)
@@ -1348,6 +1410,9 @@ int main(const int argc, const char *argv[])
 
     /* Close the context */
     drw.close(&drw);
+
+    /* Double check that the computed canvas size was correct */
+    assert(nextYmin == h);
 
     return EXIT_SUCCESS;
 }
