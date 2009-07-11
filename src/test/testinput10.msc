@@ -1,4 +1,10 @@
-# Example MSC using boxes
+# testinput10.msc: Example MSC using boxes
+#
+# This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
+# transmitted, used, modified, built upon, or otherwise exploited by
+# anyone for any purpose, commercial or non-commercial, and in any way,
+# including by methods that have not yet been invented or conceived.
+#
 
 msc {
 
