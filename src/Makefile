@@ -1,6 +1,6 @@
 # Build normally for Linux/Unix
 
-export MSCGEN_VER=0.15
+export MSCGEN_VER=0.16
 
 all:
 	$(MAKE) -C parser
@@ -28,7 +28,7 @@ install:
   		install -m 0755 ../bin/mscgen.exe /usr/bin; \
   		[ -r ../bin/bgd.dll ] && install -m 0755 ../bin/bgd.dll /usr/bin || true; \
 	fi
-	install -m 0755 ../bin/mscgen /usr/bin 
+	install -m 0755 ../bin/mscgen /usr/bin
 	install -m 0644  man/mscgen.1 /usr/share/man/man1
 
 uninstall:
@@ -64,16 +64,16 @@ dllcheck:
 
 distclean: clean
 	$(MAKE) -C parser $@
-	$(MAKE) -C renderer $@	
+	$(MAKE) -C renderer $@
 	$()
 	rm -f ../dist/*.gz ../dist/*.md5 ../dist/*.zip ../bin/mscgen.exe ../bin/mscgen ../bin/bgd.dll
 
 clean:
 	$(MAKE) -C parser $@
-	$(MAKE) -C renderer $@	
+	$(MAKE) -C renderer $@
 
 test:
 	$(MAKE) -C parser $@
 	$(MAKE) -C renderer $@
-	
+
 .PHONY: test bindist winbindist srcdist install uninstall clean distclean

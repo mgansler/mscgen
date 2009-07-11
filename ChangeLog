@@ -1,3 +1,6 @@
+0.16: 28/06/2009
+      Fix segfault on malformed input, issue #10.
+       [Thanks Neils for reporting and providing a fix]
       Replace flex default rule so that it will not echo unknown characters.
        Instead it returns an unknown token to the parser which then stops
        and warns about the erroneous input line.
