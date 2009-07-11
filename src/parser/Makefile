@@ -6,7 +6,7 @@ LEX=flex
 LDFLAGS+=
 CC=gcc
 CFLAGS+=-O2 -I. -Wall -Wextra
-OBJS  =language.tab.o lex.yy.o msc.o
+OBJS  =language.tab.o lex.yy.o msc.o safe.o
 
 libparser.a: $(OBJS)
 	$(AR) cr $@ $^
@@ -25,7 +25,7 @@ test: parsertest
 	cd ../test && ./parsercheck.sh
 
 clean: FORCE
-	rm -f libparser.a language.tab.c language.tab.h lex.yy.c parsertest.o language.output $(OBJS)
+	rm -f libparser.a language.tab.c language.tab.h lex.yy.c parsertest.o safe.o language.output $(OBJS)
 
 distclean: clean
 	rm -f parsertest parsertest.exe

@@ -23,6 +23,7 @@
 #include <assert.h>
 #include "adraw_int.h"
 #include "utf8.h"
+#include "safe.h"
 
 /***************************************************************************
  * Manifest Constants
@@ -418,7 +419,7 @@ Boolean PsInit(unsigned int     w,
     PsContext *context;
 
     /* Create context */
-    context = outContext->internal = malloc(sizeof(PsContext));
+    context = outContext->internal = malloc_s(sizeof(PsContext));
     if(context == NULL)
     {
         return FALSE;

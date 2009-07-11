@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "msc.h"
+#include "safe.h"
 #include "language.tab.h"  /* Token definitions from Yacc/Bison */
 
 /* Counter for error reporting */
@@ -70,8 +71,8 @@ ARCTEXTCOLO(U?)R|arctextcolo(u?)r yylval.attribType = MSC_ATTR_ARC_TEXT_COLOUR; 
 box                               yylval.arctype = MSC_ARC_BOX;      return TOK_REL_BOX;            /* box */
 abox                              yylval.arctype = MSC_ARC_ABOX;     return TOK_REL_ABOX;           /* abox */
 rbox                              yylval.arctype = MSC_ARC_RBOX;     return TOK_REL_RBOX;           /* rbox */
-[A-Za-z0-9_]+                     yylval.string = strdup(yytext); return TOK_STRING;
-\"(\\\"|[^\"])*\"         yylval.string = strdup(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
+[A-Za-z0-9_]+                     yylval.string = strdup_s(yytext); return TOK_STRING;
+\"(\\\"|[^\"])*\"         yylval.string = strdup_s(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
 =                                 return TOK_EQUAL;
 ,                                 return TOK_COMMA;
 \;                                return TOK_SEMICOLON;

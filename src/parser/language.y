@@ -25,7 +25,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <msc.h>
+#include "safe.h"
+#include "msc.h"
 
 /* Lexer prototype to prevent compiler warning */
 int yylex(void);
@@ -35,6 +36,8 @@ int yylex(void);
 
 /* Name of parameter that is passed to yyparse() */
 #define YYPARSE_PARAM yyparse_result
+
+#define YYMALLOC malloc_s
 
 unsigned long lex_getlinenum(void);
 
@@ -140,7 +143,7 @@ int yywrap()
 char *removeEscapes(const char *in)
 {
     const uint16_t l = strlen(in);
-    char          *r = malloc(l + 1);
+    char          *r = malloc_s(l + 1);
     uint16_t       t, u;
 
     if(r != NULL)
