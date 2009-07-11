@@ -1,6 +1,9 @@
 %{
 /***************************************************************************
- * language.l : Mscgen language lexer definition.
+ *
+ * $Id$
+ *
+ * Mscgen language lexer definition.
  * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This file is part of msclib.

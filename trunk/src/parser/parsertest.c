@@ -1,5 +1,8 @@
 /***************************************************************************
- * parsertest.c : Test function for the msc parser.
+ *
+ * $Id$
+ *
+ * Test function for the msc parser.
  * Copyright (C) 2009 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This file is part of msclib.
