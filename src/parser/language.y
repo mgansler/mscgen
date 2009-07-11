@@ -259,7 +259,7 @@ optlist:     opt
 
 opt:         optval TOK_EQUAL string
 {
-    $$ = MscAllocOpt($1, $3)
+    $$ = MscAllocOpt($1, $3);
 };
 
 optval:      TOK_OPT_HSCALE | TOK_OPT_WIDTH | TOK_OPT_ARCGRADIENT;
@@ -345,7 +345,7 @@ attrlist:    attr
 
 attr:         attrval TOK_EQUAL string
 {
-    $$ = MscAllocAttrib($1, $3)
+    $$ = MscAllocAttrib($1, $3);
 };
 
 attrval:      TOK_ATTR_LABEL | TOK_ATTR_URL | TOK_ATTR_ID | TOK_ATTR_IDURL | TOK_ATTR_LINE_COLOUR | TOK_ATTR_TEXT_COLOUR |
