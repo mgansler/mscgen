@@ -22,7 +22,7 @@
 
 for F in `ls *.msc` ; do
     echo $F
-    ../src/parser/parsertest < $F > /dev/null || exit $?
+    ../src/parsertest < $F > /dev/null || exit $?
 done
 
 # END OF SCRIPT

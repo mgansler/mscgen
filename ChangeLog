@@ -8,6 +8,8 @@
        usual restrictions apply (file must be exectutable, Unix format etc..)
       Correctly handle multi-line C comments, issue #16.
        [Thanks Neils for reporting this one]
+      Collapse parser and renderer together and bring man/ and test/ up a
+       level.  Parser and renderer and now both under GPLv2.
 
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
