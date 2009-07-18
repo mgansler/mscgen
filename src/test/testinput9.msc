@@ -1,3 +1,5 @@
+#!/usr/bin/mscgen -Tpng
+#
 # testinput9.msc : Sample msc input file for UTF-8
 #
 # Original file by Markus Kuhn, adapted for HTML by Martin Dürst, now

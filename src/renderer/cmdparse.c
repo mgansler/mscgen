@@ -26,7 +26,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "bool.h"
 #include "cmdparse.h"
 
 /***************************************************************************
@@ -56,7 +55,7 @@ static const CmdSwitch *findSwitch(const CmdSwitch opts[],
 
     for(t = 0; t < nOpts; t++)
     {
-        if(strcmp(opts[t].switchString, swt) == 0)
+        if(strncmp(opts[t].switchString, swt, strlen(opts[t].switchString)) == 0)
         {
             return &opts[t];
         }
@@ -74,10 +73,13 @@ static const CmdSwitch *findSwitch(const CmdSwitch opts[],
  *
  * Function:     CmdParse
  *
- * Parameters:   opts   Options list to use to parse command options.
- *               nOpts  Length of opts array.
- *               argc   Count of arguments to parse.
- *               argv   Arguments to parse.
+ * Parameters:   opts        Options list to use to parse command options.
+ *               nOpts       Length of opts array.
+ *               argc        Count of arguments to parse.
+ *               argv        Arguments to parse.
+ *               inputSwitch Special switch to assume incase the last input
+ *                            option is unmatched.  In such a case, the
+ *                            switch table for this option is used.
  *
  * Returns:      TRUE if parsing suceeded.
  *
@@ -85,7 +87,11 @@ static const CmdSwitch *findSwitch(const CmdSwitch opts[],
  *                array.
  *
  ***************************************************************************/
-Boolean CmdParse(const CmdSwitch opts[], const int nOpts, const int argc, const char *argv[])
+Boolean CmdParse(const CmdSwitch opts[],
+                 const int       nOpts,
+                 const int       argc,
+                 const char     *argv[],
+                 const char     *inputSwitch)
 {
     int t;
 
@@ -95,11 +101,47 @@ Boolean CmdParse(const CmdSwitch opts[], const int nOpts, const int argc, const 
         /* Attempt to match the option */
         const CmdSwitch *swt = findSwitch(opts, nOpts, argv[t]);
 
+        /* Assume last parameter is the trailing input filename */
+        if(swt == NULL && t == argc - 1)
+        {
+            swt = findSwitch(opts, nOpts, inputSwitch);
+        }
+
         if(swt == NULL)
         {
             fprintf(stderr, "Unrecognised option '%s'\n", argv[t]);
             return FALSE;
         }
+        /* Check if the option was a prefixed switch or a distinct argument */
+        else if(strlen(swt->switchString) == strlen(argv[t]))
+        {
+            /* Indicate that the flag is present */
+            *swt->presentFlag = TRUE;
+
+            /* Check if an option needs parsing */
+            if(swt->parseString != NULL)
+            {
+                /* Skip the switch */
+                t++;
+
+                /* Check that another parameter is available to parse */
+                if(t >= argc)
+                {
+                    fprintf(stderr, "Switch '%s' requires a parameter\n", swt->switchString);
+                    return FALSE;
+                }
+
+                /* Attempt a parse */
+                if(sscanf(argv[t], swt->parseString, swt->parseResult) != 1)
+                {
+                    fprintf(stderr,
+                            "Invalid or unparsable parameter to option '%s'\n",
+                            swt->switchString);
+                    return FALSE;
+                }
+            }
+        }
+        /* Option was a prefix */
         else
         {
             /* Indicate that the flag is present */
@@ -108,24 +150,18 @@ Boolean CmdParse(const CmdSwitch opts[], const int nOpts, const int argc, const 
             /* Check if an option needs parsing */
             if(swt->parseString != NULL)
             {
-                /* Check that another parameter is available to parse */
-                if(t + 1 >= argc)
-                {
-                    fprintf(stderr, "Switch '%s' requires a parameter\n", argv[t]);
-                    return FALSE;
-                }
+                const char *opt = argv[t];
+
+                opt += strlen(swt->switchString);
 
                 /* Attempt a parse */
-                if(sscanf(argv[t + 1], swt->parseString, swt->parseResult) != 1)
+                if(sscanf(opt, swt->parseString, swt->parseResult) != 1)
                 {
                     fprintf(stderr,
                             "Invalid or unparsable parameter to option '%s'\n",
                             argv[t]);
                     return FALSE;
                 }
-
-                /* Extra option is parsed */
-                t++;
             }
         }
 

@@ -1,4 +1,11 @@
 0.17:
+      Change the command line parser so a space is not needed to split
+       switches from the value e.g. -Tpng is now acceptable.
+      Take input filename as last parameter if it doesn't match any switches.
+      Default output filename is <input filename>.<output type>.
+      The above changes now make it possible to use #!/usr/bin/mscgen -Tpng
+       at the top of a script to cause mscgen to process it directly.  The
+       usual restrictions apply (file must be exectutable, Unix format etc..)
       Correctly handle multi-line C comments, issue #16.
        [Thanks Neils for reporting this one]
 

@@ -1,3 +1,5 @@
+#!/usr/bin/mscgen -Tpng
+#
 # testinput11.msc: Some UTF8 text
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,

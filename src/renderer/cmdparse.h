@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
  **************************************************************************/
 
-#if !defined(CMDPARSE_HEADER)
+#ifndef CMDPARSE_HEADER
 #define CMDPARSE_HEADER
 
 /***************************************************************************
@@ -59,12 +59,16 @@ CmdSwitch;
  * \param nOpts  The number of elements in \a opts.
  * \param argc   The number of elements in \a argv.
  * \param argv   The array of command options.
+ * \param inputSwitch  Special switch to assume incase the last input
+ *                      option is unmatched.  In such a case, the
+ *                      switch table for this option is used.
  * \retval Boolean  \a TRUE if all options were successfully parsed.
  */
 Boolean CmdParse(const CmdSwitch opts[],
                  const int       nOpts,
                  const int       argc,
-                 const char      *argv[]);
+                 const char      *argv[],
+                 const char      *inputSwitch);
 
 #endif
 

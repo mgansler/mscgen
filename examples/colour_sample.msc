@@ -1,3 +1,4 @@
+#!/usr/bin/mscgen -Tpng
 # colour_sample.msc: Sample msc input file
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
@@ -9,6 +10,7 @@
 # EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
+
 
 //
 // This sample includes samples of colouring (and links).
