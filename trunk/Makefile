@@ -1,10 +1,12 @@
+#
+# $Id$
+#
 # Build normally for Linux/Unix
 
-export MSCGEN_VER=0.16
+export MSCGEN_VER=0.17
 
 all:
-	$(MAKE) -C src/parser
-	$(MAKE) -C src/renderer
+	$(MAKE) -C src
 
 all-osx:
 	(export OS=osx; $(MAKE))
@@ -60,20 +62,17 @@ bindist: all
 	openssl md5 dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz > dist/mscgen$(STATIC)-$(MSCGEN_VER).tar.gz.md5
 
 dllcheck:
-	$(MAKE) -C src/renderer $@
+	$(MAKE) -C src $@
 
 distclean: clean
-	$(MAKE) -C src/parser $@
-	$(MAKE) -C src/renderer $@
+	$(MAKE) -C src $@
 	$()
 	rm -f dist/*.gz dist/*.md5 dist/*.zip bin/mscgen.exe bin/mscgen bin/bgd.dll
 
 clean:
-	$(MAKE) -C src/parser $@
-	$(MAKE) -C src/renderer $@
+	$(MAKE) -C src $@
 
 test:
-	$(MAKE) -C src/parser $@
-	$(MAKE) -C src/renderer $@
+	$(MAKE) -C src $@
 
 .PHONY: test bindist winbindist srcdist install uninstall clean distclean
