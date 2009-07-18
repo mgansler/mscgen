@@ -22,7 +22,7 @@ parsertest: parsertest.o libparser.a
 
 
 test: parsertest
-	cd ../test && ./parsercheck.sh
+	cd ../../test && ./parsercheck.sh
 
 clean: FORCE
 	rm -f libparser.a language.tab.c language.tab.h lex.yy.c parsertest.o safe.o language.output $(OBJS)
