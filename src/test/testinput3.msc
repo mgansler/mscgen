@@ -5,6 +5,10 @@
 # anyone for any purpose, commercial or non-commercial, and in any way,
 # including by methods that have not yet been invented or conceived.
 #
+# This example is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
 
 msc {
   a [label="TASK_A"],
