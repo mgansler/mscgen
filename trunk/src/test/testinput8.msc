@@ -1,3 +1,5 @@
+#!/usr/bin/mscgen -Tpng
+#
 #testinput8.msc : Sample msc input file for escapes
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,

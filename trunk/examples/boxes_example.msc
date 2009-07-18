@@ -1,3 +1,4 @@
+#!/usr/bin/mscgen -Tpng
 # boxes_example.msc: Example MSC using boxes
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
@@ -9,6 +10,7 @@
 # EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
+
 
 //
 // This example shows how to make and use different kind of "boxes".

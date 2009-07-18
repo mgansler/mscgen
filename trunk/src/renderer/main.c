@@ -978,15 +978,19 @@ static void arcLine(Msc               m,
 static void usage()
 {
     printf(
-"Usage: mscgen -T <type> [-i <infile>] -o <file>\n"
+"Usage: mscgen -T <type> [-o <file>] [-i] <infile>\n"
 "       mscgen -l\n"
 "\n"
 "Where:\n"
 " -T <type>   Specifies the output file type, which maybe one of 'png', 'eps',\n"
 "             'svg' or 'ismap'\n"
 " -i <infile> The file from which to read input.  If omitted or specified as\n"
-"             '-', input will be read from stdin.\n"
-" -o <file>   Write output to the named file.  This option must be specified.\n"
+"              '-', input will be read from stdin.  The '-i' flag maybe\n"
+"              omitted if <infile> is specified as the last option on the\n"
+"              command line.\n"
+" -o <file>   Write output to the named file.  This option must be specified if \n"
+"              input is taken from stdin, otherwise the output filename\n"
+"              defaults to <infile>.<type>.\n"
 " -p          Print parsed msc output (for parser debug).\n"
 " -l          Display program licence and exit.\n"
 "\n"
@@ -1040,7 +1044,7 @@ int main(const int argc, const char *argv[])
     float            f;
 
     /* Parse the command line options */
-    if(!CmdParse(gClSwitches, sizeof(gClSwitches) / sizeof(CmdSwitch), argc - 1, &argv[1]))
+    if(!CmdParse(gClSwitches, sizeof(gClSwitches) / sizeof(CmdSwitch), argc - 1, &argv[1], "-i"))
     {
         usage();
         return EXIT_FAILURE;
@@ -1053,12 +1057,25 @@ int main(const int argc, const char *argv[])
     }
 
     /* Check that the ouput type was specified */
-    if(!gOutTypePresent || !gOutputFilePresent)
+    if(!gOutTypePresent)
     {
-        fprintf(stderr, "-T <type> must be specified on the command line\n"
-                        "-o <file> must be specified on the command line\n");
+        fprintf(stderr, "-T <type> must be specified on the command line\n");
         usage();
         return EXIT_FAILURE;
+    }
+
+    /* Check that the output filename was specified */
+    if(!gOutputFilePresent)
+    {
+        if(!gInputFilePresent || strcmp(gInputFile, "-") == 0)
+        {
+            fprintf(stderr, "-o <filename> must be specified on the command line if -i is not used or input is from stdin\n");
+            usage();
+            return EXIT_FAILURE;
+        }
+
+        gOutputFilePresent = TRUE;
+        snprintf(gOutputFile, sizeof(gOutputFile), "%s.%s", gInputFile, gOutType);
     }
 
     /* Determine the output type */

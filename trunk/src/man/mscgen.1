@@ -6,14 +6,13 @@ mscgen \- Message Sequence Chart Renderer
 .B mscgen \-T
 .I type
 .B [
-.B \-i
-.I infile
-.B ]
 .B \-o
 .I file
-.B [
-.B \-p
 .B ]
+.B [
+.B \-i
+.B ]
+.I infile
 
 .B mscgen -l
 
@@ -26,10 +25,11 @@ Mscgen is a small program that parses Message Sequence Chart descriptions and pr
 Specifies the output file type, which maybe one of 'png', 'eps', 'svg' or 'ismap'
 .TP
 .BI \-i " infile"
-The file from which to read input.  If omitted or specified as '-', input will be read from stdin.
+The file from which to read input.  If omitted or specified as '-', input will be read from stdin.  The '-i' option maybe omitted if <infile> is specified as the last option.
 .TP
 .BI \-o " file"
-Write output to the named file.  This option must be specified when generating output.
+Write output to the named file.  This option must be specified if input is taken from stdin, otherwise the output filename defaults to <infile>.<type>.
+
 .TP
 .B \-p
 Display the parsed msc as text to stdout.  This is useful only for checking the parser.
