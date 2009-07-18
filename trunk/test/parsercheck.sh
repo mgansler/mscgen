@@ -20,19 +20,9 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-
 for F in `ls *.msc` ; do
-    echo "$F"
-    $VALGRIND ../../bin/mscgen -T png -o $F.s.png -i $F || exit $?
-    $VALGRIND ../../bin/mscgen -T svg -o $F.svg -i $F || exit $?
-    $VALGRIND ../../bin/mscgen -T eps -o $F.eps -i $F || exit $?
-
-    # Try running script directly
-    ./$F
-
-    # Check direct running gave same output, then remove duplicate image
-    cmp ./$F.png  $F.s.png || exit $?
-    rm $F.s.png
+    echo $F
+    ../src/parser/parsertest < $F > /dev/null || exit $?
 done
 
 # END OF SCRIPT

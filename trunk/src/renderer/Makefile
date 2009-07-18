@@ -69,7 +69,7 @@ distclean: clean
 
 clean:
 	rm -f $(OBJS)
-	rm -f ../test/*.png ../test/*.eps ../test/*.svg ../test/*.ismap
+	rm -f ../../test/*.png ../../test/*.eps ../../test/*.svg ../../test/*.ismap
 
 ifeq ($(OS),win32)
 dllcheck:
@@ -85,6 +85,6 @@ endif
 endif
 
 test:
-	(cd ../test && ./renderercheck.sh)
+	(cd ../../test && ./renderercheck.sh)
 
 .PHONY: clean distclean test dllcheck
