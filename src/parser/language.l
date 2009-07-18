@@ -38,13 +38,25 @@ static unsigned long lex_linenum = 1;
 /* Not used, so prevent compiler warning */
 %option nounput noinput
 
+%x IN_COMMENT
 %%
+
+<IN_COMMENT>{
+"*/"                              BEGIN(INITIAL);
+[^*\n]+
+"*"
+\r\n|\r|\n                        lex_linenum++;
+}
+
+
+<INITIAL>{
+"/*"                              BEGIN(IN_COMMENT);
 
 \r\n|\r|\n                        lex_linenum++;
 
 #.*$                              /* Ignore lines after '#' */
 \/\/.*$                           /* Ignore lines after '//' */
-"/*".*"*/"                        /* Ignore C style comments */
+
 msc                               return TOK_MSC;
 HSCALE|hscale                     yylval.optType = MSC_OPT_HSCALE;              return TOK_OPT_HSCALE;
 WIDTH|width                       yylval.optType = MSC_OPT_WIDTH;               return TOK_OPT_WIDTH;
@@ -75,7 +87,7 @@ box                               yylval.arctype = MSC_ARC_BOX;      return TOK_
 abox                              yylval.arctype = MSC_ARC_ABOX;     return TOK_REL_ABOX;           /* abox */
 rbox                              yylval.arctype = MSC_ARC_RBOX;     return TOK_REL_RBOX;           /* rbox */
 [A-Za-z0-9_]+                     yylval.string = strdup_s(yytext); return TOK_STRING;
-\"(\\\"|[^\"])*\"         yylval.string = strdup_s(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
+\"(\\\"|[^\"])*\"                 yylval.string = strdup_s(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
 =                                 return TOK_EQUAL;
 ,                                 return TOK_COMMA;
 \;                                return TOK_SEMICOLON;
@@ -86,6 +98,9 @@ rbox                              yylval.arctype = MSC_ARC_RBOX;     return TOK_
 \*                                return TOK_ASTERISK;
 [ \t]+                            /* ignore whitespace */;
 <*>.|\n                           return TOK_UNKNOWN;
+
+}
+
 %%
 
 unsigned long lex_getlinenum(void)

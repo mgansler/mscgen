@@ -1,3 +1,7 @@
+0.17:
+      Correctly handle multi-line C comments, issue #16.
+       [Thanks Neils for reporting this one]
+
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
        [Thanks Neils for reporting and providing a fix]

@@ -14,8 +14,13 @@
 
 msc {
 
-   # The entities
+   /* A comment */
    A, B;
+
+   // Another comment
+   /* Multi-line
+      comment */
+
    ... [ label = "1234567890<A & B>" ];
    A=>B [ label = "\"magic\" happens" ];
    A<<B [ label = "answer is '42'" ];
