@@ -72,6 +72,7 @@ lex.yy.c: language.l language.tab.h
 
 distclean: clean
 	(cd ../bin && rm -f mscgen.exe mscgen bgd.dll)
+	rm -f parsertest
 
 clean:
 	rm -f $(OBJS)
