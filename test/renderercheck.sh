@@ -20,23 +20,11 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-for F in `ls *.msc` ; do
+for F in `cd $srcdir && ls *.msc` ; do
     echo "$F"
-    $VALGRIND ../bin/mscgen -T png -o $F.png -i $F || exit $?
-    $VALGRIND ../bin/mscgen -T svg -o $F.svg -i $F || exit $?
-    $VALGRIND ../bin/mscgen -T eps -o $F.eps -i $F || exit $?
-
-    if [ -e /usr/bin/mscgen ] ; then
-
-      # Try running script directly
-      mv $F.png $F.s.png
-      ./$F
-
-      # Check direct running gave same output, then remove duplicate image
-      cmp ./$F.png  $F.s.png || exit $?
-      rm $F.s.png
-    fi
-
+    $VALGRIND $top_builddir/src/mscgen -T png -o $F.png -i $srcdir/$F || exit $?
+    $VALGRIND $top_builddir/src/mscgen -T svg -o $F.svg -i $srcdir/$F || exit $?
+    $VALGRIND $top_builddir/src/mscgen -T eps -o $F.eps -i $srcdir/$F || exit $?
 done
 
 # END OF SCRIPT
