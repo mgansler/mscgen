@@ -12,11 +12,10 @@ AC_CONFIG_FILES([examples/Makefile])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
+AC_PROG_CC_C99
 AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_INSTALL
-
-#AC_SUBST(exec_prefix)
 
 AC_CHECK_HEADERS([unistd.h])
 
@@ -91,13 +90,14 @@ if test "$sh_HAVE_GD_H" = 0 ; then
 
 fi
 
+## Optionally create add the examples (defaulting to "yes").
+## Should probably get a "--with-examples" switch.
+AM_CONDITIONAL([WITH_EXAMPLES], [test "x$WITH_EXAMPLES" != "no"])
+
 ## This has to be run unconditionally.
 ## Otherwise automake will complain since USE_WIN32_GD will not always
 ## have a value.
 AM_CONDITIONAL(USE_WIN32_GD, [test "$sh_USE_WIN32_GD" = 1])
 
 AC_OUTPUT
-
-
-
 
