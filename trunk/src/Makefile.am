@@ -2,7 +2,7 @@
 # $Id$
 #
 
-AM_CFLAGS = -Wall -std=gnu99
+AM_CFLAGS = -Wall
 AM_YFLAGS = -d
 
 BUILT_SOURCES = language.c language.h lexer.c
