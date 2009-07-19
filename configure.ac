@@ -2,14 +2,14 @@
 # $Id$
 #
 
-AC_INIT(mscgen, 0.17, Michael.McTernan.2001@cs.bris.ac.uk)
-AC_PREREQ(2.61)
+AC_INIT([mscgen],[0.17],[Michael.McTernan.2001@cs.bris.ac.uk])
+AC_PREREQ(2.63)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([examples/Makefile])
-AM_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_PROG_CC_C99
