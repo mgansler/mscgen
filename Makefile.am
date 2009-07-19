@@ -12,3 +12,6 @@ EXTRA_DIST = $(top_srcdir)/gdwin32/COPYING.TXT \
              $(top_srcdir)/gdwin32/bin/*.exe \
              $(top_srcdir)/gdwin32/lib/*.lib \
              $(top_srcdir)/gdwin32/include/*.h
+
+dist_doc_DATA = README COPYING ChangeLog
+
