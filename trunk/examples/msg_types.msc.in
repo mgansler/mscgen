@@ -1,4 +1,4 @@
-#!/usr/bin/mscgen -Tpng
+#!@prefix@/bin/mscgen -Tpng
 # msg_types.msc: Sample msc input file with URLs
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
