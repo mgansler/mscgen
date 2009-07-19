@@ -8,10 +8,7 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([test/Makefile])
-AC_CONFIG_FILES([examples/simple_prog_desc.msc])
-AC_CONFIG_FILES([examples/boxes_example.msc])
-AC_CONFIG_FILES([examples/colour_sample.msc])
-AC_CONFIG_FILES([examples/msg_types.msc])
+AC_CONFIG_FILES([examples/Makefile])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 AC_PROG_CC

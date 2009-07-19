@@ -3,10 +3,9 @@
 #
 
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src man test
+SUBDIRS = src man test examples
 
-EXTRA_DIST = $(top_srcdir)/examples/*.msc.in \
-             $(top_srcdir)/gdwin32/COPYING.TXT \
+EXTRA_DIST = $(top_srcdir)/gdwin32/COPYING.TXT \
              $(top_srcdir)/gdwin32/index.html \
              $(top_srcdir)/gdwin32/NEWS \
              $(top_srcdir)/gdwin32/bin/*.dll \
