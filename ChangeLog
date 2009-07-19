@@ -10,6 +10,9 @@
        [Thanks Neils for reporting this one]
       Collapse parser and renderer together and bring man/ and test/ up a
        level.  Parser and renderer and now both under GPLv2.
+      Change build system to use autotools.  Also add examples with an install
+       target too. 
+       [Many thanks to Neils for his hard work on this contribution]
 
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
