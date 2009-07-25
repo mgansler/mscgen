@@ -1,0 +1,12 @@
+# $Id$
+
+DESCRIPTION="Message Sequence Chart Renderer"
+HOMEPAGE="http://www.mcternan.co.uk/"
+SRC_URI="http://localhost/${P}.tar.bz2"
+
+# We use the standard src_compile and src_test.
+
+src_install() {
+	cd ${B}
+	cyginstall
+}
