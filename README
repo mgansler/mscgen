@@ -93,5 +93,16 @@ following location:
 
   http://groups.google.com/group/mscgen-announce
 
+LICENCE
+=======
+
+Mscgen, Copyright (C) 2007 Michael C McTernan,
+                      Michael.McTernan.2001@cs.bris.ac.uk
+Mscgen comes with ABSOLUTELY NO WARRANTY.  Mscgen is free software, and you 
+are welcome to redistribute it under certain conditions; see the COPYING
+file for details.
+
+PNG rendering support is provided by libgd, www.libgd.org; see the COPYING.gd
+file for full credits.
 
 END OF FILE
