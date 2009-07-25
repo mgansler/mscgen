@@ -56,8 +56,8 @@ AC_DEFUN([GD_TRY_CONV_LINK],
 	_save_libs="$LIBS"
 	_save_ldflags="$LDFLAGS"
 	_save_cppflags="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS -I${srcdir}gdwin32/include/"
-	LDFLAGS="$LDFLAGS -L${srcdir}gdwin32/lib/ -L${srcdir}/gdwin32/bin/"
+	CPPFLAGS="$CPPFLAGS -I${srcdir}/gdwin32/include/"
+	LDFLAGS="$LDFLAGS -L${srcdir}/gdwin32/lib/ -L${srcdir}/gdwin32/bin/"
 	LIBS="$LIBS $1"
 	AC_LINK_IFELSE([#include "gd.h"
                         #include "gdfontt.h"  /* Tiny font */
