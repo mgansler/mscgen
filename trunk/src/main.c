@@ -1003,7 +1003,10 @@ static void usage()
 "                                        Michael.McTernan.2001@cs.bris.ac.uk\n"
 "Mscgen comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are\n"
 "welcome to redistribute it under certain conditions; type `mscgen -l' for\n"
-"details.\n",
+"details.\n"
+"\n"
+"PNG rendering by libgd, www.ligdg.org\n"
+"\n",
 PACKAGE_VERSION);
 }
 

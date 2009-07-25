@@ -86,7 +86,7 @@ sh_USE_WIN32_GD=0
 
 if test "$sh_HAVE_GD_H" = 0 ; then
 
-   GD_TRY_CONV_LINK([-lbgd], [sh_USE_WIN32_GD=1], [AC_MSG_ERROR([mscgen requires libgd and gd.h; yum install libgd-devel?])])
+   GD_TRY_CONV_LINK([-lbgd], [sh_USE_WIN32_GD=1], [AC_MSG_ERROR([mscgen requires libgd and gd.h; yum install gd-devel?])])
 
 fi
 
