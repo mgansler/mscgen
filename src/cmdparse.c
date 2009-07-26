@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "cmdparse.h"
+#include "bool.h"
 
 /***************************************************************************
  * Local Functions
@@ -93,7 +94,8 @@ Boolean CmdParse(const CmdSwitch opts[],
                  const char     *argv[],
                  const char     *inputSwitch)
 {
-    int t;
+    Boolean lastOpt = FALSE;
+    int     t;
 
     /* Parse supplied options in turn */
     for(t = 0; t < argc; t++)
@@ -105,6 +107,7 @@ Boolean CmdParse(const CmdSwitch opts[],
         if(swt == NULL && t == argc - 1)
         {
             swt = findSwitch(opts, nOpts, inputSwitch);
+	    lastOpt = TRUE;
         }
 
         if(swt == NULL)
@@ -113,7 +116,7 @@ Boolean CmdParse(const CmdSwitch opts[],
             return FALSE;
         }
         /* Check if the option was a prefixed switch or a distinct argument */
-        else if(strlen(swt->switchString) == strlen(argv[t]))
+        else if(strcmp(swt->switchString, argv[t]) == 0)
         {
             /* Indicate that the flag is present */
             *swt->presentFlag = TRUE;
@@ -152,7 +155,8 @@ Boolean CmdParse(const CmdSwitch opts[],
             {
                 const char *opt = argv[t];
 
-                opt += strlen(swt->switchString);
+		if(!lastOpt)
+                    opt += strlen(swt->switchString);
 
                 /* Attempt a parse */
                 if(sscanf(opt, swt->parseString, swt->parseResult) != 1)

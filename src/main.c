@@ -165,7 +165,30 @@ static void deleteTmp()
     }
 }
 
+/** Remove any file extension from the passed filename.
+ */
+static void trimExtension(char *s)
+{
+    int l = strlen(s);
 
+    while(l > 0)
+    {
+	l--;
+	switch(s[l])
+	{
+	  case '.':
+	    /* Don't truncate hidden files */
+	    if(l > 0 && s[l - 1] != '\\' && s[l -1] != '/')
+	    {
+		s[l] = '\0';
+	    }
+	    return;
+	  case '/':
+	  case '\\':
+	    return;
+	}
+    }
+}
 
 /** Count the number of lines in some string.
  * This counts line breaks that are written as a litteral '\n' in the line.
@@ -1083,7 +1106,10 @@ int main(const int argc, const char *argv[])
         }
 
         gOutputFilePresent = TRUE;
-        snprintf(gOutputFile, sizeof(gOutputFile), "%s.%s", gInputFile, gOutType);
+        snprintf(gOutputFile, sizeof(gOutputFile), "%s", gInputFile);
+	trimExtension(gOutputFile);
+	strncat(gOutputFile, ".", sizeof(gOutputFile));
+	strncat(gOutputFile, gOutType, sizeof(gOutputFile));
     }
 
     /* Determine the output type */
