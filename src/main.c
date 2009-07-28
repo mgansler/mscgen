@@ -35,6 +35,7 @@
 #endif
 #include <assert.h>
 #include "cmdparse.h"
+#include "usage.h"
 #include "adraw.h"
 #include "safe.h"
 #include "msc.h"
@@ -111,6 +112,13 @@ static Boolean gDumpLicencePresent = FALSE;
 
 static Boolean gPrintParsePresent = FALSE;
 
+#ifdef USE_FREETYPE
+static Boolean gOutputFontPresent = FALSE;
+static char    gOutputFont[256];
+#else
+static char   *gOutputFont = NULL;
+#endif
+
 /** Command line switches.
  * This gives the command line switches that can be interpreted by mscgen.
  */
@@ -121,6 +129,9 @@ static CmdSwitch gClSwitches[] =
     {"-T",     &gOutTypePresent,    "%10[^?]",   gOutType },
     {"-l",     &gDumpLicencePresent,NULL,        NULL },
     {"-p",     &gPrintParsePresent, NULL,        NULL }
+#ifdef USE_FREETYPE
+   ,{"-F",     &gOutputFontPresent, "%256[^?]",  gOutputFont }
+#endif
 };
 
 
@@ -1001,68 +1012,6 @@ static void arcLine(Msc               m,
 }
 
 
-/** Print program usage and return.
- */
-static void usage()
-{
-    printf(
-"Usage: mscgen -T <type> [-o <file>] [-i] <infile>\n"
-"       mscgen -l\n"
-"\n"
-"Where:\n"
-" -T <type>   Specifies the output file type, which maybe one of 'png', 'eps',\n"
-"             'svg' or 'ismap'\n"
-" -i <infile> The file from which to read input.  If omitted or specified as\n"
-"              '-', input will be read from stdin.  The '-i' flag maybe\n"
-"              omitted if <infile> is specified as the last option on the\n"
-"              command line.\n"
-" -o <file>   Write output to the named file.  This option must be specified if \n"
-"              input is taken from stdin, otherwise the output filename\n"
-"              defaults to <infile>.<type>.\n"
-" -p          Print parsed msc output (for parser debug).\n"
-" -l          Display program licence and exit.\n"
-"\n"
-"Mscgen version %s, Copyright (C) 2007 Michael C McTernan,\n"
-"                                        Michael.McTernan.2001@cs.bris.ac.uk\n"
-"Mscgen comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are\n"
-"welcome to redistribute it under certain conditions; type `mscgen -l' for\n"
-"details.\n"
-"\n"
-"PNG rendering by libgd, www.ligdg.org\n"
-"\n",
-PACKAGE_VERSION);
-}
-
-
-/** Print program licence and return.
- */
-static void licence()
-{
-    printf(
-"Mscgen, a message sequence chart renderer.\n"
-"Copyright (C) 2007 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk\n"
-"\n"
-"TTPCom Ltd., hereby disclaims all copyright interest in the program `mscgen'\n"
-"(which renders message sequence charts) written by Michael McTernan.\n"
-"\n"
-"Rob Meades of TTPCom Ltd, 1 August 2005\n"
-"Rob Meades, director of Software\n"
-"\n"
-"This program is free software; you can redistribute it and/or modify\n"
-"it under the terms of the GNU General Public License as published by\n"
-"the Free Software Foundation; either version 2 of the License, or\n"
-"(at your option) any later version.\n"
-"\n"
-"This program is distributed in the hope that it will be useful,\n"
-"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"GNU General Public License for more details.\n"
-"\n"
-"You should have received a copy of the GNU General Public License\n"
-"along with this program; if not, write to the Free Software\n"
-"Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA\n");
-}
-
 int main(const int argc, const char *argv[])
 {
     FILE            *ismap = NULL;
@@ -1077,13 +1026,13 @@ int main(const int argc, const char *argv[])
     /* Parse the command line options */
     if(!CmdParse(gClSwitches, sizeof(gClSwitches) / sizeof(CmdSwitch), argc - 1, &argv[1], "-i"))
     {
-        usage();
+        Usage();
         return EXIT_FAILURE;
     }
 
     if(gDumpLicencePresent)
     {
-        licence();
+        Licence();
         return EXIT_SUCCESS;
     }
 
@@ -1091,7 +1040,7 @@ int main(const int argc, const char *argv[])
     if(!gOutTypePresent)
     {
         fprintf(stderr, "-T <type> must be specified on the command line\n");
-        usage();
+        Usage();
         return EXIT_FAILURE;
     }
 
@@ -1101,17 +1050,37 @@ int main(const int argc, const char *argv[])
         if(!gInputFilePresent || strcmp(gInputFile, "-") == 0)
         {
             fprintf(stderr, "-o <filename> must be specified on the command line if -i is not used or input is from stdin\n");
-            usage();
+            Usage();
             return EXIT_FAILURE;
         }
 
         gOutputFilePresent = TRUE;
         snprintf(gOutputFile, sizeof(gOutputFile), "%s", gInputFile);
-	trimExtension(gOutputFile);
-	strncat(gOutputFile, ".", sizeof(gOutputFile));
-	strncat(gOutputFile, gOutType, sizeof(gOutputFile));
+        trimExtension(gOutputFile);
+        strncat(gOutputFile, ".", sizeof(gOutputFile));
+        strncat(gOutputFile, gOutType, sizeof(gOutputFile));
     }
+#ifdef USE_FREETYPE
+    /* Check for an output font name from the environment */
+    if(!gOutputFontPresent)
+    {
+        const char *envFont = getenv("MSCGEN_FONT");
+        const int   bufLen  = sizeof(gOutputFont);
 
+        if(envFont &&
+           snprintf(gOutputFont, bufLen, "%s", envFont) >= bufLen)
+        {
+            fprintf(stderr, "MSCGEN_FONT font name too long (must be < %d characters)\n",
+                    bufLen);
+            return EXIT_FAILURE;
+        }
+        else
+        {
+            /* Pick a default font */
+            snprintf(gOutputFont, bufLen, "helvetica");
+        }
+    }
+#endif
     /* Determine the output type */
     if(strcmp(gOutType, "png") == 0)
     {
@@ -1171,7 +1140,7 @@ int main(const int argc, const char *argv[])
     else
     {
         fprintf(stderr, "Unknown output format '%s'\n", gOutType);
-        usage();
+        Usage();
         return EXIT_FAILURE;
     }
 
@@ -1218,7 +1187,7 @@ int main(const int argc, const char *argv[])
     }
 
     /* Open the drawing context with dummy dimensions */
-    if(!ADrawOpen(10, 10, outImage, outType, &drw))
+    if(!ADrawOpen(10, 10, outImage, gOutputFont, outType, &drw))
     {
         fprintf(stderr, "Failed to create output context\n");
         return EXIT_FAILURE;
@@ -1271,7 +1240,7 @@ int main(const int argc, const char *argv[])
     drw.close(&drw);
 
     /* Open the output */
-    if(!ADrawOpen(w, h, outImage, outType, &drw))
+    if(!ADrawOpen(w, h, outImage, gOutputFont, outType, &drw))
     {
         fprintf(stderr, "Failed to create output context\n");
         return EXIT_FAILURE;

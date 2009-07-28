@@ -36,6 +36,7 @@
 Boolean ADrawOpen(unsigned int    w,
                   unsigned int    h,
                   const char     *file,
+                  const char     *fontName,
                   ADrawOutputType type,
                   struct ADrawTag *outContext)
 {
@@ -48,7 +49,7 @@ Boolean ADrawOpen(unsigned int    w,
 
         case ADRAW_FMT_PNG:
 #if !defined(REMOVE_PNG_OUTPUT)
-            return GdoInit(w, h, file, outContext);
+            return GdoInit(w, h, file, fontName, outContext);
 #else
             fprintf(stderr, "Built with REMOVE_PNG_OUPUT; PNG output is not supported\n");
             return FALSE;
