@@ -247,6 +247,7 @@ ADraw;
  * \param[in] w                The width of the output image.
  * \param[in] h                The height of the ouput image.
  * \param[in] file             The file to which the image should be written.
+ * \param[in] fontName         The name of the font to use, can be NULL for "default".
  * \param[in] type             The output type to generate.
  * \param[in, out] *outContext Pointer to an \a ADraw structure to populate
  *                              with values.
@@ -255,6 +256,7 @@ ADraw;
 Boolean ADrawOpen(unsigned int     w,
                   unsigned int     h,
                   const char      *file,
+		  const char      *fontName,
                   ADrawOutputType  type,
                   struct ADrawTag *outContext);
 

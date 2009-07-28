@@ -40,10 +40,6 @@
 
 #define MAX_COLOURS 128
 
-#ifndef FONT
-#define FONT "helvetica"
-#endif
-
 /***************************************************************************
  * Local types
  ***************************************************************************/
@@ -53,8 +49,9 @@ typedef struct GdoContextTag
     gdImagePtr  img;
 #ifdef USE_FREETYPE
     double      fontPoints;
+    const char *fontName;
 #else
-    gdFontPtr    font;
+    gdFontPtr   font;
 #endif
 
     /** Array of colours and GD references. */
@@ -178,7 +175,7 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
     r = gdImageStringFT(NULL,
                         rect,
                         context->pen,
-                        FONT,
+                        context->fontName,
                         context->fontPoints,
                         0,
                         0, 0,
@@ -210,7 +207,7 @@ int gdoTextHeight(struct ADrawTag *ctx)
     r = gdImageStringFT(NULL,
                         rect,
                         context->pen,
-                        FONT,
+                        context->fontName,
                         context->fontPoints,
                         0,
                         0, 0,
@@ -271,7 +268,7 @@ void gdoTextR(struct ADrawTag *ctx,
     r = gdImageStringFT(getGdoImg(ctx),
                         rect,
                         context->pen,
-                        FONT,
+                        context->fontName,
                         context->fontPoints,
                         0,
                         x, y - 2,
@@ -430,14 +427,11 @@ Boolean gdoClose(struct ADrawTag *ctx)
 Boolean GdoInit(unsigned int     w,
                 unsigned int     h,
                 const char      *file,
+		const char      *fontName,
                 struct ADrawTag *outContext)
 {
     GdoContext *context;
 
-#ifdef USE_FREETYPE
-    /* Request that we use font config strings */
-    gdFTUseFontConfig(1);
-#endif
     /* Create context */
     context = outContext->internal = zalloc_s(sizeof(GdoContext));
     if(context == NULL)
@@ -453,6 +447,14 @@ Boolean GdoInit(unsigned int     w,
         perror(NULL);
         return FALSE;
     }
+
+#ifdef USE_FREETYPE
+    /* Request that we use font config strings and store font name */
+    gdFTUseFontConfig(1);
+    context->fontName = fontName;
+
+    assert(fontName != NULL);
+#endif
 
     /* Allocate the image */
     context->img = gdImageCreateTrueColor(w, h);

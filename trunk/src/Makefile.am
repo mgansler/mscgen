@@ -16,7 +16,8 @@ mscgen_SOURCES = \
 adraw.c      cmdparse.c  main.c      svg_out.c     language.y \
 adraw.h      cmdparse.h  msc.c       ps_out.c      utf8.c \
 adraw_int.h  gd_out.c    msc.h       safe.c        utf8.h \
-bool.h       lexer.l     null_out.c  safe.h
+bool.h       lexer.l     null_out.c  safe.h        usage.c \
+usage.h
 
 
 if USE_WIN32_GD
