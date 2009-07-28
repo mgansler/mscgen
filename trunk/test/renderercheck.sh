@@ -22,9 +22,9 @@
 
 for F in `cd $srcdir && ls *.msc` ; do
     echo "$F"
-    $VALGRIND $top_builddir/src/mscgen -T png -i $srcdir/$F || exit $?
-    $VALGRIND $top_builddir/src/mscgen -T svg -i $srcdir/$F || exit $?
-    $VALGRIND $top_builddir/src/mscgen -T eps -i $srcdir/$F || exit $?
+    $VALGRIND $top_builddir/src/mscgen -T png -i $srcdir/$F -o $F.png || exit $?
+    $VALGRIND $top_builddir/src/mscgen -T svg -i $srcdir/$F -o $F.svg || exit $?
+    $VALGRIND $top_builddir/src/mscgen -T eps -i $srcdir/$F -o $F.eps || exit $?
 done
 
 # END OF SCRIPT
