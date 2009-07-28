@@ -47,7 +47,7 @@ Boolean NullInit(struct ADrawTag *outContext);
 Boolean GdoInit(unsigned int     w,
                 unsigned int     h,
                 const char      *file,
-		const char      *fontName,
+                const char      *fontName,
                 struct ADrawTag *outContext);
 
 Boolean PsInit(unsigned int     w,
