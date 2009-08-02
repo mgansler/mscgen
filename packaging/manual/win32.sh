@@ -9,11 +9,11 @@ export LDFLAGS="-mno-cygwin"
 export GDLIB_CFLAGS="-I`pwd`/../../gdwin32/include" 
 export GDLIB_LIBS="-L`pwd`/../../gdwin32/lib -lbgd"
 
-#(cd ../../
- #make distclean
- #./autogen.sh
-# ./configure  
- #make distcheck || (echo "Distcheck failed!"; exit))
+(cd ../../
+ make distclean
+ ./autogen.sh
+ ./configure  
+ make distcheck || (echo "Distcheck failed!"; exit))
 
 DIST_FILE=`ls ../../mscgen-*.tar.gz`
 DIST_VER=`echo "$DIST_FILE" | sed "s/^.*-\([0-9]\+.[0-9]\+\).*$/\1/"`
