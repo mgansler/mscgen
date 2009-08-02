@@ -33,8 +33,8 @@ mkdir -p binstage/w32/mscgen-$DIST_VER
   && make install-strip)
 cp ../../gdwin32/bin/bgd.dll binstage/w32/mscgen-$DIST_VER/bin
 chmod a+x binstage/w32/mscgen-$DIST_VER/bin/bgd.dll
-tar -C binstage/w32 -czf mscgen-w32-$DIST_VER.tar.gz mscgen-$DIST_VER
-md5sum mscgen-w32-$DIST_VER.tar.gz > mscgen-w32-$DIST_VER.tar.gz.md5
+(cd binstage/w32 && zip -r mscgen-w32-$DIST_VER.zip mscgen-$DIST_VER && mv mscgen-w32-$DIST_VER.zip ../..)
+md5sum mscgen-w32-$DIST_VER.zip > mscgen-w32-$DIST_VER.zip.md5
 
 # Clean up
 rm -rf binstage buildstage mscgen-$DIST_VER mscgen-$DIST_VER.tar.gz
