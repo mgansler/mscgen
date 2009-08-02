@@ -2,7 +2,8 @@
 
 (cd ../../
  make distclean
- ./configure
+ ./autogen.sh 
+ ./configure 
  make distcheck || (echo "Distcheck failed!"; exit))
 
 DIST_FILE=`ls ../../mscgen-*.tar.gz`
