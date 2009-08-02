@@ -107,7 +107,7 @@ Boolean CmdParse(const CmdSwitch opts[],
         if(swt == NULL && t == argc - 1)
         {
             swt = findSwitch(opts, nOpts, inputSwitch);
-	    lastOpt = TRUE;
+            lastOpt = TRUE;
         }
 
         if(swt == NULL)
@@ -155,7 +155,7 @@ Boolean CmdParse(const CmdSwitch opts[],
             {
                 const char *opt = argv[t];
 
-		if(!lastOpt)
+                if(!lastOpt)
                     opt += strlen(swt->switchString);
 
                 /* Attempt a parse */
