@@ -11,9 +11,12 @@
       Collapse parser and renderer together and bring man/ and test/ up a
        level.  Parser and renderer and now both under GPLv2.
       Change build system to use autotools.  Also add examples with an install
-       target too. 
+       target too.
        [Many thanks to Neils for his hard work on this contribution]
       Add COPYING notice and credits for libgd according to their licence.
+      Remove the win32 version of gd from the packaging, and use pkg-conf to
+       file/setup build for libgd.  Also add --without-png option to configure.
+       [Again, thanks to Neils for suggestions and patches on this]
 
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
