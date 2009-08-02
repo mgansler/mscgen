@@ -74,7 +74,7 @@ void Usage(void)
 "welcome to redistribute it under certain conditions; type `mscgen -l' for\n"
 "details.\n"
 "\n"
-"PNG rendering by libgd, www.ligdg.org\n"
+"PNG rendering by libgd, www.libgd.org\n"
 "\n",
 PACKAGE_VERSION);
 }
