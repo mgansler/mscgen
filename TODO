@@ -1,11 +1,11 @@
 Make the entitiy spacing dependent on the number of entities.
   i.e. 2 entities are more spaced than an MSC with 8.
 
-Add entity shapes.
-
 Add arrowsize option (global and with per-arc overrides).
 
 Add option to change broadcast arc representation.
 
 Add in the text background colour patch.
   (Also add white background to text in SVG and EPS output)
+  
+Fix cygport build (required gdlib.pc to be available somewhere)  
