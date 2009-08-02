@@ -29,7 +29,9 @@ The file from which to read input.  If omitted or specified as '-', input will b
 .TP
 .BI \-o " file"
 Write output to the named file.  This option must be specified if input is taken from stdin, otherwise the output filename defaults to <infile>.<type>.
-
+.TP
+.BI \-F " font"
+Use specified font for rendering PNG output.  This is only supported if mscgen was built with USE_FREETYPE and is ignored otherwise.
 .TP
 .B \-p
 Display the parsed msc as text to stdout.  This is useful only for checking the parser.

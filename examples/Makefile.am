@@ -24,19 +24,12 @@ EXTRA_DIST = msg_types.mscin \
              simple_prog_desc.mscin
 
 
-if WITH_EXAMPLES
 install-examples: $(BUILT_SOURCES)
 	test -d $(DESTDIR)$(exampledir)/ || $(MKDIR_P) $(DESTDIR)$(exampledir)/
 	$(INSTALL_SCRIPT) *.msc $(DESTDIR)$(exampledir)/
 
 uninstall-examples:
 	rm -f $(DESTDIR)$(exampledir)/*.msc
-else
-install-examples:
-uninstall-examples:
-
-endif
-
 
 install-data-hook: install-examples
 uninstall-hook: uninstall-examples

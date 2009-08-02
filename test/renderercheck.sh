@@ -20,9 +20,14 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
+grep -q "^#define REMOVE_PNG_OUTPUT 1" $top_builddir/config.h
+if [ "$?" = "0" ] ; then
+  NO_PNG=1
+fi
+
 for F in `cd $srcdir && ls *.msc` ; do
     echo "$F"
-    $VALGRIND $top_builddir/src/mscgen -T png -i $srcdir/$F -o $F.png || exit $?
+    [ "$NO_PNG" == 1 ] || $VALGRIND $top_builddir/src/mscgen -T png -i $srcdir/$F -o $F.png || exit $?
     $VALGRIND $top_builddir/src/mscgen -T svg -i $srcdir/$F -o $F.svg || exit $?
     $VALGRIND $top_builddir/src/mscgen -T eps -i $srcdir/$F -o $F.eps || exit $?
 done

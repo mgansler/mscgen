@@ -112,12 +112,8 @@ static Boolean gDumpLicencePresent = FALSE;
 
 static Boolean gPrintParsePresent = FALSE;
 
-#ifdef USE_FREETYPE
 static Boolean gOutputFontPresent = FALSE;
 static char    gOutputFont[256];
-#else
-static char   *gOutputFont = NULL;
-#endif
 
 /** Command line switches.
  * This gives the command line switches that can be interpreted by mscgen.
@@ -128,10 +124,8 @@ static CmdSwitch gClSwitches[] =
     {"-o",     &gOutputFilePresent, "%4096[^?]", gOutputFile },
     {"-T",     &gOutTypePresent,    "%10[^?]",   gOutType },
     {"-l",     &gDumpLicencePresent,NULL,        NULL },
-    {"-p",     &gPrintParsePresent, NULL,        NULL }
-#ifdef USE_FREETYPE
-   ,{"-F",     &gOutputFontPresent, "%256[^?]",  gOutputFont }
-#endif
+    {"-p",     &gPrintParsePresent, NULL,        NULL },
+    {"-F",     &gOutputFontPresent, "%256[^?]",  gOutputFont }
 };
 
 
@@ -1079,6 +1073,11 @@ int main(const int argc, const char *argv[])
             /* Pick a default font */
             snprintf(gOutputFont, bufLen, "helvetica");
         }
+    }
+    else
+    {
+      fprintf(stderr,"Note: -F option specified but ignored since mscgen was not built\n"
+                     "      with USE_FREETYPE.\n");
     }
 #endif
     /* Determine the output type */
