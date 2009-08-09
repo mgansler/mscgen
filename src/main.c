@@ -1339,10 +1339,14 @@ int main(const int argc, const char *argv[])
                     return EXIT_FAILURE;
                 }
 
-                /* Check for entity arc colouring if not set explicity on the arc */
+                /* Check for entity colouring if not set explicity on the arc */
                 if(arcTextColour == NULL)
                 {
                     arcTextColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_TEXT_COLOUR);
+                }
+
+                if(arcLineColour == NULL)
+                {
                     arcLineColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_LINE_COLOUR);
                 }
 
