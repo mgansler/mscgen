@@ -40,9 +40,15 @@ tar -C binstage/static -czf mscgen-static-$DIST_VER.tar.gz mscgen-$DIST_VER
 # Clean up
 rm -rf binstage buildstage mscgen-$DIST_VER
 
-# Create MD5 file
+# Create MD5 files
 for F in `ls *.tar.gz` ; do
   md5sum $F > $F.md5
 done
+
+# Now create the RPM
+cp ../rpm/mscgen.spec ~/rpmbuild/SPECS
+(cd ~/rpmbuild/SPECS && rpmbuild -ba mscgen.spec)
+cp ~/rpmbuild/RPMS/i386/mscgen-*.rpm .
+
 
 # END OF SCRIPT
