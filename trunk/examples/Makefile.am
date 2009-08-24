@@ -4,6 +4,11 @@
 
 
 .SUFFIXES= .msc .mscin
+
+example_DATA = msg_types.msc \
+                boxes_example.msc \
+                colour_sample.msc \
+                simple_prog_desc.msc
 exampledir=$(docdir)/examples
 
 # Use the suffix rule to support non-GNU make.
@@ -11,10 +16,7 @@ exampledir=$(docdir)/examples
 	echo "#!$(bindir)/mscgen -Tpng" | cat - $< > $@
 	chmod a+x $@
 
-BUILT_SOURCES = msg_types.msc \
-                boxes_example.msc \
-                colour_sample.msc \
-                simple_prog_desc.msc
+BUILT_SOURCES = $(example_DATA)
 
 CLEANFILES = $(BUILT_SOURCES)
 
@@ -23,13 +25,3 @@ EXTRA_DIST = msg_types.mscin \
              colour_sample.mscin \
              simple_prog_desc.mscin
 
-
-install-examples: $(BUILT_SOURCES)
-	test -d $(DESTDIR)$(exampledir)/ || $(MKDIR_P) $(DESTDIR)$(exampledir)/
-	$(INSTALL_SCRIPT) *.msc $(DESTDIR)$(exampledir)/
-
-uninstall-examples:
-	rm -f $(DESTDIR)$(exampledir)/*.msc
-
-install-data-hook: install-examples
-uninstall-hook: uninstall-examples

@@ -20,6 +20,9 @@
       Fix ignoring of arc line colour attribute unless a text colour was also 
        given, issue #23.
        [Thanks to dunbar.ian for reporting, Neils for finding the bug]
+      Apply patch to simplify installation of examples and increase install
+       portability, issue #27.
+       [Thanks chickenandpom for this patch]
 
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
