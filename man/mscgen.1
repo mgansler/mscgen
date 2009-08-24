@@ -1,4 +1,4 @@
-.TH "mscgen" 1
+.TH MSCGEN "1" "2009-08-24" "mscgen-0.17" "User Commands"
 .SH NAME
 mscgen \- Message Sequence Chart Renderer
 .SH SYNOPSIS
@@ -14,7 +14,7 @@ mscgen \- Message Sequence Chart Renderer
 .B ]
 .I infile
 
-.B mscgen -l
+.B mscgen \-l
 
 .SH DESCRIPTION
 Mscgen is a small program that parses Message Sequence Chart descriptions and produces PNG, EPS, SVG or server side image maps (ismaps) as the output. Message Sequence Charts (MSCs) are a way of representing entities and interactions over some time period and are often used in combination with SDL.  MSCs are popular in Telecoms to specify how protocols operate although MSCs need not be complicated to create or use. Mscgen aims to provide a simple text language that is clear to create, edit and understand, which can also be transformed into images.
@@ -58,7 +58,7 @@ msc {
   a<<=c [ label = "callback()"];
   ---  [ label = "If more to run", ID="*" ];
   a->a [ label = "next()"];
-  a->c [ label = "ac1()\nac2()"];
+  a->c [ label = "ac1()\\nac2()"];
   b<-c [ label = "cb(TRUE)"];
   b->b [ label = "stalled(...)"];
   a<-b [ label = "ab() = FALSE"];
