@@ -3,7 +3,7 @@
 #
 
 AC_INIT([mscgen],[0.17],[Michael.McTernan.2001@cs.bris.ac.uk])
-AC_PREREQ(2.63)
+AC_PREREQ(2.59)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([man/Makefile])
@@ -32,6 +32,15 @@ AC_ARG_WITH([png],
 
 AH_TEMPLATE([REMOVE_PNG_OUTPUT],
             [If set, remove PNG output support thereby removing libgd dependence.])
+
+# Older versions of autoconf (<2.60?) fail to define docdir 
+docdir='${datadir}/doc'
+AC_SUBST(docdir)
+
+# Earlier versions of gdlib.pc fail to include -lgd in the link flags.
+#  Check if it needs to be added.  This allows building on RedHat EL
+AC_SEARCH_LIBS(gdImageColorAllocate, gd,, AC_MSG_ERROR([Failed to find library containing gd]))
+
 
 AC_OUTPUT
 
