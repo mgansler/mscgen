@@ -34,12 +34,12 @@ AH_TEMPLATE([REMOVE_PNG_OUTPUT],
             [If set, remove PNG output support thereby removing libgd dependence.])
 
 # Older versions of autoconf (<2.60?) fail to define docdir 
-docdir='${datadir}/doc'
+docdir='${datadir}/doc/mscgen'
 AC_SUBST(docdir)
 
 # Earlier versions of gdlib.pc fail to include -lgd in the link flags.
 #  Check if it needs to be added.  This allows building on RedHat EL
-AC_SEARCH_LIBS(gdImageColorAllocate, gd,, AC_MSG_ERROR([Failed to find library containing gd]))
+AC_SEARCH_LIBS(gdImageColorAllocate, gd,, AC_MSG_ERROR([Failed to find library containing gd]), -lm)
 
 
 AC_OUTPUT
