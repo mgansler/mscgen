@@ -23,6 +23,7 @@
       Apply patches to simplify installation of examples and increase install
        portability, issue #27.
        [Thanks chickenandpom for this patch]
+      Ensure docs install under mscgen.
 
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
