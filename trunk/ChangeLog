@@ -1,4 +1,4 @@
-0.17:
+0.17: 31/08/2009
       Change the command line parser so a space is not needed to split
        switches from the value e.g. -Tpng is now acceptable.
       Take input filename as last parameter if it doesn't match any switches.
@@ -20,7 +20,7 @@
       Fix ignoring of arc line colour attribute unless a text colour was also 
        given, issue #23.
        [Thanks to dunbar.ian for reporting, Neils for finding the bug]
-      Apply patch to simplify installation of examples and increase install
+      Apply patches to simplify installation of examples and increase install
        portability, issue #27.
        [Thanks chickenandpom for this patch]
 
