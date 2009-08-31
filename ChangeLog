@@ -1,3 +1,5 @@
+0.18:
+
 0.17: 31/08/2009
       Change the command line parser so a space is not needed to split
        switches from the value e.g. -Tpng is now acceptable.
@@ -23,6 +25,7 @@
       Apply patches to simplify installation of examples and increase install
        portability, issue #27.
        [Thanks chickenandpom for this patch]
+      Ensure docs install under mscgen.
 
 0.16: 28/06/2009
       Fix segfault on malformed input, issue #10.
