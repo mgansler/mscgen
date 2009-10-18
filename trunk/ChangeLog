@@ -1,4 +1,6 @@
 0.18:
+      Fix multi-line labels causing multiple dividers ("---")
+       Thanks to llucax for the report.
 
 0.17: 31/08/2009
       Change the command line parser so a space is not needed to split
