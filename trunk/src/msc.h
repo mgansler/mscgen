@@ -39,6 +39,7 @@ typedef enum MscOptTypeTag
 }
 MscOptType;
 
+
 /** Arc attributes.
  * An arc may have one or more attributes listed in square brackets after
  * the declaration.  This gives an enumerated type for each permissible
@@ -54,7 +55,9 @@ typedef enum MscAttribTypeTag
     MSC_ATTR_TEXT_COLOUR,
     MSC_ATTR_TEXT_BGCOLOUR,
     MSC_ATTR_ARC_LINE_COLOUR,
-    MSC_ATTR_ARC_TEXT_COLOUR
+    MSC_ATTR_ARC_TEXT_COLOUR,
+    MSC_ATTR_NO_ARROWS,
+    MSC_ATTR_BI_ARROWS
 }
 MscAttribType;
 

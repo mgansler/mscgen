@@ -369,8 +369,8 @@ static void arrowR(unsigned int x,
                      x, y,
                      x - gOpts.arrowWidth, y + gOpts.arrowHeight);
             drw.line(&drw,
-                     x, y,
-                     x - gOpts.arrowWidth, y - gOpts.arrowHeight);
+                     x - gOpts.arrowWidth, y - gOpts.arrowHeight,
+                     x, y);
             break;
 
         default:
@@ -882,12 +882,14 @@ static void arcText(Msc                m,
  * This will draw the arc line and arrow head between two columns,
  * noting that if the start and end column are the same, an arc is
  * rendered.
- * \param  m        The Msc for which the text is being rendered.
- * \param  ymin     Top of row.
- * \param  ymax     Bottom of row.
- * \param  startCol Starting column for the arc.
- * \param  endCol   Column at which the arc terminates.
- * \param  arcType  The type of the arc, which dictates its rendered style.
+ * \param  m           The Msc for which the text is being rendered.
+ * \param  ymin        Top of row.
+ * \param  ymax        Bottom of row.
+ * \param  startCol    Starting column for the arc.
+ * \param  endCol      Column at which the arc terminates.
+ * \param  hasArrows   If true, draw arc arrows, otherwise omit them.
+ * \param  hasBiArrows If true, has arrows in both directions.
+ * \param  arcType     The type of the arc, which dictates its rendered style.
  */
 static void arcLine(Msc               m,
                     unsigned int      ymin,
@@ -895,6 +897,8 @@ static void arcLine(Msc               m,
                     unsigned int      startCol,
                     unsigned int      endCol,
                     const char       *arcLineCol,
+                    const int         hasArrows,
+                    const int         hasBiArrows,
                     const MscArcType  arcType)
 {
     const unsigned int y  = (ymin + ymax) / 2;
@@ -927,13 +931,28 @@ static void arcLine(Msc               m,
         }
 
         /* Now the arrow heads */
-        if(startCol < endCol)
+        if(hasArrows)
         {
-            arrowR(dx, y + gOpts.arcGradient, arcType);
-        }
-        else
-        {
-            arrowL(dx, y + gOpts.arcGradient, arcType);
+            if(startCol < endCol)
+            {
+                arrowR(dx, y + gOpts.arcGradient, arcType);
+            }
+            else
+            {
+                arrowL(dx, y + gOpts.arcGradient, arcType);
+            }
+
+            if(hasBiArrows)
+            {
+                if(startCol < endCol)
+                {
+                    arrowL(sx, y + gOpts.arcGradient, arcType);
+                }
+                else
+                {
+                    arrowR(sx, y + gOpts.arcGradient, arcType);
+                }
+            }
         }
     }
     else if(startCol < (MscGetNumEntities(m) / 2))
@@ -973,7 +992,10 @@ static void arcLine(Msc               m,
                     270);
         }
 
-        arrowR(dx, y + (gOpts.arcSpacing / 4), arcType);
+        if(hasArrows)
+        {
+            arrowR(dx, y + (gOpts.arcSpacing / 4), arcType);
+        }
     }
     else
     {
@@ -1012,7 +1034,10 @@ static void arcLine(Msc               m,
                     90);
         }
 
-        arrowL(dx, y + (gOpts.arcSpacing / 4), arcType);
+        if(hasArrows)
+        {
+            arrowL(dx, y + (gOpts.arcSpacing / 4), arcType);
+        }
     }
 
     /* Restore pen if needed */
@@ -1304,14 +1329,16 @@ int main(const int argc, const char *argv[])
     MscResetArcIterator(m);
     do
     {
-        const MscArcType   arcType       = MscGetCurrentArcType(m);
-        const char        *arcUrl        = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
-        const char        *arcLabel      = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
-        const char        *arcId         = MscGetCurrentArcAttrib(m, MSC_ATTR_ID);
-        const char        *arcIdUrl      = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
-        const char        *arcTextColour = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
-        const char        *arcLineColour = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
-        const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) : 1;
+        const MscArcType   arcType        = MscGetCurrentArcType(m);
+        const char        *arcUrl         = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
+        const char        *arcLabel       = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
+        const char        *arcId          = MscGetCurrentArcAttrib(m, MSC_ATTR_ID);
+        const char        *arcIdUrl       = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
+        const char        *arcTextColour  = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
+        const char        *arcLineColour  = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
+        const int          arcHasArrows   = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
+        const int          arcHasBiArrows = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
+        const unsigned int arcLabelLines  = arcLabel ? countLines(arcLabel) : 1;
         int                startCol, endCol;
 
         if(arcType == MSC_ARC_PARALLEL)
@@ -1391,7 +1418,8 @@ int main(const int argc, const char *argv[])
                 {
                     if((signed)t != startCol)
                     {
-                        arcLine(m, ymin, ymax, startCol, t, arcLineColour, arcType);
+                        arcLine(m, ymin, ymax, startCol, t,
+                                arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
                     }
                 }
 
@@ -1427,7 +1455,8 @@ int main(const int argc, const char *argv[])
                     {
                         entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                     }
-                    arcLine(m, ymin, ymax, startCol, endCol, arcLineColour, arcType);
+                    arcLine(m, ymin, ymax, startCol, endCol,
+                            arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
                 }
             }
 
