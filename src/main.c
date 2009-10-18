@@ -178,20 +178,20 @@ static void trimExtension(char *s)
 
     while(l > 0)
     {
-	l--;
-	switch(s[l])
-	{
-	  case '.':
-	    /* Don't truncate hidden files */
-	    if(l > 0 && s[l - 1] != '\\' && s[l -1] != '/')
-	    {
-		s[l] = '\0';
-	    }
-	    return;
-	  case '/':
-	  case '\\':
-	    return;
-	}
+        l--;
+        switch(s[l])
+        {
+            case '.':
+                /* Don't truncate hidden files */
+                if(l > 0 && s[l - 1] != '\\' && s[l -1] != '/')
+                {
+                    s[l] = '\0';
+                }
+                return;
+            case '/':
+            case '\\':
+                return;
+        }
     }
 }
 
@@ -560,7 +560,7 @@ static void computeCanvasSize(Msc m,
 
                 if(arcLabelLines > 2)
                 {
-                    ymax += (arcLabelLines - 1) * textHeight;
+                    ymax += (arcLabelLines - 2) * textHeight;
                 }
             }
 
@@ -735,7 +735,7 @@ static void arcText(Msc                m,
     {
         char *lineLabel = getLine(arcLabel, l, lineBuffer, sizeof(lineBuffer));
         unsigned int y = ymin + (gOpts.arcSpacing / 2) +
-                          (l * drw.textHeight(&drw)) - l;
+                          (l * drw.textHeight(&drw)) - l + 1;
         unsigned int width = drw.textWidth(&drw, lineLabel);
         int x = ((startCol + endCol + 1) * gOpts.entitySpacing) / 2;
 
@@ -746,7 +746,8 @@ static void arcText(Msc                m,
         if(arcType == MSC_ARC_DISCO || arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE ||
            isBoxArc(arcType))
         {
-            y += drw.textHeight(&drw) / 2;
+            if(arcLabelLines == 1)
+                y += drw.textHeight(&drw) / 2;
         }
 
         if(startCol != endCol || isBoxArc(arcType))
@@ -831,26 +832,42 @@ static void arcText(Msc                m,
             drw.setFontSize(&drw, ADRAW_FONT_SMALL);
         }
 
-        /* Dividers also have a horizontal line */
-        if(arcType == MSC_ARC_DIVIDER)
+        /* Dividers also have a horizontal line at the middle */
+        if(l == (arcLabelLines / 2) && arcType == MSC_ARC_DIVIDER)
         {
             const unsigned int margin = gOpts.entitySpacing / 4;
-
-            y -= drw.textHeight(&drw) / 2;
 
             if(arcLineColour != NULL)
             {
                 drw.setPen(&drw, ADrawGetColour(arcLineColour));
             }
 
-            drw.dottedLine(&drw,
-                           margin, y,
-                           x - gOpts.textHGapPre,  y);
-            drw.dottedLine(&drw,
-                           x + width + gOpts.textHGapPost,
-                           y,
-                           (MscGetNumEntities(m) * gOpts.entitySpacing) - margin,
-                           y);
+            /* Check for an even number of lines */
+            if((arcLabelLines & 1) == 0)
+            {
+                /* Even, the divider falls between the two lines */
+                y -= drw.textHeight(&drw);
+
+                /* Draw line through middle of text */
+                drw.dottedLine(&drw,
+                               margin, y,
+                               (MscGetNumEntities(m) * gOpts.entitySpacing) - margin,  y);
+            }
+            else
+            {
+                /* Odd, the divider is in the middle of the line */
+                y -= drw.textHeight(&drw) / 2;
+
+                /* Draw lines to skip the text */
+                drw.dottedLine(&drw,
+                              margin, y,
+                              x - gOpts.textHGapPre, y);
+                drw.dottedLine(&drw,
+                              x + width + gOpts.textHGapPost,
+                              y,
+                              (MscGetNumEntities(m) * gOpts.entitySpacing) - margin,
+                              y);
+            }
 
             if(arcLineColour != NULL)
             {
@@ -1311,7 +1328,7 @@ int main(const int argc, const char *argv[])
 
                 if(arcLabelLines > 2)
                 {
-                    ymax += ((arcLabelLines - 1) * drw.textHeight(&drw));
+                    ymax += ((arcLabelLines - 2) * drw.textHeight(&drw));
                 }
             }
 
