@@ -1103,23 +1103,23 @@ int main(const int argc, const char *argv[])
         const char *envFont = getenv("MSCGEN_FONT");
         const int   bufLen  = sizeof(gOutputFont);
 
-        if(envFont &&
-           snprintf(gOutputFont, bufLen, "%s", envFont) >= bufLen)
+        if(!envFont)
+        {
+            /* Pick a default font */
+            snprintf(gOutputFont, bufLen, "helvetica");
+        }
+        else if(snprintf(gOutputFont, bufLen, "%s", envFont) >= bufLen)
         {
             fprintf(stderr, "MSCGEN_FONT font name too long (must be < %d characters)\n",
                     bufLen);
             return EXIT_FAILURE;
         }
-        else
-        {
-            /* Pick a default font */
-            snprintf(gOutputFont, bufLen, "helvetica");
-        }
     }
-    else
+#else
+    if(gOutputFontPresent)
     {
-      fprintf(stderr,"Note: -F option specified but ignored since mscgen was not built\n"
-                     "      with USE_FREETYPE.\n");
+      fprintf(stderr, "Note: -F option specified but ignored since mscgen was not built\n"
+                      "      with USE_FREETYPE.\n");
     }
 #endif
     /* Determine the output type */
