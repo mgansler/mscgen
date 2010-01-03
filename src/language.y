@@ -234,7 +234,7 @@ Msc MscParse(FILE *in)
 %type <entitylist> entitylist
 %type <arctype>    relation_box relation_line relation_bi relation_to relation_from
                    TOK_REL_SIG_BI TOK_REL_METHOD_BI TOK_REL_RETVAL_BI TOK_REL_CALLBACK_BI
-                   TOK_REL_SIG_TO TOK_REL_METHOD_TO TOK_REL_RETVAL_TO TOK_REL_CALLBACK_TO
+                   TOK_REL_SIG_TO TOK_REL_METHOD_TO TOK_REL_RETVAL_TO TOK_REL_CALLBACK_TO TOK_REL_DOUBLE_BI
                    TOK_REL_SIG_FROM TOK_REL_METHOD_FROM TOK_REL_RETVAL_FROM TOK_REL_CALLBACK_FROM
                    TOK_REL_DOUBLE_TO TOK_REL_DOUBLE_FROM TOK_SPECIAL_ARC
                    TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX
