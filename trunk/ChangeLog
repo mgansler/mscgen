@@ -1,3 +1,7 @@
+0.xx:
+      Fix bad strncat() use allowing possible overrun.
+       Thanks to ensc42 and Neils for finding this.
+
 0.18:
       Fix multi-line labels causing multiple dividers ("---")
        Thanks to llucax for the report, issue #31.
