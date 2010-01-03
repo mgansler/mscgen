@@ -18,6 +18,7 @@ AC_PROG_YACC
 AC_PROG_INSTALL
 
 AC_CHECK_HEADERS([unistd.h])
+AC_CHECK_HEADERS([limits.h])
 
 AC_ARG_WITH([png],
   [AS_HELP_STRING([--without-png],
@@ -33,7 +34,21 @@ AC_ARG_WITH([png],
 AH_TEMPLATE([REMOVE_PNG_OUTPUT],
             [If set, remove PNG output support thereby removing libgd dependence.])
 
-# Older versions of autoconf (<2.60?) fail to define docdir 
+AC_ARG_WITH([freetype],
+  [AS_HELP_STRING([--with-freetype],
+    [Add FreeType font rendering @<:@default=no@:>@])],
+  [if test "$withval" = "yes" ; then
+     AC_DEFINE_UNQUOTED(USE_FREETYPE, 1)
+     PKG_CHECK_MODULES(FREETYPE, freetype2)
+     AC_SEARCH_LIBS(gdImageStringFT, gd,, AC_MSG_ERROR([Failed to find library containing gdImageStringFt]))
+   fi]
+)
+
+AH_TEMPLATE([USE_FREETYPE],
+            [Use FreeType for rendering text in PNGs.])
+
+
+# Older versions of autoconf (<2.60?) fail to define docdir
 docdir='${datadir}/doc/mscgen'
 AC_SUBST(docdir)
 
