@@ -19,7 +19,7 @@ adraw_int.h  gd_out.c    msc.h       safe.c        utf8.h \
 bool.h       lexer.l     null_out.c  safe.h        usage.c \
 usage.h
 
-mscgen_CFLAGS = $(GDLIB_CFLAGS)
-mscgen_LDADD  = -lm $(GDLIB_LIBS)
+mscgen_CFLAGS = $(GDLIB_CFLAGS) $(FREETYPE_CFLAGS)
+mscgen_LDADD  = -lm $(GDLIB_LIBS) $(FREETYPE_LIBS)
 
 # END OF FILE
