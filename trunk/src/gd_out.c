@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#endif
 #include "gd.h"
 #ifndef USE_FREETYPE
 #include "gdfontt.h"  /* Tiny font */
@@ -231,9 +234,13 @@ void gdoLine(struct ADrawTag *ctx,
              unsigned int     x2,
              unsigned int     y2)
 {
-    gdImageSetAntiAliased(getGdoImg(ctx), getGdoPen(ctx));
-    gdImageLine(getGdoImg(ctx),
-                x1, y1, x2, y2, gdAntiAliased);
+    /* Range check since gdImageLine() takes signed values */
+    if(x1 <= INT_MAX && y1 <= INT_MAX && x2 <= INT_MAX && y2 <= INT_MAX)
+    {
+        gdImageSetAntiAliased(getGdoImg(ctx), getGdoPen(ctx));
+        gdImageLine(getGdoImg(ctx),
+                    x1, y1, x2, y2, gdAntiAliased);
+    }
 }
 
 
@@ -244,7 +251,12 @@ void gdoDottedLine(struct ADrawTag *ctx,
                    unsigned int     y2)
 {
     setStyle(ctx);
-    gdImageLine(getGdoImg(ctx), x1, y1, x2, y2, gdStyled);
+
+    /* Range check since gdImageLine() takes signed values */
+    if(x1 <= INT_MAX && y1 <= INT_MAX && x2 <= INT_MAX && y2 <= INT_MAX)
+    {
+        gdImageLine(getGdoImg(ctx), x1, y1, x2, y2, gdStyled);
+    }
 }
 
 
@@ -258,37 +270,44 @@ void gdoTextR(struct ADrawTag *ctx,
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     const char *r;
 #endif
+    int         textWidth;
 
-    gdImageFilledRectangle(getGdoImg(ctx),
-                           x,
-                           y - (gdoTextHeight(ctx) - 1),
-                           x + gdoTextWidth(ctx, string),
-                           y - 2,
-                           getColourRef(context, ADRAW_COL_WHITE));
+    textWidth = gdoTextWidth(ctx, string);
+
+    /* Range check since gdImageFilledRectangle() takes signed values */
+    if(x + textWidth <= INT_MAX && y <= INT_MAX)
+    {
+        gdImageFilledRectangle(getGdoImg(ctx),
+                              x,
+                              y - (gdoTextHeight(ctx) - 1),
+                              x + textWidth,
+                              y - 2,
+                              getColourRef(context, ADRAW_COL_WHITE));
 
 #ifdef USE_FREETYPE
-    r = gdImageStringFT(getGdoImg(ctx),
-                        rect,
-                        context->pen,
-                        context->fontName,
-                        context->fontPoints,
-                        0,
-                        x, y - 2,
-                       (char *)string);
+        r = gdImageStringFT(getGdoImg(ctx),
+                            rect,
+                            context->pen,
+                            context->fontName,
+                            context->fontPoints,
+                            0,
+                            x, y - 2,
+                          (char *)string);
 
-    if(r)
-    {
-        fprintf(stderr, "Error: gdoTextR: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
-        exit(EXIT_FAILURE);
-    }
+        if(r)
+        {
+            fprintf(stderr, "Error: gdoTextR: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+            exit(EXIT_FAILURE);
+        }
 #else
-    gdImageString(getGdoImg(ctx),
-                  getGdoCtx(ctx)->font,
-                  x,
-                  y - gdoTextHeight(ctx),
-                  (unsigned char *)string,
-                  getGdoPen(ctx));
+        gdImageString(getGdoImg(ctx),
+                      getGdoCtx(ctx)->font,
+                      x,
+                      y - gdoTextHeight(ctx),
+                      (unsigned char *)string,
+                      getGdoPen(ctx));
 #endif
+    }
 
 }
 
@@ -298,7 +317,13 @@ void gdoTextL(struct ADrawTag *ctx,
               unsigned int     y,
               const char      *string)
 {
-    gdoTextR(ctx, x - gdoTextWidth(ctx, string), y, string);
+    x -= gdoTextWidth(ctx, string);
+
+    /* Range check since gdImageFilledRectangle() takes signed values */
+    if(x <= INT_MAX && y <= INT_MAX)
+    {
+        gdoTextR(ctx, x, y, string);
+    }
 }
 
 void gdoTextC(struct ADrawTag *ctx,
@@ -317,12 +342,17 @@ void gdoFilledRectangle(struct ADrawTag *ctx,
 {
     gdPoint p[4];
 
-    p[0].x = x1; p[0].y = y1;
-    p[1].x = x2; p[1].y = y1;
-    p[2].x = x2; p[2].y = y2;
-    p[3].x = x1; p[3].y = y2;
+    /* Range check since gdPoint contains signed values */
+    if(x1 <= INT_MAX && y1 <= INT_MAX && x2 <= INT_MAX && y2 <= INT_MAX)
+    {
+        p[0].x = x1; p[0].y = y1;
+        p[1].x = x2; p[1].y = y1;
+        p[2].x = x2; p[2].y = y2;
+        p[3].x = x1; p[3].y = y2;
 
-    gdImageFilledPolygon(getGdoImg(ctx), p, 4, getGdoPen(ctx));
+
+        gdImageFilledPolygon(getGdoImg(ctx), p, 4, getGdoPen(ctx));
+    }
 }
 
 void gdoFilledTriangle(struct ADrawTag *ctx,
@@ -335,12 +365,18 @@ void gdoFilledTriangle(struct ADrawTag *ctx,
 {
     gdPoint p[3];
 
-    p[0].x = x1; p[0].y = y1;
-    p[1].x = x2; p[1].y = y2;
-    p[2].x = x3; p[2].y = y3;
+    /* Range check since gdPoint contains signed values */
+    if(x1 <= INT_MAX && y1 <= INT_MAX &&
+       x2 <= INT_MAX && y2 <= INT_MAX &&
+       x3 <= INT_MAX && y3 <= INT_MAX)
+    {
+        p[0].x = x1; p[0].y = y1;
+        p[1].x = x2; p[1].y = y2;
+        p[2].x = x3; p[2].y = y3;
 
-    gdImageSetAntiAliased(getGdoImg(ctx), getGdoPen(ctx));
-    gdImageFilledPolygon(getGdoImg(ctx), p, 3, gdAntiAliased);
+        gdImageSetAntiAliased(getGdoImg(ctx), getGdoPen(ctx));
+        gdImageFilledPolygon(getGdoImg(ctx), p, 3, gdAntiAliased);
+    }
 }
 
 
@@ -352,7 +388,12 @@ void gdoArc(struct ADrawTag *ctx,
             unsigned int s,
             unsigned int e)
 {
-    gdImageArc(getGdoImg(ctx), cx, cy, w, h, s, e, getGdoPen(ctx));
+
+    /* Range check since gdImageArc takes signed values */
+    if(cx <= INT_MAX && cy <= INT_MAX)
+    {
+        gdImageArc(getGdoImg(ctx), cx, cy, w, h, s, e, getGdoPen(ctx));
+    }
 }
 
 
@@ -364,8 +405,12 @@ void gdoDottedArc(struct ADrawTag *ctx,
                   unsigned int s,
                   unsigned int e)
 {
-    setStyle(ctx);
-    gdImageArc(getGdoImg(ctx), cx, cy, w, h, s, e, gdStyled);
+    /* Range check since gdImageArc takes signed values */
+    if(cx <= INT_MAX && cy <= INT_MAX)
+    {
+        setStyle(ctx);
+        gdImageArc(getGdoImg(ctx), cx, cy, w, h, s, e, gdStyled);
+    }
 }
 
 
@@ -429,10 +474,21 @@ Boolean gdoClose(struct ADrawTag *ctx)
 Boolean GdoInit(unsigned int     w,
                 unsigned int     h,
                 const char      *file,
-		const char      *fontName,
+                const char      *fontName,
                 struct ADrawTag *outContext)
 {
     GdoContext *context;
+
+    /* Range check the size */
+    if(w > INT_MAX || h > INT_MAX)
+    {
+        fprintf(stderr, "Warning: The output image size larger than can be supported for png; output\n"
+                        "         will be clipped.\n");
+    }
+
+    /* Clip image size to limits */
+    if(w > INT_MAX) w = INT_MAX;
+    if(h > INT_MAX) h = INT_MAX;
 
     /* Create context */
     context = outContext->internal = zalloc_s(sizeof(GdoContext));
