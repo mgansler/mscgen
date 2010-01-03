@@ -1093,8 +1093,8 @@ int main(const int argc, const char *argv[])
         gOutputFilePresent = TRUE;
         snprintf(gOutputFile, sizeof(gOutputFile), "%s", gInputFile);
         trimExtension(gOutputFile);
-        strncat(gOutputFile, ".", sizeof(gOutputFile));
-        strncat(gOutputFile, gOutType, sizeof(gOutputFile));
+        strncat(gOutputFile, ".", sizeof(gOutputFile) - (strlen(gOutputFile) + 1));
+        strncat(gOutputFile, gOutType, sizeof(gOutputFile) - (strlen(gOutputFile) + 1));
     }
 #ifdef USE_FREETYPE
     /* Check for an output font name from the environment */
