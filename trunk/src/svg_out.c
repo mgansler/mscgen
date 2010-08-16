@@ -480,11 +480,11 @@ Boolean SvgInit(unsigned int     w,
     fprintf(context->of, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n"
                          " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
 
-    fprintf(context->of, "<svg width=\"%upx\" height=\"%upx\" version=\"1.1\"\n"
-                         " viewbox=\"0 0 %u %u\"\n"
+    fprintf(context->of, "<svg version=\"1.1\"\n"
+                         " viewBox=\"0 0 %u %u\"\n"
                          " xmlns=\"http://www.w3.org/2000/svg\" shape-rendering=\"crispEdges\"\n"
                          " stroke-width=\"1\" text-rendering=\"geometricPrecision\">\n",
-                         w, h, w, h);
+                         w, h);
 
     /* Now fill in the function pointers */
     outContext->line            = SvgLine;
