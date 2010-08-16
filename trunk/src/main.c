@@ -86,10 +86,10 @@ typedef struct GlobalOptionsTag
     /** Vertical depth of the arrow heads. */
     unsigned int arrowHeight;
 
-    /** Horizontal gap between text and horizonal lines. */
+    /** Horizontal gap between text and horizontal lines. */
     unsigned int textHGapPre;
 
-    /** Horizontal gap between text and horizonal lines. */
+    /** Horizontal gap between text and horizontal lines. */
     unsigned int textHGapPost;
 }
 GlobalOptions;
@@ -135,7 +135,7 @@ static GlobalOptions gOpts =
 
     80,     /* entitySpacing */
     20,     /* entityHeadGap */
-    25,     /* arcSpacing */
+    26,     /* arcSpacing */
     0,      /* arcGradient */
     8,      /* boxSpacing */
     6,      /* rboxArc */
@@ -196,14 +196,15 @@ static void trimExtension(char *s)
 }
 
 /** Count the number of lines in some string.
- * This counts line breaks that are written as a litteral '\n' in the line.
+ * This counts line breaks that are written as a literal '\n' in the line to
+ * determine how many lines of output are needed.
  *
  * \param[in] l  Pointer to the input string to inspect.
- * \retuns       The count of lines that should be output for the given string.
+ * \returns      The count of '\n' characters appearing in the input string + 1.
  */
 static unsigned int countLines(const char *l)
 {
-    unsigned int c = 0;
+    unsigned int c = 1;
 
     do
     {
@@ -446,16 +447,16 @@ static void entityText(FILE             *ismap,
                        const char       *entIdUrl,
                        const char       *entColour)
 {
-    unsigned int lines = countLines(entLabel);
-    unsigned int l;
-    char         lineBuffer[1024];
+    const unsigned int lines = countLines(entLabel);
+    unsigned int       l;
+    char               lineBuffer[1024];
 
     if(entLabel)
     {
         /* Adjust y to be above the writing line */
-        y -= drw.textHeight(&drw) * lines;
+        y -= drw.textHeight(&drw) * (lines - 1);
 
-        for(l = 0; l < lines; l++)
+        for(l = 0; l < lines - 1; l++)
         {
             char         *lineLabel = getLine(entLabel, l, lineBuffer, sizeof(lineBuffer));
             unsigned int  width     = drw.textWidth(&drw, lineLabel);
@@ -545,7 +546,7 @@ static void computeCanvasSize(Msc m,
     {
         const MscArcType   arcType       = MscGetCurrentArcType(m);
         const char        *arcLabel      = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
-        const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) : 1;
+        const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) - 1 : 1;
 
         if(arcType == MSC_ARC_PARALLEL)
         {
@@ -556,9 +557,9 @@ static void computeCanvasSize(Msc m,
             if(addLines)
             {
                 ymin = nextYmin;
-                ymax = ymin + (gOpts.arcSpacing - 1);
+                ymax = ymin + gOpts.arcSpacing;
 
-                if(arcLabelLines > 2)
+                if(arcLabelLines > 1)
                 {
                     ymax += (arcLabelLines - 2) * textHeight;
                 }
@@ -576,7 +577,7 @@ static void computeCanvasSize(Msc m,
 }
 
 
-/** Draw vertical lines stemming from entites.
+/** Draw vertical lines stemming from entities.
  * This function will draw a single segment of the vertical line that
  * drops from an entity.
  * \param m          The \a Msc for which the lines are drawn
@@ -615,7 +616,7 @@ static void entityLines(Msc                m,
 
 
 
-/** Draw vertical lines and boxes stemming from entites.
+/** Draw vertical lines and boxes stemming from entities.
  * \param ymin          Top of the row.
  * \param ymax          Bottom of the row.
  * \param boxStart      Column in which the box starts.
@@ -727,7 +728,7 @@ static void entityBox(unsigned int       ymin,
  * \param arcId          The text identifier for the arc.
  * \param arcIdUrl       The URL for rendering the test identifier as a hyperlink.
  *                        This maybe \a NULL if not required.
- * \param arcTextColour  Colout for the arc text, or NULL to use default.
+ * \param arcTextColour  Colour for the arc text, or NULL to use default.
  * \param arcType        The type of arc, used to control output semantics.
  */
 static void arcText(Msc                m,
@@ -752,11 +753,11 @@ static void arcText(Msc                m,
     {
         char *lineLabel = getLine(arcLabel, l, lineBuffer, sizeof(lineBuffer));
         unsigned int y = ymin + (gOpts.arcSpacing / 2) +
-                          (l * drw.textHeight(&drw)) - l + 1;
+                          (l * drw.textHeight(&drw));
         unsigned int width = drw.textWidth(&drw, lineLabel);
         int x = ((startCol + endCol + 1) * gOpts.entitySpacing) / 2;
 
-        /* Discontinunity arcs have central text, otherwise the
+        /* Discontinuity arcs have central text, otherwise the
          *  label is above the rendered arc (or horizontally in the
          *  centre of a non-straight arc).
          */
@@ -1089,7 +1090,7 @@ int main(const int argc, const char *argv[])
         return EXIT_SUCCESS;
     }
 
-    /* Check that the ouput type was specified */
+    /* Check that the output type was specified */
     if(!gOutTypePresent)
     {
         fprintf(stderr, "-T <type> must be specified on the command line\n");
@@ -1282,7 +1283,7 @@ int main(const int argc, const char *argv[])
         unsigned int gap;
 
         /* Get the required gap */
-        gap = (lines + 1) * drw.textHeight(&drw);
+        gap = lines * drw.textHeight(&drw);
         if(gap > gOpts.entityHeadGap)
         {
             gOpts.entityHeadGap = gap;
@@ -1355,7 +1356,7 @@ int main(const int argc, const char *argv[])
         const char        *arcLineColour  = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
         const int          arcHasArrows   = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
         const int          arcHasBiArrows = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
-        const unsigned int arcLabelLines  = arcLabel ? countLines(arcLabel) : 1;
+        const unsigned int arcLabelLines  = arcLabel ? countLines(arcLabel) - 1 : 1;
         int                startCol, endCol;
 
         if(arcType == MSC_ARC_PARALLEL)
@@ -1368,15 +1369,15 @@ int main(const int argc, const char *argv[])
             if(addLines)
             {
                 ymin = nextYmin;
-                ymax = ymin + (gOpts.arcSpacing - 1);
+                ymax = ymin + gOpts.arcSpacing;
 
-                if(arcLabelLines > 2)
+                if(arcLabelLines > 1)
                 {
-                    ymax += ((arcLabelLines - 2) * drw.textHeight(&drw));
+                    ymax += (arcLabelLines - 2) * drw.textHeight(&drw);
                 }
             }
 
-            /* Get the entitiy indices */
+            /* Get the entity indices */
             if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
             {
                 startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
@@ -1446,7 +1447,7 @@ int main(const int argc, const char *argv[])
             }
             else
             {
-                /* Check if it is a box, discontinunity arc etc... */
+                /* Check if it is a box, discontinuity arc etc... */
                 if(isBoxArc(arcType))
                 {
                     if(addLines)

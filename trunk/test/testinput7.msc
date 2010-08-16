@@ -15,7 +15,7 @@
 msc {
 
    # The entities
-   A, B, C, "D";
+   A [label="A"], B [label="B1\nB2"], C [label="C1\nC2\nC3"], "D";
 
    # The relations
    |||;
@@ -26,8 +26,12 @@ msc {
    --- [label="multispan"];
    A rbox D [label="rbox"];
    B abox C [label="abox"];
-   B abox C [label="1\n2\n3"];
-   B abox C [label="Line 1\nLine 2\nLine 3"],
+   B abox C [label="Line 1\nLine 2"];
+   B abox C [label="Line 1\nLine 2\nLine 3"];
+   B abox C [label="Line 1\nLine 2\nLine 3\nLine 4"];
+   B abox C [label="Line 1\nLine 2\nLine 3\nLine 4\nLine 5"];
+   B abox C [label="Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6"];
+   B abox C [label="Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7"];
    A box A [label="Line1"];
    |||;
    |||;
