@@ -223,7 +223,7 @@ int gdoTextHeight(struct ADrawTag *ctx)
         exit(EXIT_FAILURE);
     }
 
-    return (-rect[5]) + 2;
+    return (-rect[5]) + 1;
 #endif
 }
 

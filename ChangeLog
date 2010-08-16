@@ -1,6 +1,9 @@
 0.xx:
       Fix bad strncat() use allowing possible overrun.
        Thanks to ensc42 and Neils for finding this.
+      Fix text rendering over the box edge in multiline labels.
+      Add patch to honour linecolour in boxes, issue #33.
+       Thanks to Neils for this patch.
 
 0.18:
       Fix multi-line labels causing multiple dividers ("---")
