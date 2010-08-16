@@ -621,12 +621,14 @@ static void entityLines(Msc                m,
  * \param boxStart      Column in which the box starts.
  * \param boxEnd        Column in which the box ends.
  * \param boxType       The type of box to draw, MSC_ARC_BOX, MSC_ARC_RBOX etc.
+ * \param lineColour    Colour of the lines to use for rendering the box.
  */
 static void entityBox(unsigned int       ymin,
                       unsigned int       ymax,
                       unsigned int       boxStart,
                       unsigned int       boxEnd,
-                      MscArcType         boxType)
+                      MscArcType         boxType,
+                      const char        *lineColour)
 {
     unsigned int t;
 
@@ -648,7 +650,16 @@ static void entityBox(unsigned int       ymin,
     /* Draw a while box to overwrite the entity lines */
     drw.setPen(&drw, ADRAW_COL_WHITE);
     drw.filledRectangle(&drw, x1, ymin, x2, ymax);
-    drw.setPen(&drw, ADRAW_COL_BLACK);
+
+    /* Setup the colour for rendering the boxes */
+    if(lineColour)
+    {
+        drw.setPen(&drw, ADrawGetColour(lineColour));
+    }
+    else
+    {
+        drw.setPen(&drw, ADRAW_COL_BLACK);
+    }
 
     /* Draw the outline */
     switch(boxType)
@@ -691,6 +702,12 @@ static void entityBox(unsigned int       ymin,
 
         default:
             assert(0);
+    }
+
+    /* Restore the pen colour if needed */
+    if(lineColour)
+    {
+        drw.setPen(&drw, ADRAW_COL_BLACK);
     }
 }
 
@@ -1436,7 +1453,7 @@ int main(const int argc, const char *argv[])
                     {
                         entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                     }
-                    entityBox(ymin, ymax, startCol, endCol, arcType);
+                    entityBox(ymin, ymax, startCol, endCol, arcType, arcLineColour);
                 }
                 else if(arcType == MSC_ARC_DISCO && addLines)
                 {
