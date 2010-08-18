@@ -43,6 +43,9 @@ typedef struct SvgContextTag
     /** Current pen colour name. */
     char        *penColName;
 
+    /** Current background pen colour name. */
+    char        *penBgColName;
+
     int          fontPoints;
 }
 SvgContext;
@@ -121,6 +124,11 @@ static char *getSvgPen(struct ADrawTag *ctx)
     return getSvgCtx(ctx)->penColName;
 }
 
+static char *getSvgBgPen(struct ADrawTag *ctx)
+{
+    return getSvgCtx(ctx)->penBgColName;
+}
+
 /** Given a font metric measurement, return device dependent units.
  * Font metric data is stored as 1/1000th of a point, and therefore
  * needs to be multiplied by the font point size and divided by
@@ -190,6 +198,49 @@ static void writeEscaped(struct ADrawTag *ctx, const char *string)
     }
 }
 
+
+
+static void svgRect(struct ADrawTag *ctx,
+                    const char      *colour,
+                    unsigned int     x1,
+                    unsigned int     y1,
+                    unsigned int     x2,
+                    unsigned int     y2)
+{
+    fprintf(getSvgFile(ctx),
+            "<polygon fill=\"%s\" points=\"%u,%u %u,%u %u,%u %u,%u\"/>\n",
+            colour,
+            x1, y1,
+            x2, y1,
+            x2, y2,
+            x1, y2);
+}
+
+static const char *svgColour(ADrawColour col)
+{
+    switch(col)
+    {
+        case ADRAW_COL_WHITE:
+            return "white";
+
+        case ADRAW_COL_BLACK:
+            return "black";
+
+        case ADRAW_COL_BLUE:
+            return "blue";
+
+        case ADRAW_COL_RED:
+            return "red";
+
+        case ADRAW_COL_GREEN:
+            return "green";
+
+        default:
+            return NULL;
+    }
+}
+
+
 /***************************************************************************
  * API Functions
  ***************************************************************************/
@@ -213,10 +264,12 @@ unsigned int SvgTextWidth(struct ADrawTag *ctx,
     return getSpace(ctx, width);
 }
 
+
 int SvgTextHeight(struct ADrawTag *ctx)
 {
     return getSpace(ctx, SvgHelvetica.ascender - SvgHelvetica.descender);
 }
+
 
 void SvgLine(struct ADrawTag *ctx,
              unsigned int     x1,
@@ -229,6 +282,7 @@ void SvgLine(struct ADrawTag *ctx,
             x1, y1, x2, y2, getSvgPen(ctx));
 
 }
+
 
 void SvgDottedLine(struct ADrawTag *ctx,
                    unsigned int     x1,
@@ -249,6 +303,8 @@ void SvgTextR(struct ADrawTag *ctx,
 {
     SvgContext *context = getSvgCtx(ctx);
 
+    svgRect(ctx, getSvgBgPen(ctx), x - 2, y - SvgTextHeight(ctx), x + SvgTextWidth(ctx, string), y - 1);
+
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
@@ -266,6 +322,8 @@ void SvgTextL(struct ADrawTag *ctx,
 {
     SvgContext *context = getSvgCtx(ctx);
 
+    svgRect(ctx, getSvgBgPen(ctx), x - (SvgTextWidth(ctx, string) + 2), y - SvgTextHeight(ctx), x, y - 1);
+
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
@@ -277,12 +335,16 @@ void SvgTextL(struct ADrawTag *ctx,
 
 }
 
+
 void SvgTextC(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
               const char      *string)
 {
-    SvgContext *context = getSvgCtx(ctx);
+    SvgContext  *context = getSvgCtx(ctx);
+    unsigned int hw = SvgTextWidth(ctx, string) / 2;
+
+    svgRect(ctx, getSvgBgPen(ctx), x - (hw + 2), y - SvgTextHeight(ctx), x + hw, y - 1);
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
@@ -293,22 +355,6 @@ void SvgTextC(struct ADrawTag *ctx,
     fprintf(getSvgFile(ctx), "\n</text>\n");
 }
 
-
-void SvgFilledRectangle(struct ADrawTag *ctx,
-                       unsigned int x1,
-                       unsigned int y1,
-                       unsigned int x2,
-                       unsigned int y2)
-{
-
-    fprintf(getSvgFile(ctx),
-            "<polygon fill=\"%s\" points=\"%u,%u %u,%u %u,%u %u,%u\"/>\n",
-            getSvgPen(ctx),
-            x1, y1,
-            x2, y1,
-            x2, y2,
-            x1, y2);
-}
 
 void SvgFilledTriangle(struct ADrawTag *ctx,
                        unsigned int x1,
@@ -325,6 +371,16 @@ void SvgFilledTriangle(struct ADrawTag *ctx,
             x1, y1,
             x2, y2,
             x3, y3);
+}
+
+
+void SvgFilledRectangle(struct ADrawTag *ctx,
+                        unsigned int x1,
+                        unsigned int y1,
+                        unsigned int x2,
+                        unsigned int y2)
+{
+    svgRect(ctx, getSvgPen(ctx), x1, y1, x2, y2);
 }
 
 
@@ -373,36 +429,31 @@ void SvgSetPen(struct ADrawTag *ctx,
 {
     static char colCmd[10];
 
-    switch(col)
+    getSvgCtx(ctx)->penColName = svgColour(col);
+    if(getSvgCtx(ctx)->penColName == NULL)
     {
-        case ADRAW_COL_WHITE:
-            getSvgCtx(ctx)->penColName = "white";
-            break;
+        /* Print the RGB value into the local storage */
+        sprintf(colCmd, "#%06X", col);
 
-        case ADRAW_COL_BLACK:
-            getSvgCtx(ctx)->penColName = "black";
-            break;
+        /* Now set the colour name to the local store */
+        getSvgCtx(ctx)->penColName = colCmd;
+    }
+}
 
-        case ADRAW_COL_BLUE:
-            getSvgCtx(ctx)->penColName = "blue";
-            break;
 
-        case ADRAW_COL_RED:
-            getSvgCtx(ctx)->penColName = "red";
-            break;
+void SvgSetBgPen(struct ADrawTag *ctx,
+                 ADrawColour      col)
+{
+    static char colCmd[10];
 
-        case ADRAW_COL_GREEN:
-            getSvgCtx(ctx)->penColName = "green";
-            break;
+    getSvgCtx(ctx)->penBgColName = svgColour(col);
+    if(getSvgCtx(ctx)->penBgColName == NULL)
+    {
+        /* Print the RGB value into the local storage */
+        sprintf(colCmd, "#%06X", col);
 
-        default:
-
-            /* Print the RGB value into the local storage */
-            sprintf(colCmd, "#%06X", col);
-
-            /* Now set the colour name to the local store */
-            getSvgCtx(ctx)->penColName = colCmd;
-            break;
+        /* Now set the colour name to the local store */
+        getSvgCtx(ctx)->penBgColName = colCmd;
     }
 }
 
@@ -473,6 +524,7 @@ Boolean SvgInit(unsigned int     w,
 
     /* Set the initial pen state */
     SvgSetPen(outContext, ADRAW_COL_BLACK);
+    SvgSetBgPen(outContext, ADRAW_COL_WHITE);
 
     /* Default to small font */
     SvgSetFontSize(outContext, ADRAW_FONT_SMALL);
@@ -499,6 +551,7 @@ Boolean SvgInit(unsigned int     w,
     outContext->arc             = SvgArc;
     outContext->dottedArc       = SvgDottedArc;
     outContext->setPen          = SvgSetPen;
+    outContext->setBgPen        = SvgSetBgPen;
     outContext->setFontSize     = SvgSetFontSize;
     outContext->close           = SvgClose;
 

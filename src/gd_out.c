@@ -73,6 +73,9 @@ typedef struct GdoContextTag
     /** The current pen for GD. */
     int         pen;
 
+    /** Background colour for rendering text. */
+    int         bgpen;
+
     FILE       *outFile;
 }
 GdoContext;
@@ -282,7 +285,7 @@ void gdoTextR(struct ADrawTag *ctx,
                               y - (gdoTextHeight(ctx) - 1),
                               x + textWidth,
                               y - 2,
-                              getColourRef(context, ADRAW_COL_WHITE));
+                              context->bgpen);
 
 #ifdef USE_FREETYPE
         r = gdImageStringFT(getGdoImg(ctx),
@@ -292,7 +295,7 @@ void gdoTextR(struct ADrawTag *ctx,
                             context->fontPoints,
                             0,
                             x, y - 2,
-                          (char *)string);
+                            (char *)string);
 
         if(r)
         {
@@ -414,12 +417,21 @@ void gdoDottedArc(struct ADrawTag *ctx,
 }
 
 
-void gdoSetPen (struct ADrawTag *ctx,
-                ADrawColour      col)
+void gdoSetPen(struct ADrawTag *ctx,
+               ADrawColour      col)
 {
     GdoContext *context = getGdoCtx(ctx);;
 
     context->pen = getColourRef(context, col);
+}
+
+
+void gdoSetBgPen(struct ADrawTag *ctx,
+                 ADrawColour      col)
+{
+    GdoContext *context = getGdoCtx(ctx);;
+
+    context->bgpen = getColourRef(context, col);
 }
 
 
@@ -523,8 +535,9 @@ Boolean GdoInit(unsigned int     w,
                            w, h,
                            getColourRef(context, ADRAW_COL_WHITE));
 
-    /* Set pen colour to black */
-    context->pen = getColourRef(context, ADRAW_COL_BLACK);
+    /* Set pen colour to black and background to white */
+    context->pen   = getColourRef(context, ADRAW_COL_BLACK);
+    context->bgpen = getColourRef(context, ADRAW_COL_WHITE);
 
     /* Get the default font size */
     gdoSetFontSize(outContext, ADRAW_FONT_SMALL);
@@ -542,6 +555,7 @@ Boolean GdoInit(unsigned int     w,
     outContext->arc             = gdoArc;
     outContext->dottedArc       = gdoDottedArc;
     outContext->setPen          = gdoSetPen;
+    outContext->setBgPen        = gdoSetBgPen;
     outContext->setFontSize     = gdoSetFontSize;
     outContext->close           = gdoClose;
 
