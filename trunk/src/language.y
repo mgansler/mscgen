@@ -69,7 +69,8 @@ void yyerror(const char *str)
                                       "TOK_OPT_HSCALE",         "TOK_ASTERISK",
                                       "TOK_OPT_WIDTH",          "TOK_ARC_BOX",
                                       "TOK_ARC_ABOX",           "TOK_ARC_RBOX",
-                                      "TOK_ATTR_TEXT_BGCOLOUR", "TOK_ATTR_ARC_TEXT_BGCOLOUR" };
+                                      "TOK_ATTR_TEXT_BGCOLOUR", "TOK_ATTR_ARC_TEXT_BGCOLOUR",
+                                      "TOK_REL_LOSS_TO",        "TOK_REL_LOSS_FROM" };
 
     static const char *tokRepl[] =  { "{",             "}",
                                       "[",             "]",
@@ -90,7 +91,8 @@ void yyerror(const char *str)
                                       "hscale",        "'*'",
                                       "width",         "box",
                                       "abox",          "rbox",
-                                      "textbgcolour",  "arctextbgcolor" };
+                                      "textbgcolour",  "arctextbgcolor",
+                                      "-x",            "x-" };
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 
     char *s;
@@ -201,6 +203,7 @@ Msc MscParse(FILE *in)
        TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL
        TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR TOK_ATTR_TEXT_BGCOLOUR
        TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR TOK_ATTR_ARC_TEXT_BGCOLOUR
+       TOK_REL_LOSS_TO TOK_REL_LOSS_FROM
        TOK_REL_SIG_BI      TOK_REL_SIG_TO      TOK_REL_SIG_FROM
        TOK_REL_METHOD_BI   TOK_REL_METHOD_TO   TOK_REL_METHOD_FROM
        TOK_REL_RETVAL_BI   TOK_REL_RETVAL_TO   TOK_REL_RETVAL_FROM
@@ -239,8 +242,9 @@ Msc MscParse(FILE *in)
                    TOK_REL_SIG_BI TOK_REL_METHOD_BI TOK_REL_RETVAL_BI TOK_REL_CALLBACK_BI
                    TOK_REL_SIG_TO TOK_REL_METHOD_TO TOK_REL_RETVAL_TO TOK_REL_CALLBACK_TO TOK_REL_DOUBLE_BI
                    TOK_REL_SIG_FROM TOK_REL_METHOD_FROM TOK_REL_RETVAL_FROM TOK_REL_CALLBACK_FROM
-                   TOK_REL_DOUBLE_TO TOK_REL_DOUBLE_FROM TOK_SPECIAL_ARC
-                   TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX
+                   TOK_REL_DOUBLE_TO TOK_REL_DOUBLE_FROM
+                   TOK_REL_LOSS_TO TOK_REL_LOSS_FROM
+                   TOK_SPECIAL_ARC TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX
                    TOK_REL_SIG TOK_REL_METHOD TOK_REL_RETVAL TOK_REL_DOUBLE
 %type <attrib>     attrlist attr
 %type <attribType> attrval
@@ -361,8 +365,8 @@ arcrel:       TOK_SPECIAL_ARC
 relation_box:  TOK_REL_BOX | TOK_REL_ABOX | TOK_REL_RBOX;
 relation_line: TOK_REL_SIG | TOK_REL_METHOD | TOK_REL_RETVAL | TOK_REL_DOUBLE;
 relation_bi:   TOK_REL_SIG_BI | TOK_REL_METHOD_BI | TOK_REL_RETVAL_BI | TOK_REL_CALLBACK_BI | TOK_REL_DOUBLE_BI;
-relation_to:   TOK_REL_SIG_TO | TOK_REL_METHOD_TO | TOK_REL_RETVAL_TO | TOK_REL_CALLBACK_TO | TOK_REL_DOUBLE_TO;
-relation_from: TOK_REL_SIG_FROM | TOK_REL_METHOD_FROM | TOK_REL_RETVAL_FROM | TOK_REL_CALLBACK_FROM | TOK_REL_DOUBLE_FROM;
+relation_to:   TOK_REL_SIG_TO | TOK_REL_METHOD_TO | TOK_REL_RETVAL_TO | TOK_REL_CALLBACK_TO | TOK_REL_DOUBLE_TO | TOK_REL_LOSS_TO;
+relation_from: TOK_REL_SIG_FROM | TOK_REL_METHOD_FROM | TOK_REL_RETVAL_FROM | TOK_REL_CALLBACK_FROM | TOK_REL_DOUBLE_FROM | TOK_REL_LOSS_FROM;
 
 attrlist:    attr
            | attrlist TOK_COMMA attr

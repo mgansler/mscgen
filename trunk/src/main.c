@@ -933,7 +933,7 @@ static void arcLine(Msc               m,
                     unsigned int      startCol,
                     unsigned int      endCol,
                     const char       *arcLineCol,
-                    const int         hasArrows,
+                    int               hasArrows,
                     const int         hasBiArrows,
                     const MscArcType  arcType)
 {
@@ -960,6 +960,17 @@ static void arcLine(Msc               m,
         {
             drw.line(&drw, sx, y - 1, dx, y - 1 + gOpts.arcGradient);
             drw.line(&drw, sx, y + 1, dx, y + 1 + gOpts.arcGradient);
+        }
+        else if(arcType == MSC_ARC_LOSS)
+        {
+            signed int   span = dx - sx;
+            unsigned int mx = sx + (span / 4) * 3;
+
+            drw.line(&drw, sx, y, mx, y + gOpts.arcGradient);
+            hasArrows = 0;
+
+            drw.line(&drw, mx - 4, y + gOpts.arcGradient - 4, mx + 4, y + gOpts.arcGradient + 4);
+            drw.line(&drw, mx + 4, y + gOpts.arcGradient - 4, mx - 4, y + gOpts.arcGradient + 4);
         }
         else
         {
@@ -1018,11 +1029,28 @@ static void arcLine(Msc               m,
                     90,
                     270);
         }
+        else if(arcType == MSC_ARC_LOSS)
+        {
+            unsigned int mx = sx - (gOpts.entitySpacing / 2) + 4;
+
+            drw.arc(&drw,
+                    sx, y - 1,
+                    gOpts.entitySpacing - 8,
+                    gOpts.arcSpacing / 2,
+                    180,
+                    270);
+
+            hasArrows = 0;
+
+            /* Draw a cross */
+            drw.line(&drw, mx - 4, y - 5, mx + 4, y + 3);
+            drw.line(&drw, mx + 4, y - 5, mx - 4, y + 3);
+        }
         else
         {
             drw.arc(&drw,
                     sx, y,
-                    gOpts.entitySpacing,
+                    gOpts.entitySpacing - 4,
                     gOpts.arcSpacing / 2,
                     90,
                     270);
@@ -1059,6 +1087,23 @@ static void arcLine(Msc               m,
                     gOpts.arcSpacing / 2,
                     270,
                     90);
+        }
+        else if(arcType == MSC_ARC_LOSS)
+        {
+            unsigned int mx = sx + (gOpts.entitySpacing / 2) - 4;
+
+            drw.arc(&drw,
+                    sx, y - 1,
+                    gOpts.entitySpacing - 8,
+                    gOpts.arcSpacing / 2,
+                    270,
+                    0);
+
+            hasArrows = 0;
+
+            /* Draw a cross */
+            drw.line(&drw, mx - 4, y - 5, mx + 4, y + 3);
+            drw.line(&drw, mx + 4, y - 5, mx - 4, y + 3);
         }
         else
         {

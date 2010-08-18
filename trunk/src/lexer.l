@@ -78,6 +78,8 @@ ARCTEXTBGCOLO(U?)R|arctextbgcolo(u?)r yylval.attribType = MSC_ATTR_ARC_TEXT_BGCO
 -\>                                   yylval.arctype = MSC_ARC_SIGNAL;   return TOK_REL_SIG_TO;         /* -> */
 \<-                                   yylval.arctype = MSC_ARC_SIGNAL;   return TOK_REL_SIG_FROM;       /* <- */
 --                                    yylval.arctype = MSC_ARC_SIGNAL;   return TOK_REL_SIG;            /* -- */
+-[Xx]                                 yylval.arctype = MSC_ARC_LOSS;     return TOK_REL_LOSS_TO;        /* -x */
+[Xx]-                                 yylval.arctype = MSC_ARC_LOSS;     return TOK_REL_LOSS_FROM;      /* x- */
 \<=\>                                 yylval.arctype = MSC_ARC_METHOD;   return TOK_REL_METHOD_BI;      /* <=> */
 =\>                                   yylval.arctype = MSC_ARC_METHOD;   return TOK_REL_METHOD_TO;      /* => */
 \<=                                   yylval.arctype = MSC_ARC_METHOD;   return TOK_REL_METHOD_FROM;    /* <= */

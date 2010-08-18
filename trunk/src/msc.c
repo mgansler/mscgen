@@ -441,17 +441,18 @@ const char *MscPrettyAttribType(MscAttribType t)
 {
     switch(t)
     {
-        case MSC_ATTR_LABEL:           return "label";
-        case MSC_ATTR_URL:             return "url";
-        case MSC_ATTR_ID:              return "id";
-        case MSC_ATTR_IDURL:           return "idurl";
-        case MSC_ATTR_TEXT_BGCOLOUR:   return "textbgcolour";
-        case MSC_ATTR_LINE_COLOUR:     return "linecolour";
-        case MSC_ATTR_TEXT_COLOUR:     return "textcolour";
-        case MSC_ATTR_ARC_LINE_COLOUR: return "arvlinecolour";
-        case MSC_ATTR_ARC_TEXT_COLOUR: return "arctextcolour";
-        case MSC_ATTR_NO_ARROWS:       return "noarrows";
-        case MSC_ATTR_BI_ARROWS:       return "biarrows";
+        case MSC_ATTR_LABEL:             return "label";
+        case MSC_ATTR_URL:               return "url";
+        case MSC_ATTR_ID:                return "id";
+        case MSC_ATTR_IDURL:             return "idurl";
+        case MSC_ATTR_LINE_COLOUR:       return "linecolour";
+        case MSC_ATTR_TEXT_COLOUR:       return "textcolour";
+        case MSC_ATTR_TEXT_BGCOLOUR:     return "textbgcolour";
+        case MSC_ATTR_ARC_LINE_COLOUR:   return "arclinecolour";
+        case MSC_ATTR_ARC_TEXT_COLOUR:   return "arctextcolour";
+        case MSC_ATTR_ARC_TEXT_BGCOLOUR: return "arctextbgcolour";
+        case MSC_ATTR_NO_ARROWS:         return "noarrows";
+        case MSC_ATTR_BI_ARROWS  :       return "biarrows";
         default:
             return "<unknown>";
     }
