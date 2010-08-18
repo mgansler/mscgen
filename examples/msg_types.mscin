@@ -37,6 +37,10 @@ A<=B [label="method"];
 A>>B [label="return"];
 A<<B [label="return"];
 
+A -X B [label="loss"];
+A X- B [label="loss"];
+
+
 A=>>B [label="call-back"];
 A<<=B [label="call-back", URL="www.google.com"];
 
@@ -55,6 +59,9 @@ A<<A [label="return"];
 A=>>A [label="call-back"];
 A<<=A [label="call-back", URL="www.google.com", ID="3"];
 
+A -X A [label="loss"];
+A X- A [label="loss"];
+
 --- [label="Right arcs"];
 
 B->B [label="signal"];
@@ -69,6 +76,10 @@ B<<B [label="return"];
 
 B=>>B [label="call-back", ID="4"];
 B<<=B [label="call-back", URL="www.google.com"];
+
+B -X B [label="loss"];
+B X- B [label="loss"];
+
 
 --- [label="End of arcs", URL="www.google.com"];
 

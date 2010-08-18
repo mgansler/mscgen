@@ -1,17 +1,18 @@
 0.xx:
       Fix bad strncat() use allowing possible overrun.
        Thanks to ensc42 and Neils for finding this.
-      Fix text rendering over the box edge in multiline labels.
-      Add patch to honour linecolour in boxes, issue #33.
-       Thanks to Neils for this patch.
-
-0.18:
       Fix multi-line labels causing multiple dividers ("---")
        Thanks to llucax for the report, issue #31.
-      Add support for arrowless arcs and bi-directional arrows as requested 
+      Add support for arrowless arcs and bi-directional arrows as requested
        by xmlscott and started by Niels.  Can now use arrows such as <->, <=>
        for bidirectional arrows, --, ==, .. etc... for arcs without arrows.
        Issue #29.
+      Fix text rendering over the box edge in multiline labels.
+      Add patch to honour linecolour in boxes, issue #33.
+       Thanks to Neils for this patch.
+      Add support for textbgcolour and arctextbgcolour to set the background
+       colour for text in an entity or on an arc.
+      Add support for -X and X- arcs which indicate a lost message.
 
 0.17: 31/08/2009
       Change the command line parser so a space is not needed to split
@@ -32,7 +33,7 @@
       Remove the win32 version of gd from the packaging, and use pkg-conf to
        file/setup build for libgd.  Also add --without-png option to configure.
        [Again, thanks to Neils for suggestions and patches on this]
-      Fix ignoring of arc line colour attribute unless a text colour was also 
+      Fix ignoring of arc line colour attribute unless a text colour was also
        given, issue #23.
        [Thanks to dunbar.ian for reporting, Neils for finding the bug]
       Apply patches to simplify installation of examples and increase install
