@@ -160,6 +160,7 @@ Boolean NullInit(struct ADrawTag *outContext)
     outContext->arc             = NullArc;
     outContext->dottedArc       = NullDottedArc;
     outContext->setPen          = NullSetPen;
+    outContext->setBgPen        = NullSetPen;
     outContext->setFontSize     = NullSetFontSize;
     outContext->close           = NullClose;
 

@@ -425,18 +425,20 @@ static void arrowL(unsigned int x,
 
 /** Render some entity text.
  * Draw the text for some entity.
- * \param  ismap     If not \a NULL, write an ismap description here.
- * \param  x         The x position at which the entity text should be centered.
- * \param  y         The y position where the text should be placed
- * \param  entLabel  The label to render, which maybe \a NULL in which case
- *                     no ouput is produced.
- * \param  entUrl    The URL for rendering the label as a hyperlink.  This
- *                     maybe \a NULL if not required.
- * \param  entId     The text identifier for the arc.
- * \param  entIdUrl  The URL for rendering the test identifier as a hyperlink.
- *                     This maybe \a NULL if not required.
- * \param  entColour The text colour name or specification for the entity text.
- *                    If NULL, use default colouring scheme.
+ * \param  ismap       If not \a NULL, write an ismap description here.
+ * \param  x           The x position at which the entity text should be centered.
+ * \param  y           The y position where the text should be placed
+ * \param  entLabel    The label to render, which maybe \a NULL in which case
+ *                       no ouput is produced.
+ * \param  entUrl      The URL for rendering the label as a hyperlink.  This
+ *                       maybe \a NULL if not required.
+ * \param  entId       The text identifier for the arc.
+ * \param  entIdUrl    The URL for rendering the test identifier as a hyperlink.
+ *                       This maybe \a NULL if not required.
+ * \param  entColour   The text colour name or specification for the entity text.
+ *                      If NULL, use default colouring scheme.
+ * \param  entBgColour The text background colour name or specification for the
+ *                      entity text. If NULL, use default colouring scheme.
  */
 static void entityText(FILE             *ismap,
                        unsigned int      x,
@@ -445,7 +447,8 @@ static void entityText(FILE             *ismap,
                        const char       *entUrl,
                        const char       *entId,
                        const char       *entIdUrl,
-                       const char       *entColour)
+                       const char       *entColour,
+                       const char       *entBgColour)
 {
     const unsigned int lines = countLines(entLabel);
     unsigned int       l;
@@ -477,15 +480,21 @@ static void entityText(FILE             *ismap,
                           x + (width / 2), y);
             }
 
-            /* Set to the explicit colour if directed */
+            /* Set to the explicit colours if directed */
             if(entColour != NULL)
             {
                 drw.setPen(&drw, ADrawGetColour(entColour));
             }
 
+            if(entBgColour != NULL)
+            {
+                drw.setBgPen(&drw, ADrawGetColour(entBgColour));
+            }
+
             /* Render text and restore pen */
             drw.textC (&drw, x, y, lineLabel);
             drw.setPen(&drw, ADRAW_COL_BLACK);
+            drw.setBgPen(&drw, ADRAW_COL_WHITE);
 
             /* Render the Id of the title, if specified and for first line only */
             if(entId && l == 0)
@@ -729,6 +738,7 @@ static void entityBox(unsigned int       ymin,
  * \param arcIdUrl       The URL for rendering the test identifier as a hyperlink.
  *                        This maybe \a NULL if not required.
  * \param arcTextColour  Colour for the arc text, or NULL to use default.
+ * \param arcTextColour  Colour for the arc text backgroun, or NULL to use default.
  * \param arcType        The type of arc, used to control output semantics.
  */
 static void arcText(Msc                m,
@@ -743,6 +753,7 @@ static void arcText(Msc                m,
                     const char        *arcId,
                     const char        *arcIdUrl,
                     const char        *arcTextColour,
+                    const char        *arcTextBgColour,
                     const char        *arcLineColour,
                     const MscArcType   arcType)
 {
@@ -809,15 +820,22 @@ static void arcText(Msc                m,
         }
 
 
-        /* Set to the explicit colour if directed */
+        /* Set to the explicit colours if directed */
         if(arcTextColour != NULL)
         {
             drw.setPen(&drw, ADrawGetColour(arcTextColour));
         }
 
+        if(arcTextBgColour != NULL)
+        {
+            drw.setBgPen(&drw, ADrawGetColour(arcTextBgColour));
+        }
+
+
         /* Render text and restore pen */
         drw.textR (&drw, x, y, lineLabel);
         drw.setPen(&drw, ADRAW_COL_BLACK);
+        drw.setBgPen(&drw, ADRAW_COL_WHITE);
 
         /* Render the Id of the arc, if specified and for the first line*/
         if(arcId && l == 0)
@@ -1323,7 +1341,8 @@ int main(const int argc, const char *argv[])
                    MscGetCurrentEntAttrib(m, MSC_ATTR_URL),
                    MscGetCurrentEntAttrib(m, MSC_ATTR_ID),
                    MscGetCurrentEntAttrib(m, MSC_ATTR_IDURL),
-                   MscGetCurrentEntAttrib(m, MSC_ATTR_TEXT_COLOUR));
+                   MscGetCurrentEntAttrib(m, MSC_ATTR_TEXT_COLOUR),
+                   MscGetCurrentEntAttrib(m, MSC_ATTR_TEXT_BGCOLOUR));
 
         /* Get the colours */
         line = MscGetCurrentEntAttrib(m, MSC_ATTR_LINE_COLOUR);
@@ -1347,16 +1366,17 @@ int main(const int argc, const char *argv[])
     MscResetArcIterator(m);
     do
     {
-        const MscArcType   arcType        = MscGetCurrentArcType(m);
-        const char        *arcUrl         = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
-        const char        *arcLabel       = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
-        const char        *arcId          = MscGetCurrentArcAttrib(m, MSC_ATTR_ID);
-        const char        *arcIdUrl       = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
-        const char        *arcTextColour  = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
-        const char        *arcLineColour  = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
-        const int          arcHasArrows   = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
-        const int          arcHasBiArrows = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
-        const unsigned int arcLabelLines  = arcLabel ? countLines(arcLabel) - 1 : 1;
+        const MscArcType   arcType         = MscGetCurrentArcType(m);
+        const char        *arcUrl          = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
+        const char        *arcLabel        = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
+        const char        *arcId           = MscGetCurrentArcAttrib(m, MSC_ATTR_ID);
+        const char        *arcIdUrl        = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
+        const char        *arcTextColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
+        const char        *arcTextBgColour = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_BGCOLOUR);
+        const char        *arcLineColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
+        const int          arcHasArrows    = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
+        const int          arcHasBiArrows  = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
+        const unsigned int arcLabelLines   = arcLabel ? countLines(arcLabel) - 1 : 1;
         int                startCol, endCol;
 
         if(arcType == MSC_ARC_PARALLEL)
@@ -1405,6 +1425,11 @@ int main(const int argc, const char *argv[])
                 if(arcTextColour == NULL)
                 {
                     arcTextColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_TEXT_COLOUR);
+                }
+
+                if(arcTextBgColour == NULL)
+                {
+                    arcTextBgColour = MscGetEntAttrib(m, startCol, MSC_ATTR_ARC_TEXT_BGCOLOUR);
                 }
 
                 if(arcLineColour == NULL)
@@ -1484,7 +1509,7 @@ int main(const int argc, const char *argv[])
                 arcText(m, ismap, w, ymin,
                         startCol, endCol, arcLabel, arcLabelLines,
                         arcUrl, arcId, arcIdUrl,
-                        arcTextColour, arcLineColour, arcType);
+                        arcTextColour, arcTextBgColour, arcLineColour, arcType);
             }
 
             addLines = TRUE;

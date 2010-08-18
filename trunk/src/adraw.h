@@ -224,6 +224,9 @@ typedef struct ADrawTag
     void         (*setPen)        (struct ADrawTag *ctx,
                                    ADrawColour col);
 
+    void         (*setBgPen)      (struct ADrawTag *ctx,
+                                   ADrawColour col);
+
     void         (*setFontSize)   (struct ADrawTag *ctx,
                                    ADrawFontSize size);
 

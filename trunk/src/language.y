@@ -50,25 +50,26 @@ unsigned long lex_getlinenum(void);
  */
 void yyerror(const char *str)
 {
-    static const char *tokNames[] = { "TOK_OCBRACKET",        "TOK_CCBRACKET",
-                                      "TOK_OSBRACKET",        "TOK_CSBRACKET",
-                                      "TOK_REL_DOUBLE_TO",    "TOK_REL_DOUBLE_FROM",
-                                      "TOK_REL_SIG_TO",       "TOK_REL_SIG_FROM",
-                                      "TOK_REL_METHOD_TO",    "TOK_REL_METHOD_FROM",
-                                      "TOK_REL_RETVAL_TO",    "TOK_REL_RETVAL_FROM",
-                                      "TOK_REL_CALLBACK_TO",  "TOK_REL_CALLBACK_FROM",
-                                      "TOK_REL_SIG",          "TOK_REL_METHOD",
-                                      "TOK_REL_RETVAL",       "TOK_REL_DOUBLE",
-                                      "TOK_EQUAL",            "TOK_COMMA",
-                                      "TOK_SEMICOLON",        "TOK_MSC",
-                                      "TOK_ATTR_LABEL",       "TOK_ATTR_URL",
-                                      "TOK_ATTR_IDURL",       "TOK_ATTR_ID",
-                                      "TOK_ATTR_LINE_COLOUR", "TOK_ATTR_TEXT_COLOUR",
-                                      "TOK_SPECIAL_ARC",      "TOK_UNKNOWN",
-                                      "TOK_STRING",           "TOK_QSTRING",
-                                      "TOK_OPT_HSCALE",       "TOK_ASTERISK",
-                                      "TOK_OPT_WIDTH",        "TOK_ARC_BOX",
-                                      "TOK_ARC_ABOX",         "TOK_ARC_RBOX" };
+    static const char *tokNames[] = { "TOK_OCBRACKET",          "TOK_CCBRACKET",
+                                      "TOK_OSBRACKET",          "TOK_CSBRACKET",
+                                      "TOK_REL_DOUBLE_TO",      "TOK_REL_DOUBLE_FROM",
+                                      "TOK_REL_SIG_TO",         "TOK_REL_SIG_FROM",
+                                      "TOK_REL_METHOD_TO",      "TOK_REL_METHOD_FROM",
+                                      "TOK_REL_RETVAL_TO",      "TOK_REL_RETVAL_FROM",
+                                      "TOK_REL_CALLBACK_TO",    "TOK_REL_CALLBACK_FROM",
+                                      "TOK_REL_SIG",            "TOK_REL_METHOD",
+                                      "TOK_REL_RETVAL",         "TOK_REL_DOUBLE",
+                                      "TOK_EQUAL",              "TOK_COMMA",
+                                      "TOK_SEMICOLON",          "TOK_MSC",
+                                      "TOK_ATTR_LABEL",         "TOK_ATTR_URL",
+                                      "TOK_ATTR_IDURL",         "TOK_ATTR_ID",
+                                      "TOK_ATTR_LINE_COLOUR",   "TOK_ATTR_TEXT_COLOUR",
+                                      "TOK_SPECIAL_ARC",        "TOK_UNKNOWN",
+                                      "TOK_STRING",             "TOK_QSTRING",
+                                      "TOK_OPT_HSCALE",         "TOK_ASTERISK",
+                                      "TOK_OPT_WIDTH",          "TOK_ARC_BOX",
+                                      "TOK_ARC_ABOX",           "TOK_ARC_RBOX",
+                                      "TOK_ATTR_TEXT_BGCOLOUR", "TOK_ATTR_ARC_TEXT_BGCOLOUR" };
 
     static const char *tokRepl[] =  { "{",             "}",
                                       "[",             "]",
@@ -88,7 +89,8 @@ void yyerror(const char *str)
                                       "string",        "quoted string",
                                       "hscale",        "'*'",
                                       "width",         "box",
-                                      "abox",          "rbox" };
+                                      "abox",          "rbox",
+                                      "textbgcolour",  "arctextbgcolor" };
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 
     char *s;
@@ -196,8 +198,9 @@ Msc MscParse(FILE *in)
 
 %token TOK_STRING TOK_QSTRING TOK_EQUAL TOK_COMMA TOK_SEMICOLON TOK_OCBRACKET TOK_CCBRACKET
        TOK_OSBRACKET TOK_CSBRACKET TOK_MSC
-       TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR
-       TOK_ATTR_TEXT_BGCOLOUR TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR
+       TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL
+       TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR TOK_ATTR_TEXT_BGCOLOUR
+       TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR TOK_ATTR_ARC_TEXT_BGCOLOUR
        TOK_REL_SIG_BI      TOK_REL_SIG_TO      TOK_REL_SIG_FROM
        TOK_REL_METHOD_BI   TOK_REL_METHOD_TO   TOK_REL_METHOD_FROM
        TOK_REL_RETVAL_BI   TOK_REL_RETVAL_TO   TOK_REL_RETVAL_FROM
@@ -240,7 +243,10 @@ Msc MscParse(FILE *in)
                    TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX
                    TOK_REL_SIG TOK_REL_METHOD TOK_REL_RETVAL TOK_REL_DOUBLE
 %type <attrib>     attrlist attr
-%type <attribType> attrval TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR;
+%type <attribType> attrval
+                   TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL
+                   TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR TOK_ATTR_TEXT_BGCOLOUR
+                   TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR  TOK_ATTR_ARC_TEXT_BGCOLOUR
 %type <string>     string TOK_STRING TOK_QSTRING
 
 
@@ -369,8 +375,9 @@ attr:         attrval TOK_EQUAL string
     $$ = MscAllocAttrib($1, $3);
 };
 
-attrval:      TOK_ATTR_LABEL | TOK_ATTR_URL | TOK_ATTR_ID | TOK_ATTR_IDURL | TOK_ATTR_LINE_COLOUR | TOK_ATTR_TEXT_COLOUR |
-              TOK_ATTR_ARC_LINE_COLOUR | TOK_ATTR_ARC_TEXT_COLOUR;
+attrval:      TOK_ATTR_LABEL | TOK_ATTR_URL | TOK_ATTR_ID | TOK_ATTR_IDURL |
+              TOK_ATTR_LINE_COLOUR | TOK_ATTR_TEXT_COLOUR | TOK_ATTR_TEXT_BGCOLOUR |
+              TOK_ATTR_ARC_LINE_COLOUR | TOK_ATTR_ARC_TEXT_COLOUR | TOK_ATTR_ARC_TEXT_BGCOLOUR;
 
 
 string: TOK_QSTRING

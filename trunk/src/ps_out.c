@@ -52,6 +52,9 @@ typedef struct PsContextTag
 
     /** Current pen colour. */
     ADrawColour  penColour;
+
+    /** Background colour for the pen. */
+    ADrawColour  penBgColour;
 }
 PsContext;
 
@@ -165,6 +168,25 @@ static void writeEscaped(struct ADrawTag *ctx, const char *string)
     }
 }
 
+static void setColour(struct ADrawTag *ctx,
+                      ADrawColour      col)
+{
+    float r, g, b;
+
+    /* Extract RGB values */
+    r = (col & 0xff0000) >> 16;
+    g = (col & 0x00ff00) >>  8;
+    b = (col & 0x0000ff) >>  0;
+
+    /* Normalise */
+    r /= 255.0f;
+    g /= 255.0f;
+    b /= 255.0f;
+
+    /* Generate output command */
+    fprintf(getPsFile(ctx), "%f %f %f setrgbcolor\n", r ,g ,b);
+}
+
 /***************************************************************************
  * API Functions
  ***************************************************************************/
@@ -220,16 +242,56 @@ void PsDottedLine(struct ADrawTag *ctx,
 }
 
 
+void PsFilledRectangle(struct ADrawTag *ctx,
+                       unsigned int     x1,
+                       unsigned int     y1,
+                       unsigned int     x2,
+                       unsigned int     y2)
+{
+    fprintf(getPsFile(ctx),
+            "newpath "
+            "%d %d moveto "
+            "%d %d lineto "
+            "%d %d lineto "
+            "%d %d lineto "
+            "closepath "
+            "fill\n",
+            x1, -y1,
+            x2, -y1,
+            x2, -y2,
+            x1, -y2);
+}
+
+
 void PsTextR(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
               const char      *string)
 {
-    fprintf(getPsFile(ctx),
-            "%d %d moveto (",
-            x, -y - getSpace(ctx, PsHelvetica.descender));
+    PsContext *context = getPsCtx(ctx);
+
+    /* Push the string and get its width */
+    fprintf(getPsFile(ctx), "(");
     writeEscaped(ctx, string);
-    fprintf(getPsFile(ctx), ") show\n");
+    fprintf(getPsFile(ctx), ") dup stringwidth\n");
+
+    /* Draw the background box */
+    setColour(ctx, context->penBgColour);
+    fprintf(getPsFile(ctx), "pop "                /* Ignore y-value */
+                            "dup "                /* Duplicate string width */
+                            "newpath "
+                            "%d %d moveto "       /* Bottom left of the box */
+                            "0 rlineto "          /* Move to bottom right of the box */
+                            "0 %d rlineto "       /* To top right */
+                            "neg 0 rlineto "      /* Back to bottom left */
+                            "closepath fill\n",   /* Done */
+                            x, -y - getSpace(ctx, PsHelvetica.descender),
+                            PsTextHeight(ctx));
+
+    /* Restore pen and show the string */
+    setColour(ctx, context->penColour);
+    fprintf(getPsFile(ctx), "%d %d moveto show\n",
+                             x, -y - getSpace(ctx, PsHelvetica.descender));
 }
 
 
@@ -238,6 +300,13 @@ void PsTextL(struct ADrawTag *ctx,
               unsigned int     y,
               const char      *string)
 {
+    PsContext *context = getPsCtx(ctx);
+
+    /* Draw the background box */
+    setColour(ctx, context->penBgColour);
+    PsFilledRectangle(ctx, x, -y, x + 10, -y + 10);
+    setColour(ctx, context->penColour);
+
     fprintf(getPsFile(ctx),
             "%d %d moveto "
             "(",
@@ -258,39 +327,31 @@ void PsTextC(struct ADrawTag *ctx,
               unsigned int     y,
               const char      *string)
 {
-    fprintf(getPsFile(ctx),
-            "%d %d moveto "
-            "(",
-            x, -y - getSpace(ctx, PsHelvetica.descender));
+    PsContext *context = getPsCtx(ctx);
+
+    /* Push the string and get its width */
+    fprintf(getPsFile(ctx), "(");
     writeEscaped(ctx, string);
-    fprintf(getPsFile(ctx),
-            ") dup stringwidth "
-            "pop "        /* Ignore y value */
-            "2 div neg "  /* Invert and halve x value */
-            "0 "
-            "rmoveto "
-            "show\n");
-}
+    fprintf(getPsFile(ctx), ") dup stringwidth\n");
 
+    /* Draw the background box */
+    setColour(ctx, context->penBgColour);
+    fprintf(getPsFile(ctx), "pop "                     /* Ignore y-value */
+                            "dup dup "                 /* Duplicate string width twice */
+                            "newpath "
+                            "%d %d moveto "            /* Starting point, centre bottom of box */
+                            "2 div neg 0 rmoveto "     /* Move to bottom left */
+                            "0 rlineto "               /* Move to bottom right of the box */
+                            "0 %d rlineto "            /* To top right */
+                            "neg 0 rlineto "           /* Back to bottom left */
+                            "closepath fill\n",        /* Done */
+                            x, -y,
+                            PsTextHeight(ctx));
 
-void PsFilledRectangle(struct ADrawTag *ctx,
-                       unsigned int x1,
-                       unsigned int y1,
-                       unsigned int x2,
-                       unsigned int y2)
-{
-    fprintf(getPsFile(ctx),
-            "newpath "
-            "%d %d moveto "
-            "%d %d lineto "
-            "%d %d lineto "
-            "%d %d lineto "
-            "closepath "
-            "fill\n",
-            x1, -y1,
-            x2, -y1,
-            x2, -y2,
-            x1, -y2);
+    /* Restore pen and show the string */
+    setColour(ctx, context->penColour);
+    fprintf(getPsFile(ctx), "%d %d moveto dup stringwidth pop 2 div neg 0 rmoveto show\n",
+                             x, -y - getSpace(ctx, PsHelvetica.descender));
 }
 
 
@@ -345,33 +406,30 @@ void PsDottedArc(struct ADrawTag *ctx,
 }
 
 
-void PsSetPen (struct ADrawTag *ctx,
-               ADrawColour      col)
+void PsSetPen(struct ADrawTag *ctx,
+              ADrawColour      col)
 {
     PsContext *context = getPsCtx(ctx);
-    float      r, g, b;
 
     assert(col != ADRAW_COL_INVALID);
 
     /* Check if the pen colour has changed */
     if(context->penColour != col)
     {
-        /* Extract RGB values */
-        r = (col & 0xff0000) >> 16;
-        g = (col & 0x00ff00) >>  8;
-        b = (col & 0x0000ff) >>  0;
-
-        /* Normalise */
-        r /= 255.0f;
-        g /= 255.0f;
-        b /= 255.0f;
-
-        /* Generate output command */
-        fprintf(getPsFile(ctx), "%f %f %f setrgbcolor\n", r ,g ,b);
+        setColour(ctx, col);
 
         /* Store the pen colour */
         context->penColour = col;
     }
+}
+
+
+void PsSetBgPen(struct ADrawTag *ctx,
+                ADrawColour      col)
+{
+    PsContext *context = getPsCtx(ctx);
+
+    context->penBgColour = col;
 }
 
 
@@ -486,8 +544,9 @@ Boolean PsInit(unsigned int     w,
                          "    savematrix setmatrix\n"
                          "} def\n");
 
-    /* Set the current pen colour */
+    /* Set the current pen colours */
     context->penColour = ADRAW_COL_BLACK;
+    context->penBgColour = ADRAW_COL_WHITE;
 
     /* Now fill in the function pointers */
     outContext->line            = PsLine;
@@ -502,6 +561,7 @@ Boolean PsInit(unsigned int     w,
     outContext->arc             = PsArc;
     outContext->dottedArc       = PsDottedArc;
     outContext->setPen          = PsSetPen;
+    outContext->setBgPen        = PsSetBgPen;
     outContext->setFontSize     = PsSetFontSize;
     outContext->close           = PsClose;
 
