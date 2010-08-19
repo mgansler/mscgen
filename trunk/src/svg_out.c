@@ -41,10 +41,10 @@ typedef struct SvgContextTag
     FILE        *of;
 
     /** Current pen colour name. */
-    char        *penColName;
+    const char  *penColName;
 
     /** Current background pen colour name. */
-    char        *penBgColName;
+    const char  *penBgColName;
 
     int          fontPoints;
 }
@@ -119,12 +119,12 @@ static FILE *getSvgFile(struct ADrawTag *ctx)
     return getSvgCtx(ctx)->of;
 }
 
-static char *getSvgPen(struct ADrawTag *ctx)
+static const char *getSvgPen(struct ADrawTag *ctx)
 {
     return getSvgCtx(ctx)->penColName;
 }
 
-static char *getSvgBgPen(struct ADrawTag *ctx)
+static const char *getSvgBgPen(struct ADrawTag *ctx)
 {
     return getSvgCtx(ctx)->penBgColName;
 }

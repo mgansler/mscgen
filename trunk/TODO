@@ -5,7 +5,4 @@ Add arrowsize option (global and with per-arc overrides).
 
 Add option to change broadcast arc representation.
 
-Add in the text background colour patch.
-  (Also add white background to text in SVG and EPS output)
-  
 Fix cygport build (required gdlib.pc to be available somewhere)  

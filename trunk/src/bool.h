@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
  ***************************************************************************/
 
-#if !defined(BOOL_H)
+#ifndef BOOL_H
 #define BOOL_H
 
 typedef enum
@@ -31,6 +31,6 @@ typedef enum
 Boolean;
 
 
-#endif
+#endif /* BOOL_H */
 
 /* END OF FILE */

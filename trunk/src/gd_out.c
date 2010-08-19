@@ -486,7 +486,7 @@ Boolean gdoClose(struct ADrawTag *ctx)
 Boolean GdoInit(unsigned int     w,
                 unsigned int     h,
                 const char      *file,
-                const char      *fontName,
+                const char      *fontName UNUSED,
                 struct ADrawTag *outContext)
 {
     GdoContext *context;
