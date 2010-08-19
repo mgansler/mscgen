@@ -1,5 +1,5 @@
 Name:           mscgen
-Version:        0.17 
+Version:        0.18 
 Release:        1%{?dist}
 Summary:        Message Sequence Chart rendering program 
 Group:          Applications/Multimedia 
