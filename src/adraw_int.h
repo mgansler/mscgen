@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
  **************************************************************************/
 
-#if !defined(GD_OUT_H)
-#define      GD_OUT_H
+#ifndef ADRAW_INT_H
+#define ADRAW_INT_H
 
 #include "adraw.h"
 
@@ -60,6 +60,6 @@ Boolean SvgInit(unsigned int     w,
                 const char      *file,
                 struct ADrawTag *outContext);
 
-#endif
+#endif /* ADRAW_INT_H */
 
 /* END OF FILE */

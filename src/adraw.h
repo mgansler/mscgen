@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
  **************************************************************************/
 
-#if !defined(ADRAW_H)
+#ifndef ADRAW_H
 #define ADRAW_H
 
 #include "bool.h"
@@ -269,6 +269,6 @@ Boolean ADrawOpen(unsigned int     w,
  */
 ADrawColour ADrawGetColour(const char *colour);
 
-#endif
+#endif /* ADRAW_H */
 
 /* END OF FILE */
