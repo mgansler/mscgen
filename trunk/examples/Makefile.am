@@ -8,7 +8,9 @@
 example_DATA = msg_types.msc \
                 boxes_example.msc \
                 colour_sample.msc \
-                simple_prog_desc.msc
+                simple_prog_desc.msc \
+                client_server.msc
+
 exampledir=$(docdir)/examples
 
 # Use the suffix rule to support non-GNU make.

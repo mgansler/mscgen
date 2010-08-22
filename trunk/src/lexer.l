@@ -71,6 +71,7 @@ TEXTBGCOLO(U?)R|textbgcolo(u?)r       yylval.attribType = MSC_ATTR_TEXT_BGCOLOUR
 ARCLINECOLO(U?)R|arclinecolo(u?)r     yylval.attribType = MSC_ATTR_ARC_LINE_COLOUR;   return TOK_ATTR_ARC_LINE_COLOUR;
 ARCTEXTCOLO(U?)R|arctextcolo(u?)r     yylval.attribType = MSC_ATTR_ARC_TEXT_COLOUR;   return TOK_ATTR_ARC_TEXT_COLOUR;
 ARCTEXTBGCOLO(U?)R|arctextbgcolo(u?)r yylval.attribType = MSC_ATTR_ARC_TEXT_BGCOLOUR; return TOK_ATTR_ARC_TEXT_BGCOLOUR;
+ARCSKIP|arcskip                       yylval.attribType = MSC_ATTR_ARC_SKIP;          return TOK_ATTR_ARC_SKIP;
 \.\.\.                                yylval.arctype = MSC_ARC_DISCO;    return TOK_SPECIAL_ARC;        /* ... */
 ---                                   yylval.arctype = MSC_ARC_DIVIDER;  return TOK_SPECIAL_ARC;        /* --- */
 \|\|\|                                yylval.arctype = MSC_ARC_SPACE;    return TOK_SPECIAL_ARC;        /* ||| */

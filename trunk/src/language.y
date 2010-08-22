@@ -70,7 +70,8 @@ void yyerror(const char *str)
                                       "TOK_OPT_WIDTH",          "TOK_ARC_BOX",
                                       "TOK_ARC_ABOX",           "TOK_ARC_RBOX",
                                       "TOK_ATTR_TEXT_BGCOLOUR", "TOK_ATTR_ARC_TEXT_BGCOLOUR",
-                                      "TOK_REL_LOSS_TO",        "TOK_REL_LOSS_FROM" };
+                                      "TOK_REL_LOSS_TO",        "TOK_REL_LOSS_FROM",
+                                      "TOK_OPT_ARCGRADIENT",    "TOK_ATTR_ARC_SKIP" };
 
     static const char *tokRepl[] =  { "{",             "}",
                                       "[",             "]",
@@ -92,7 +93,8 @@ void yyerror(const char *str)
                                       "width",         "box",
                                       "abox",          "rbox",
                                       "textbgcolour",  "arctextbgcolor",
-                                      "-x",            "x-" };
+                                      "-x",            "x-",
+                                      "arcgradient",   "arcskip" };
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 
     char *s;
@@ -215,6 +217,7 @@ Msc MscParse(FILE *in)
        TOK_OPT_WIDTH       TOK_OPT_ARCGRADIENT
        TOK_ASTERISK        TOK_UNKNOWN
        TOK_REL_SIG TOK_REL_METHOD TOK_REL_RETVAL TOK_REL_DOUBLE
+       TOK_ATTR_ARC_SKIP
 
 %union
 {
@@ -251,6 +254,7 @@ Msc MscParse(FILE *in)
                    TOK_ATTR_LABEL TOK_ATTR_URL TOK_ATTR_ID TOK_ATTR_IDURL
                    TOK_ATTR_LINE_COLOUR TOK_ATTR_TEXT_COLOUR TOK_ATTR_TEXT_BGCOLOUR
                    TOK_ATTR_ARC_LINE_COLOUR TOK_ATTR_ARC_TEXT_COLOUR  TOK_ATTR_ARC_TEXT_BGCOLOUR
+                   TOK_ATTR_ARC_SKIP
 %type <string>     string TOK_STRING TOK_QSTRING
 
 
@@ -381,7 +385,8 @@ attr:         attrval TOK_EQUAL string
 
 attrval:      TOK_ATTR_LABEL | TOK_ATTR_URL | TOK_ATTR_ID | TOK_ATTR_IDURL |
               TOK_ATTR_LINE_COLOUR | TOK_ATTR_TEXT_COLOUR | TOK_ATTR_TEXT_BGCOLOUR |
-              TOK_ATTR_ARC_LINE_COLOUR | TOK_ATTR_ARC_TEXT_COLOUR | TOK_ATTR_ARC_TEXT_BGCOLOUR;
+              TOK_ATTR_ARC_LINE_COLOUR | TOK_ATTR_ARC_TEXT_COLOUR | TOK_ATTR_ARC_TEXT_BGCOLOUR |
+              TOK_ATTR_ARC_SKIP;
 
 
 string: TOK_QSTRING

@@ -84,6 +84,17 @@ GdoContext;
  * Helper functions
  ***************************************************************************/
 
+/** Swap a pair of values inplace.
+ */
+static void swap(unsigned int *a, unsigned int *b)
+{
+    unsigned int x;
+
+    x = *a;
+    *a = *b;
+    *b = x;
+}
+
 
 /** Get the context pointer from an ADraw structure.
  */
@@ -240,6 +251,13 @@ void gdoLine(struct ADrawTag *ctx,
     /* Range check since gdImageLine() takes signed values */
     if(x1 <= INT_MAX && y1 <= INT_MAX && x2 <= INT_MAX && y2 <= INT_MAX)
     {
+        /* Anti-aliasing fails if drawing 'backwards' */
+        if(x1 > x2)
+        {
+            swap(&x1, &x2);
+            swap(&y1, &y2);
+        }
+
         gdImageSetAntiAliased(getGdoImg(ctx), getGdoPen(ctx));
         gdImageLine(getGdoImg(ctx),
                     x1, y1, x2, y2, gdAntiAliased);
