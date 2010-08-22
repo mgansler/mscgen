@@ -58,7 +58,8 @@ typedef enum MscAttribTypeTag
     MSC_ATTR_ARC_TEXT_COLOUR,
     MSC_ATTR_ARC_TEXT_BGCOLOUR,
     MSC_ATTR_NO_ARROWS,
-    MSC_ATTR_BI_ARROWS
+    MSC_ATTR_BI_ARROWS,
+    MSC_ATTR_ARC_SKIP
 }
 MscAttribType;
 

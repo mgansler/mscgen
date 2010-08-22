@@ -289,15 +289,38 @@ static char *getLine(const char        *string,
 
 /** Check if some arc name indicates a broadcast entity.
  */
-Boolean isBroadcastArc(const char *entity)
+static Boolean isBroadcastArc(const char *entity)
 {
     return entity != NULL && (strcmp(entity, "*") == 0);
 }
 
 
+/** Get the skip value in pixels for some the current arc in the Msc.
+ */
+static int getArcGradient(Msc m)
+{
+    const char  *s    = MscGetCurrentArcAttrib(m, MSC_ATTR_ARC_SKIP);
+    unsigned int skip = gOpts.arcGradient;
+
+    if(s != NULL)
+    {
+        if(sscanf(s, "%d", &skip) == 1)
+        {
+            skip = (skip * gOpts.arcSpacing) + gOpts.arcGradient;
+        }
+        else
+        {
+            fprintf(stderr, "Warning: Non-integer arcskip value: %s\n", s);
+        }
+    }
+
+    return skip;
+}
+
+
 /** Check if some arc type indicates a box.
  */
-Boolean isBoxArc(const MscArcType a)
+static Boolean isBoxArc(const MscArcType a)
 {
     return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  || a == MSC_ARC_ABOX;
 }
@@ -745,6 +768,7 @@ static void arcText(Msc                m,
                     FILE              *ismap,
                     unsigned int       outwidth,
                     unsigned int       ymin,
+                    int                ygradient,
                     unsigned int       startCol,
                     unsigned int       endCol,
                     const char        *arcLabel,
@@ -763,7 +787,7 @@ static void arcText(Msc                m,
     for(l = 0; l < arcLabelLines; l++)
     {
         char *lineLabel = getLine(arcLabel, l, lineBuffer, sizeof(lineBuffer));
-        unsigned int y = ymin + (gOpts.arcSpacing / 2) +
+        unsigned int y = ymin + ((gOpts.arcSpacing + ygradient) / 2) +
                           (l * drw.textHeight(&drw));
         unsigned int width = drw.textWidth(&drw, lineLabel);
         int x = ((startCol + endCol + 1) * gOpts.entitySpacing) / 2;
@@ -921,6 +945,8 @@ static void arcText(Msc                m,
  * \param  m           The Msc for which the text is being rendered.
  * \param  ymin        Top of row.
  * \param  ymax        Bottom of row.
+ * \param  ygradient   The gradient of the arc which alters the y position a
+ *                      the ending column.
  * \param  startCol    Starting column for the arc.
  * \param  endCol      Column at which the arc terminates.
  * \param  hasArrows   If true, draw arc arrows, otherwise omit them.
@@ -930,6 +956,7 @@ static void arcText(Msc                m,
 static void arcLine(Msc               m,
                     unsigned int      ymin,
                     unsigned int      ymax,
+                    unsigned int      ygradient,
                     unsigned int      startCol,
                     unsigned int      endCol,
                     const char       *arcLineCol,
@@ -954,27 +981,27 @@ static void arcLine(Msc               m,
         /* Draw the line */
         if(arcType == MSC_ARC_RETVAL)
         {
-            drw.dottedLine(&drw, sx, y, dx, y + gOpts.arcGradient);
+            drw.dottedLine(&drw, sx, y, dx, y + ygradient);
         }
         else if(arcType == MSC_ARC_DOUBLE)
         {
-            drw.line(&drw, sx, y - 1, dx, y - 1 + gOpts.arcGradient);
-            drw.line(&drw, sx, y + 1, dx, y + 1 + gOpts.arcGradient);
+            drw.line(&drw, sx, y - 1, dx, y - 1 + ygradient);
+            drw.line(&drw, sx, y + 1, dx, y + 1 + ygradient);
         }
         else if(arcType == MSC_ARC_LOSS)
         {
             signed int   span = dx - sx;
             unsigned int mx = sx + (span / 4) * 3;
 
-            drw.line(&drw, sx, y, mx, y + gOpts.arcGradient);
+            drw.line(&drw, sx, y, mx, y + ygradient);
             hasArrows = 0;
 
-            drw.line(&drw, mx - 4, y + gOpts.arcGradient - 4, mx + 4, y + gOpts.arcGradient + 4);
-            drw.line(&drw, mx + 4, y + gOpts.arcGradient - 4, mx - 4, y + gOpts.arcGradient + 4);
+            drw.line(&drw, mx - 4, y + ygradient - 4, mx + 4, y + ygradient + 4);
+            drw.line(&drw, mx + 4, y + ygradient - 4, mx - 4, y + ygradient + 4);
         }
         else
         {
-            drw.line(&drw, sx, y, dx, y + gOpts.arcGradient);
+            drw.line(&drw, sx, y, dx, y + ygradient);
         }
 
         /* Now the arrow heads */
@@ -982,22 +1009,22 @@ static void arcLine(Msc               m,
         {
             if(startCol < endCol)
             {
-                arrowR(dx, y + gOpts.arcGradient, arcType);
+                arrowR(dx, y + ygradient, arcType);
             }
             else
             {
-                arrowL(dx, y + gOpts.arcGradient, arcType);
+                arrowL(dx, y + ygradient, arcType);
             }
 
             if(hasBiArrows)
             {
                 if(startCol < endCol)
                 {
-                    arrowL(sx, y + gOpts.arcGradient, arcType);
+                    arrowL(sx, y + ygradient, arcType);
                 }
                 else
                 {
-                    arrowR(sx, y + gOpts.arcGradient, arcType);
+                    arrowR(sx, y + ygradient, arcType);
                 }
             }
         }
@@ -1419,6 +1446,7 @@ int main(const int argc, const char *argv[])
         const char        *arcTextColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
         const char        *arcTextBgColour = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_BGCOLOUR);
         const char        *arcLineColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
+        const int          arcGradient     = getArcGradient(m);
         const int          arcHasArrows    = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
         const int          arcHasBiArrows  = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
         const unsigned int arcLabelLines   = arcLabel ? countLines(arcLabel) - 1 : 1;
@@ -1506,7 +1534,7 @@ int main(const int argc, const char *argv[])
                 {
                     if((signed)t != startCol)
                     {
-                        arcLine(m, ymin, ymax, startCol, t,
+                        arcLine(m, ymin, ymax, arcGradient, startCol, t,
                                 arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
                     }
                 }
@@ -1543,7 +1571,7 @@ int main(const int argc, const char *argv[])
                     {
                         entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
                     }
-                    arcLine(m, ymin, ymax, startCol, endCol,
+                    arcLine(m, ymin, ymax, arcGradient, startCol, endCol,
                             arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
                 }
             }
@@ -1551,7 +1579,7 @@ int main(const int argc, const char *argv[])
             /* All may have text */
             if(arcLabel)
             {
-                arcText(m, ismap, w, ymin,
+                arcText(m, ismap, w, ymin, arcGradient,
                         startCol, endCol, arcLabel, arcLabelLines,
                         arcUrl, arcId, arcIdUrl,
                         arcTextColour, arcTextBgColour, arcLineColour, arcType);

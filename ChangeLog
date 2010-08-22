@@ -1,4 +1,4 @@
-0.xx:
+0.18:
       Fix bad strncat() use allowing possible overrun.
        Thanks to ensc42 and Neils for finding this.
       Fix multi-line labels causing multiple dividers ("---")
@@ -10,9 +10,11 @@
       Fix text rendering over the box edge in multiline labels.
       Add patch to honour linecolour in boxes, issue #33.
        Thanks to Neils for this patch.
-      Add support for textbgcolour and arctextbgcolour to set the background
-       colour for text in an entity or on an arc.
+      Add 'textbgcolour' and 'arctextbgcolour' attributes to set the
+       background colour for text in an entity or on an arc.
       Add support for -X and X- arcs which indicate a lost message.
+      Add support for a new 'arcskip' attribute which allows an arc to have
+       an additional slant to show delays or similar.
 
 0.17: 31/08/2009
       Change the command line parser so a space is not needed to split
