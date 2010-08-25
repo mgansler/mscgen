@@ -46,7 +46,12 @@ for F in `ls *.tar.gz` ; do
 done
 
 # Now create the RPM
-cp ../rpm/mscgen.spec ~/rpmbuild/SPECS
+echo
+echo Creating RPM 
+echo
+
+cp -v ../rpm/mscgen.spec ~/rpmbuild/SPECS
+cp -v mscgen-src-$DIST_VER.tar.gz ~/rpmbuild/SOURCES
 (cd ~/rpmbuild/SPECS && rpmbuild -ba mscgen.spec)
 cp ~/rpmbuild/RPMS/i386/mscgen-*.rpm .
 

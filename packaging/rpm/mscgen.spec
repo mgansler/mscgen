@@ -43,6 +43,28 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/mscgen.1.gz
 
 %changelog
+* Thu Aug 25 2010 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.18-1
+- Fix bad strncat() use allowing possible overrun.
+   Thanks to ensc42 and Neils for finding this.
+- Fix multi-line labels causing multiple dividers ("---")
+   Thanks to llucax for the report, issue #31.
+- Add support for arrowless arcs and bi-directional arrows as requested
+   by xmlscott and started by Niels.  Can now use arrows such as <->, <=>
+   for bidirectional arrows, --, ==, .. etc... for arcs without arrows.
+   Issue #29.
+- Fix text rendering over the box edge in multiline labels.
+   Add patch to honour linecolour in boxes, issue #33.
+   Thanks to Neils for this patch.
+- Add 'textbgcolour' and 'arctextbgcolour' attributes to set the
+   background colour for text in an entity or on an arc.
+   Add support for -X and X- arcs which indicate a lost message.
+- Add support for a new 'arcskip' attribute which allows an arc to have
+   an additional slant to show delays or similar.
+- Change configure.ac to attempt to use gdlib-config and then pkg-config.
+   This enables simpler configuration/build on platforms where gd hasn't
+   been updated to supply a pkg-config file e.g. Cygwin.  Update README
+   regarding building on Cygwin and progress the cygport.
+
 * Sun Aug 2 2009 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.17-1 
 - Initial version.
 
