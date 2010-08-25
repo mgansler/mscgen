@@ -1,0 +1,62 @@
+diff -Naur -x .svn mscgen.orig//CYGWIN-PATCHES/mscgen.README mscgen.cygwin//CYGWIN-PATCHES/mscgen.README
+--- mscgen.orig//CYGWIN-PATCHES/mscgen.README	1970-01-01 00:00:00.000000000 +0000
++++ mscgen.cygwin//CYGWIN-PATCHES/mscgen.README	2010-08-25 19:40:28.328125000 +0100
+@@ -0,0 +1,50 @@
++mscgen
++------------------------------------------
++A message sequence chart renderer.
++
++Runtime requirements:
++  cygwin-1.5.18 or newer
++  libgd2
++
++Build requirements:
++  cygwin-1.5.18 or newer
++  gcc-3.4.4-1 or newer
++  binutils-20050610-1 or newer
++  libgd-devel-2.0.36RC1-11 or newer
++  
++Canonical homepage:
++  http://www.mcternan.co.uk/mscgen
++
++Canonical download:
++  http://www.mcternan.co.uk/mscgen/software/mscgen-src-0.18.tar.gz
++
++License:
++  GPL
++
++Language:
++  C
++
++------------------------------------
++
++Build instructions:  
++  tar -xjf mscgen-0.18-1-src.tar.bz2
++  cygport mscgen-0.18-1.cygport all
++
++This will create:
++  mscgen-0.18-1.tar.bz2
++  mscgen-0.18-1-src.tar.bz2
++
++
++------------------
++
++Port Notes:
++
++----------  mscgen-0.18-1 -- 26/08/2010 -----------
++Initial release
++
++
++For more information about this package, see the upstream documentation in
++/usr/share/doc/mscgen.
++
++Cygwin port maintained by: Michael McTernan, Michael.McTernan.2001@cs.bris.ac.uk
++Please address all questions to the Cygwin mailing list at <cygwin@cygwin.com>
+diff -Naur -x .svn mscgen.orig//CYGWIN-PATCHES/setup.hint mscgen.cygwin//CYGWIN-PATCHES/setup.hint
+--- mscgen.orig//CYGWIN-PATCHES/setup.hint	1970-01-01 00:00:00.000000000 +0000
++++ mscgen.cygwin//CYGWIN-PATCHES/setup.hint	2010-08-25 18:54:08.093750000 +0100
+@@ -0,0 +1,4 @@
++category: Graphics
++requires: cygwin libgd2
++sdesc: "A Message Sequence Chart Renderer"
++ldesc: "A Message Sequence Chart Renderer."
