@@ -3,11 +3,13 @@
 # pkg-config doesn't know about the binary gd, so we disable it and 
 #  hardwire the variables we know about in the environment
 
+HERE="`pwd`"
+
 export PKG_CONFIG=true  
 export CFLAGS="-mno-cygwin"
 export LDFLAGS="-mno-cygwin"
-export GDLIB_CFLAGS="-I`pwd`/../../gdwin32/include" 
-export GDLIB_LIBS="-L`pwd`/../../gdwin32/lib -lbgd"
+export GDLIB_CFLAGS="-I\"$HERE/../../gdwin32/include\"" 
+export GDLIB_LIBS="-L\"$HERE/../../gdwin32/lib\" -lbgd"
 
 (cd ../../
  make distclean

@@ -15,6 +15,10 @@
       Add support for -X and X- arcs which indicate a lost message.
       Add support for a new 'arcskip' attribute which allows an arc to have
        an additional slant to show delays or similar.
+      Change configure.ac to attempt to use gdlib-config and then pkg-config.
+       This enables simpler configuration/build on platforms where gd hasn't
+       been updated to supply a pkg-config file e.g. Cygwin.  Update README
+       regarding building on Cygwin and progress the cygport.
 
 0.17: 31/08/2009
       Change the command line parser so a space is not needed to split
