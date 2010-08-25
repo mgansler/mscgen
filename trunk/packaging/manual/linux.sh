@@ -54,6 +54,8 @@ cp -v ../rpm/mscgen.spec ~/rpmbuild/SPECS
 cp -v mscgen-src-$DIST_VER.tar.gz ~/rpmbuild/SOURCES
 (cd ~/rpmbuild/SPECS && rpmbuild -ba mscgen.spec)
 cp ~/rpmbuild/RPMS/i386/mscgen-*.rpm .
+cp ~/rpmbuild/RPMS/i486/mscgen-*.rpm .
+cp ~/rpmbuild/RPMS/i586/mscgen-*.rpm .
 
 
 # END OF SCRIPT
