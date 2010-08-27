@@ -83,7 +83,7 @@ AH_TEMPLATE([USE_FREETYPE],
 
 # Older versions of autoconf (<2.60?) fail to define docdir
 if test -z "$docdir" ; then
-  docdir='${datadir}/doc/mscgen-${PACKAGE_VERSION}poo'
+  docdir='${datadir}/doc/mscgen-${PACKAGE_VERSION}'
   AC_SUBST(docdir)
 fi
 

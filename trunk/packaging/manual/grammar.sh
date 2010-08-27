@@ -7,7 +7,7 @@
 bison -v ../../src/language.y
 
 # Top and tail the output, remove leading space
-cat ../../src/language.output |
+cat language.output |
 sed "/Terminals, with rules where they appear/q" |
 head -n -1 |
 tail -n '+7' |
@@ -64,5 +64,9 @@ sed "s/TOK_ATTR_ARC_LINE_COLOUR/'arclinecolour'/g" |
 sed "s/TOK_ATTR_ARC_TEXT_COLOUR/'arctextcolour'/g" |
 sed "s/TOK_ATTR_ARC_TEXT_BGCOLOUR/'arctextbgcolour'/g" |
 sed "s/TOK_ATTR_ARC_SKIP/'arcskip'/g"
+
+rm language.output language.tab.c
+
+# END OF SCRIPT
 
 
