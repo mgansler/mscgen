@@ -60,6 +60,6 @@ diff -Nrup origsrc/mscgen/CYGWIN-PATCHES/setup.hint src/mscgen/CYGWIN-PATCHES/se
 +++ src/mscgen/CYGWIN-PATCHES/setup.hint	2010-08-31 18:28:47.855716745 +0100
 @@ -0,0 +1,4 @@
 +category: Graphics
-+requires: cygwin libgd2
++requires: libgd2
 +sdesc: "A Message Sequence Chart Renderer"
 +ldesc: "A Message Sequence Chart Renderer."
