@@ -473,12 +473,12 @@ static void entityText(FILE             *ismap,
                        const char       *entColour,
                        const char       *entBgColour)
 {
-    const unsigned int lines = countLines(entLabel);
-    unsigned int       l;
-    char               lineBuffer[1024];
-
     if(entLabel)
     {
+        const unsigned int lines = countLines(entLabel);
+        unsigned int       l;
+        char               lineBuffer[1024];
+
         /* Adjust y to be above the writing line */
         y -= drw.textHeight(&drw) * (lines - 1);
 
