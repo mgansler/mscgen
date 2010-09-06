@@ -26,5 +26,5 @@ EXTRA_DIST = msg_types.mscin \
              boxes_example.mscin \
              colour_sample.mscin \
              simple_prog_desc.mscin \
-             client_server.msc
+             client_server.mscin
 
