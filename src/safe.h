@@ -46,6 +46,7 @@
 void *malloc_s(size_t size);
 void *zalloc_s(size_t size);
 char *strdup_s(const char *s);
+const char *getenv_s(const char *name);
 
 /*#pragma GCC poison malloc strdup calloc*/
 
