@@ -3,7 +3,7 @@
  * $Id$
  *
  * This file is part of mscgen, a message sequence chart renderer.
- * Copyright (C) 2005 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
+ * Copyright (C) 2010 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,14 +194,14 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
     r = gdImageStringFT(NULL,
                         rect,
                         context->pen,
-                        context->fontName,
+                        (char *)context->fontName,
                         context->fontPoints,
                         0,
                         0, 0,
                         (char *)string);
     if(r)
     {
-        fprintf(stderr, "Error: gdoTextWidth: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+        fprintf(stderr, "Error: gdoTextWidth: %s (GDFONTPATH=%s)\n", r, getenv_s("GDFONTPATH"));
         exit(EXIT_FAILURE);
     }
 
@@ -226,14 +226,14 @@ int gdoTextHeight(struct ADrawTag *ctx)
     r = gdImageStringFT(NULL,
                         rect,
                         context->pen,
-                        context->fontName,
+                        (char *)context->fontName,
                         context->fontPoints,
                         0,
                         0, 0,
                         "gHELLO");
     if(r)
     {
-        fprintf(stderr, "Error: gdoTextHeight: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+        fprintf(stderr, "Error: gdoTextHeight: %s (GDFONTPATH=%s)\n", r, getenv_s("GDFONTPATH"));
         exit(EXIT_FAILURE);
     }
 
@@ -253,6 +253,12 @@ void gdoLine(struct ADrawTag *ctx,
     {
         /* Anti-aliasing fails if drawing 'backwards' */
         if(x1 > x2)
+        {
+            swap(&x1, &x2);
+            swap(&y1, &y2);
+        }
+
+        if(y1 > y2)
         {
             swap(&x1, &x2);
             swap(&y1, &y2);
@@ -309,7 +315,7 @@ void gdoTextR(struct ADrawTag *ctx,
         r = gdImageStringFT(getGdoImg(ctx),
                             rect,
                             context->pen,
-                            context->fontName,
+                            (char *)context->fontName,
                             context->fontPoints,
                             0,
                             x, y - 2,
@@ -317,7 +323,7 @@ void gdoTextR(struct ADrawTag *ctx,
 
         if(r)
         {
-            fprintf(stderr, "Error: gdoTextR: %s (GDFONTPATH=%s)\n", r, getenv("GDFONTPATH"));
+            fprintf(stderr, "Error: gdoTextR: %s (GDFONTPATH=%s)\n", r, getenv_s("GDFONTPATH"));
             exit(EXIT_FAILURE);
         }
 #else

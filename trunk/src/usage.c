@@ -3,7 +3,7 @@
  * $Id: main.c 75 2009-07-26 14:45:59Z Michael.McTernan $
  *
  * This file is part of mscgen, a message sequence chart renderer.
- * Copyright (C) 2007 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
+ * Copyright (C) 2010 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void Usage(void)
 " -p          Print parsed msc output (for parser debug).\n"
 " -l          Display program licence and exit.\n"
 "\n"
-"Mscgen version %s, Copyright (C) 2007 Michael C McTernan,\n"
+"Mscgen version %s, Copyright (C) 2010 Michael C McTernan,\n"
 "                                        Michael.McTernan.2001@cs.bris.ac.uk\n"
 "Mscgen comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are\n"
 "welcome to redistribute it under certain conditions; type `mscgen -l' for\n"
@@ -86,7 +86,7 @@ void Licence(void)
 {
     printf(
 "Mscgen, a message sequence chart renderer.\n"
-"Copyright (C) 2007 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk\n"
+"Copyright (C) 2010 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk\n"
 "\n"
 "TTPCom Ltd., hereby disclaims all copyright interest in the program `mscgen'\n"
 "(which renders message sequence charts) written by Michael McTernan.\n"

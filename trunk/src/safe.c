@@ -3,7 +3,7 @@
  * $Id$
  *
  * This file is part of timgen, a timing diagram renderer.
- * Copyright (C) 2005 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
+ * Copyright (C) 2010 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,15 @@ char *strdup_s(const char *s)
     char *r = strdup(s);
 
     checkNotNull(r, "strdup() failed");
+
+    return r;
+}
+
+const char *getenv_s(const char *name)
+{
+    char *r = getenv(name);
+
+    if(r == NULL) r = "";
 
     return r;
 }
