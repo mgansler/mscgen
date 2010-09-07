@@ -1,6 +1,6 @@
 Name:           mscgen
 Version:        0.18 
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Message Sequence Chart rendering program 
 Group:          Applications/Multimedia 
 License:        GPLv2+
@@ -38,11 +38,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc %{_defaultdocdir}/%{name}-%{version}/
+%{_defaultdocdir}/%{name}-%{version}/
 %{_bindir}/mscgen
 %{_mandir}/man1/mscgen.1.*
 
 %changelog
+* Tue Sep 07 2010 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.18-3
+- Further Fedora packaging fixes to remove duplicate doc (bug #630754, comment 4) 
+
 * Tue Sep 07 2010 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.18-2
 - Fixes from Fedora packaging review (bug #630754).
 
