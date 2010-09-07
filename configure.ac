@@ -13,9 +13,11 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_SED
 AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_INSTALL
+PKG_PROG_PKG_CONFIG
 
 AC_CHECK_HEADERS([unistd.h])
 AC_CHECK_HEADERS([limits.h])
@@ -56,7 +58,7 @@ if test "x$with_libgd" != "xno"; then
     fi
 
   else
-    PKG_CHECK_MODULES(GDLIB, gdlib)
+    PKG_CHECK_MODULES([GDLIB], [gdlib])
   fi
 
   # Update flags with what we've found so far
