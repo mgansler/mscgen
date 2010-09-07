@@ -27,7 +27,7 @@ AC_ARG_WITH([png],
   [AS_HELP_STRING([--without-png],
                   [Remove png-support and dependence on libgd @<:@default=no@:>@])],
   [if test "$withval" = "no" ; then
-     AC_DEFINE_UNQUOTED(REMOVE_PNG_OUTPUT, 1)
+     AC_DEFINE_UNQUOTED(REMOVE_PNG_OUTPUT, )
      with_libgd=no
    fi]
 )
@@ -46,7 +46,7 @@ if test "x$with_libgd" != "xno"; then
   # Get compile and link options from either gdlib-config or pkg-config
   AC_PATH_PROG(GDLIB_CONFIG,gdlib-config)
   if test -n "$GDLIB_CONFIG"; then
-  
+
     # Allow command line override as per PKG_CHECK macro
     if test -z "$GDLIB_CFLAGS"; then
       GDLIB_CFLAGS="`$GDLIB_CONFIG --cflags`"
@@ -54,25 +54,72 @@ if test "x$with_libgd" != "xno"; then
     if test -z "$GDLIB_LIBS"; then
       GDLIB_LIBS="`$GDLIB_CONFIG --ldflags` `$GDLIB_CONFIG --libs`"
     fi
-    
+
   else
     PKG_CHECK_MODULES(GDLIB, gdlib)
   fi
-  
-  # Earlier versions of gdlib.pc fail to include -lgd in the link flags.
-  #  Check if it needs to be added.  This allows building on RedHat EL
-  AC_SEARCH_LIBS(gdImageColorAllocate, gd,, AC_MSG_ERROR([Failed to find library containing gd]), -lm)
 
-  # Check if freetype is needed with gd
+  # Update flags with what we've found so far
+  CPPFLAGS="$CPPFLAGS $GDLIB_CFLAGS"
+  LIBS="$LIBS $GDLIB_LIBS"
+
+  # Check we can use gd.h, otherwise the config isn't right
+  AC_CHECK_HEADER(gd.h,, AC_MSG_ERROR([Failed to find gd.h]))
+
+
+  # Some versions of gdlib.pc and gdlib-config fail to include -lgd in the link
+  #  flags. Therefore check if it needs to be added, along with libm.
+  # Note: We don't use AC_SEARCH_LIBS() since that fails if compiling on Win32
+  #        using -mno-cygwin since it doesn't get the correct definition of
+  #        gdImageColorAllocate() from gd.h and hence fails the link.
+
+  AC_MSG_CHECKING([if gdImageColorAllocate() can be linked])
+  gdlib=no
+
+  AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]]),
+                 gdlib=yes,
+                 gdlib=no)
+
+  if test "x$gdlib" = xno; then
+    LIBS="$LIBS -lgd"
+    AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]]),
+                   gdlib="yes (-lgd)",
+                   gdlib=no)
+  fi
+
+  if test "x$gdlib" = xno; then
+    LIBS="$LIBS -lm"
+    AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]]),
+                   gdlib="yes (-lgd -lm)",
+                   gdlib=no)
+  fi
+
+
+  AC_MSG_RESULT([$gdlib])
+
+  # Check if FreeType support needs testing
   AC_ARG_WITH([freetype],
-    [AS_HELP_STRING([--with-freetype],
-      [Add FreeType font rendering @<:@default=no@:>@])],
-    [if test "$withval" = "yes" ; then
-       AC_DEFINE_UNQUOTED(USE_FREETYPE, 1)
-       PKG_CHECK_MODULES(FREETYPE, freetype2)
-       AC_SEARCH_LIBS(gdImageStringFT, gd,, AC_MSG_ERROR([Failed to find library containing gdImageStringFt]))
-     fi]
-  )
+    [AS_HELP_STRING([--with-freetype], [Enable FreeType font rendering @<:@default=no@:>@])],
+    with_freetype=yes)
+
+  # Check if libgd has FreeType support and is usable (i.e. has required libs)
+  if test "x$with_freetype" = xyes ; then
+
+    AC_MSG_CHECKING([if gdImageStringFT() can be linked])
+
+    AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageStringFT(0,0,0,0,0,0,0,0,0);]]),
+                   with_freetype=yes,
+                   with_freetype=no)
+
+    AC_MSG_RESULT($with_freetype)
+
+    if test "x$with_freetype" = xyes ; then
+      AC_DEFINE_UNQUOTED(USE_FREETYPE, 1)
+    else
+      AC_MSG_ERROR([FreeType use was requested, but FreeType support was not found to be usable in libgd])
+    fi
+
+  fi
 
 fi
 

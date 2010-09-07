@@ -3,10 +3,20 @@ Building Mscgen
 
 Building is done with the GNU autotools and should be largely automatic.
 
+Preparation
+-----------
+
+If you obtained the sources directly from the SVN repository, you will first
+need to run autogen.sh to generate the configure script.
+
+Note: This is not required for the downloadable source tarballs as they are
+       already contain a configure script.
+
+
 Win32 - Native
 --------------
 
-A native build has no runtime dependency on Cygwin and can be ran on any 
+A native build has no runtime dependency on Cygwin and can be ran on any
 Windows machine.  It does however use Cygwin to configure and build.
 
 You can get Cygwin from http://www.cygwin.com.  The following packages
@@ -19,12 +29,24 @@ need to be installed via the Cygwin setup.exe:
  - bison
  - binutils
 
-From the top level directory, run the configure script with these options to
-build natively:
+A copy of the Win32 libgd library is also needed.  If you checked out the
+mscgen sources from Google Code, you will already have this in the gdwin32
+directory.  Otherwise you can obtain a copy from the GD site, or from Google
+Code:
+
+  http://www.libgd.org/releases/oldreleases/gd-2.0.34-win32.zip
+
+  svn checkout http://mscgen.googlecode.com/svn/trunk/gdwin32 /tmp/gdwin32
+
+You will have to unpack the zip file, and ensure the file bgd.dll is on your
+path.
+
+From the top level directory, run the configure script with options to
+build natively and use the Win32 binary gdwin32 you downloaded (an unpacked):
 
   $ ./configure CFLAGS=-mno-cygwin \
-                GDLIB_CFLAGS="-I../gdwin32/include" \
-                GDLIB_LIBS="-L../gdwin32/lib -lbgd"
+                GDLIB_CFLAGS="-I/tmp/gdwin32/include" \
+                GDLIB_LIBS="-L/tmp/gdwin32/lib -lbgd"
   $ make
   $ make check
   $ make install
@@ -42,7 +64,7 @@ C:\cygwin\bin\mscgen.exe
     C:\WINDOWS\system32\KERNEL32.dll
       C:\WINDOWS\system32\ntdll.dll
     C:\WINDOWS\system32\MSVCRT.dll
-    
+
 
 Win32 - Cygwin
 --------------
@@ -58,7 +80,6 @@ installed via the Cygwin setup program:
  - libgd2
  - libgd-devel
  - pkg-config
- - libgd-devel
 
 From the top level directory, run the configure script and then make:
 
@@ -114,9 +135,9 @@ following location:
 LICENCE
 =======
 
-Mscgen, Copyright (C) 2007 Michael C McTernan,
+Mscgen, Copyright (C) 2010 Michael C McTernan,
                       Michael.McTernan.2001@cs.bris.ac.uk
-Mscgen comes with ABSOLUTELY NO WARRANTY.  Mscgen is free software, and you 
+Mscgen comes with ABSOLUTELY NO WARRANTY.  Mscgen is free software, and you
 are welcome to redistribute it under certain conditions; see the COPYING
 file for details.
 
