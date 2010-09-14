@@ -230,7 +230,7 @@ int gdoTextHeight(struct ADrawTag *ctx)
                         context->fontPoints,
                         0,
                         0, 0,
-                        "gHELLO");
+                        "gHELLOWt");
     if(r)
     {
         fprintf(stderr, "Error: gdoTextHeight: %s (GDFONTPATH=%s)\n", r, getenv_s("GDFONTPATH"));
@@ -251,14 +251,8 @@ void gdoLine(struct ADrawTag *ctx,
     /* Range check since gdImageLine() takes signed values */
     if(x1 <= INT_MAX && y1 <= INT_MAX && x2 <= INT_MAX && y2 <= INT_MAX)
     {
-        /* Anti-aliasing fails if drawing 'backwards' */
-        if(x1 > x2)
-        {
-            swap(&x1, &x2);
-            swap(&y1, &y2);
-        }
-
-        if(y1 > y2)
+        /* Anti-aliasing fails if drawing 'backwards' for some octants */
+        if(x1 > x2 && abs(x1 - x2) > abs(y1 - y2))
         {
             swap(&x1, &x2);
             swap(&y1, &y2);

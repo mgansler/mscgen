@@ -1,6 +1,6 @@
 #!/usr/bin/mscgen -Tpng
 #
-# testinput16.msc : Sample msc input file using slopes
+# testinput16.msc : Sample msc input file using skips and slopes
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
 # transmitted, used, modified, built upon, or otherwise exploited by
@@ -23,8 +23,7 @@ msc {
  a<=b [label="ack1, nack2"];
  a=>b [label="data2", arcskip="1"];
  |||;
- a<=b [label="ack3"];
- |||;
+ a<=b [label="ack3",arcskip="2"];
 }
 
 
