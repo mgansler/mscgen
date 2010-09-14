@@ -567,17 +567,19 @@ static void computeCanvasSize(Msc m,
                               unsigned int *h)
 {
     const unsigned int textHeight = drw.textHeight(&drw);
-    unsigned int nextYmin, ymin, ymax;
+    unsigned int nextYmin, ymin, ymax, yskipmax;
     Boolean      addLines = TRUE;
 
     nextYmin = ymin = gOpts.entityHeadGap;
     ymax = gOpts.entityHeadGap + gOpts.arcSpacing;
+    yskipmax = 0;
 
     MscResetArcIterator(m);
     do
     {
         const MscArcType   arcType       = MscGetCurrentArcType(m);
         const char        *arcLabel      = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
+        const int          arcGradient   = getArcGradient(m);
         const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) - 1 : 1;
 
         if(arcType == MSC_ARC_PARALLEL)
@@ -600,8 +602,18 @@ static void computeCanvasSize(Msc m,
             addLines = TRUE;
             nextYmin = ymax + 1;
         }
+
+        /* Keep a track of where the gradient may cause the graph to end */
+        if(ymax + arcGradient > ymax)
+        {
+            yskipmax = ymax + arcGradient;
+        }
+
     }
     while(MscNextArc(m));
+
+    if(ymax < yskipmax)
+      ymax = yskipmax;
 
     /* Set the return values */
     *w = MscGetNumEntities(m) * gOpts.entitySpacing;
@@ -1591,6 +1603,12 @@ int main(const int argc, const char *argv[])
     }
     while(MscNextArc(m));
 
+    /* The computed canvas size may have been extended for skip arcs */
+    if(nextYmin < h)
+    {
+        entityLines(m, nextYmin, h, FALSE, entColourRef);
+    }
+
     /* Close the image map if needed */
     if(ismap)
     {
@@ -1599,9 +1617,6 @@ int main(const int argc, const char *argv[])
 
     /* Close the context */
     drw.close(&drw);
-
-    /* Double check that the computed canvas size was correct */
-    assert(nextYmin == h);
 
     return EXIT_SUCCESS;
 }

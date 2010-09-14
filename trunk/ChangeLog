@@ -1,7 +1,9 @@
-0.x:
+0.19:
       Configure script changes to be more thorough about gdlib and FreeType
        detection.  Also correct problems in configuring for Win32 native.
       Inprove RPM packaging compliance with Fedora packaging guidelines.
+      Further gdlib anti-alising workarounds.
+      Correct canvas height computation when last arc(s) skip (issue #46).
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.

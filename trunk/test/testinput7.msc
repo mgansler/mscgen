@@ -34,10 +34,6 @@ msc {
    B abox C [label="Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7"];
    A box A [label="Line1"];
    |||;
-   |||;
-   |||;
-   |||;
-   |||;
 }
 
 /* END OF FILE */
