@@ -1,11 +1,16 @@
 #!/bin/bash
 
+# Remove any old source tarballs 
+rm ../../mscgen-*.tar.gz
+
+# Build a new source tarball
 (cd ../../
  make distclean
  ./autogen.sh 
  ./configure 
  make distcheck || (echo "Distcheck failed!"; exit))
 
+# Find the package
 DIST_FILE=`ls ../../mscgen-*.tar.gz`
 DIST_VER=`echo "$DIST_FILE" | sed "s/^.*-\([0-9]\+.[0-9]\+\).*$/\1/"`
 
