@@ -26,12 +26,15 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "msc.h"
 #include "safe.h"
 #include "language.h"  /* Token definitions from Yacc/Bison */
 
 /* Counter for error reporting */
 static unsigned long lex_linenum = 1;
+
+char *trimQstring(char *s);
 
 %}
 
@@ -100,7 +103,7 @@ box                                   yylval.arctype = MSC_ARC_BOX;      return 
 abox                                  yylval.arctype = MSC_ARC_ABOX;     return TOK_REL_ABOX;           /* abox */
 rbox                                  yylval.arctype = MSC_ARC_RBOX;     return TOK_REL_RBOX;           /* rbox */
 [A-Za-z0-9_]+                         yylval.string = strdup_s(yytext); return TOK_STRING;
-\"(\\\"|[^\"])*\"                     yylval.string = strdup_s(yytext + 1); yylval.string[strlen(yylval.string) - 1] = '\0'; return TOK_QSTRING;
+\"(\\\"|[^\"])*\"                     yylval.string = trimQstring(strdup_s(yytext)); return TOK_QSTRING;
 =                                     return TOK_EQUAL;
 ,                                     return TOK_COMMA;
 \;                                    return TOK_SEMICOLON;
@@ -115,6 +118,57 @@ rbox                                  yylval.arctype = MSC_ARC_RBOX;     return 
 }
 
 %%
+
+/* Trim a multi-line quoted string.
+ *  This allows the parsed input quoted strings to span multiple lines of
+ *  input but be condensed to only a single line of output e.g.
+ *    a->b [label="line 1
+ *                 line 1 too"];
+ *  Will parse to a string such as"line1\n       line1 too".  This function
+ *  will collapse the \n and whitespace into a single space.
+ */
+char *trimQstring(char *s)
+{
+    int i = 0, o = 0, skipmode = 0;
+
+    /* Strip leading " */
+    if(s[i] == '\"')
+    {
+        i++;
+    }
+
+    /* Copy body, compacting whitespace after newline sequences */
+    while(s[i] != '\0')
+    {
+        if(s[i] == '\r' || s[i] == '\n' || s[i] == '\f')
+        {
+            skipmode = 1;
+        }
+        else if(!skipmode || !isspace(s[i]))
+        {
+            if(skipmode)
+            {
+                s[o] = ' ';
+                o++;
+            }
+
+            skipmode = 0;
+            s[o] = s[i];
+            o++;
+        }
+
+        i++;
+    }
+
+    /* Null terminate */
+    s[o] = '\0';
+
+    /* Remove trailing " */
+    if(o > 1 && s[o - 1] == '\"')
+        s[o-1] = '\0';
+
+    return s;
+}
 
 unsigned long lex_getlinenum(void)
 {

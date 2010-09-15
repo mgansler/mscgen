@@ -22,6 +22,8 @@ msc {
   b->* [ label = "Broadcast from b" ] ;
   a<=c [ label = "Response" ] ;
   a->c [ label = "Line 1\nLine 2" ] ;
+  a->c [ label = "Line 1
+                  and more line 1" ];
   a->b ;
   *<-a [ label = "Broadcast from a" ] ;
 }
