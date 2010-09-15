@@ -4,6 +4,10 @@
       Inprove RPM packaging compliance with Fedora packaging guidelines.
       Further gdlib anti-alising workarounds.
       Correct canvas height computation when last arc(s) skip (issue #46).
+      Allow input quoted strings to span multiple lines e.g.
+         a->b [label="line1
+                      line1 too!"];
+       (issue #45)
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
