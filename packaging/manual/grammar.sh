@@ -55,8 +55,8 @@ sed "s/TOK_REL_LOSS_TO/'-x'/g" |
 sed "s/TOK_REL_LOSS_FROM/'x-'/g" |
 sed "s/TOK_ATTR_LABEL/'label'/g" |
 sed "s/TOK_ATTR_URL/'url'/g" |
-sed "s/TOK_ATTR_ID/'id'/g" |
 sed "s/TOK_ATTR_IDURL/'idurl'/g" |
+sed "s/TOK_ATTR_ID/'id'/g" |
 sed "s/TOK_ATTR_LINE_COLOUR/'linecolour'/g" |
 sed "s/TOK_ATTR_TEXT_COLOUR/'textcolour'/g" |
 sed "s/TOK_ATTR_TEXT_BGCOLOUR/'textbgcolour'/g" |
