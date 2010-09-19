@@ -8,6 +8,8 @@
          a->b [label="line1
                       line1 too!"];
        (issue #45)
+      Add gtksourceview syntax highlighting grammar installed in docs
+       (Thanks to NThykier for adding this, issue #51).
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.

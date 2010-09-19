@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   This is a language definition for gtksourceview describing
+   the grammar of mscgen (www.mcternan.co.uk/mscgen/).
+
+   Originally written by: Niels Thykier <niels@thykier.net>
+
+   This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
+   transmitted, used, modified, built upon, or otherwise exploited by
+   anyone for any purpose, commercial or non-commercial, and in any way,
+   including by methods that have not yet been invented or conceived.
+
+   This file is provided "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+   EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+-->
+<language id="msc" _name="mscgen" version="2.0" _section="Other">
+    <metadata>
+      <property name="globs">*.msc</property>
+    </metadata>
+    <styles>
+      <style id="comment" _name="Comment" map-to="def:comment"/>
+      <style id="string" _name="String" map-to="def:string"/>
+      <style id="attribute" _name="Arc attribute" map-to="def:keyword"/>
+      <style id="arc" _name="Arc type" map-to="def:preprocessor"/>
+      <style id="option" _name="Option and keywords" map-to="def:type"/>
+      <style id="colour" _name="Colour" map-to="def:constant"/>
+    </styles>
+    <default-regex-options case-sensitive="false" />
+    <definitions>
+
+        <define-regex id="escaped-character" extended="true">
+            \\(                   # leading backslash
+            [\\\"\'nrbtfav\?] |   # escaped character
+            [0-7]{1,3} |          # one, two, or three octal digits
+            x[0-9A-Fa-f]+         # 'x' followed by hex digits
+            )
+        </define-regex>
+
+        <context id="msc">
+            <include>
+
+                <context ref="c:comment" />
+                <context ref="def:shell-like-comment" />
+                <context ref="c:comment-multiline" />
+
+                <context id="string" end-at-line-end="false"
+                        style-ref="string">
+                    <start>"</start>
+                    <end>"</end>
+                   <include>
+                        <context id="escaped-character" style-ref="c:escaped-character">
+                            <match>\%{escaped-character}</match>
+                        </context>
+                   </include>
+                </context>
+
+                <context id="colour" style-ref="colour">
+                  <keyword>red</keyword>
+                  <keyword>orange</keyword>
+                  <keyword>yellow</keyword>
+                  <keyword>green</keyword>
+                  <keyword>blue</keyword>
+                  <keyword>indigo</keyword>
+                  <keyword>violet</keyword>
+                </context>
+
+                <context id="arc" style-ref="arc">
+                  <keyword>[ar]?box</keyword>
+                  <keyword>-x</keyword>
+                  <keyword>x-</keyword>
+                  <!--
+                      all the arcs - these fail to handle $entity $arc *
+                      and * $arc $entity though.
+
+                  <keyword>&lt;&lt;=&gt;&gt;</keyword>
+                  <keyword>=&gt;&gt;</keyword>
+                  <keyword>&lt;&lt;=</keyword>
+                  <keyword>[-.=:]&gt;</keyword>
+                  <keyword>&lt;[-.=:]</keyword>
+                  -->
+                </context>
+
+                <context id="attribute" style-ref="attribute">
+                    <keyword>label</keyword>
+                    <keyword>url</keyword>
+                    <keyword>id</keyword>
+                    <keyword>idurl</keyword>
+                    <keyword>linecolou?r</keyword>
+                    <keyword>textcolou?r</keyword>
+                    <keyword>textbgcolou?r</keyword>
+                    <keyword>arclinecolou?r</keyword>
+                    <keyword>arctextcolou?r</keyword>
+                    <keyword>arctextbgcolou?r</keyword>
+                    <keyword>arcskip</keyword>
+                </context>
+
+                <context id="option" style-ref="option">
+                    <keyword>hscale</keyword>
+                    <keyword>arcgradient</keyword>
+                    <keyword>width</keyword>
+                    <keyword>msc</keyword>
+                </context>
+            </include>
+        </context>
+    </definitions>
+</language>

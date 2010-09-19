@@ -114,6 +114,16 @@ From the top level directory, run the configure script and then make:
   $ sudo make install
 
 
+Syntax Highlighting
+===================
+
+A lang file for GtkSourceView based editors is included with mscgen.
+The mscgen.lang file is installed in /usr/shar/doc should be copied to 
+/usr/share/gtksourceview-2.0/language-specs or the equivalent installation
+directory for GtkSourceView.  This then allows mscgen input files to be
+displayed with syntax highlighting in applications such a gedit and Anjuta.
+
+
 Bugs
 ====
 
