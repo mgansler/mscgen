@@ -16,7 +16,7 @@
    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 -->
-<language id="msc" _name="mscgen" version="2.0" _section="Other">
+<language id="msc" _name="mscgen" version="2.0" _section="Others">
     <metadata>
       <property name="globs">*.msc</property>
     </metadata>
