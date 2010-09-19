@@ -118,10 +118,18 @@ Syntax Highlighting
 ===================
 
 A lang file for GtkSourceView based editors is included with mscgen.
-The mscgen.lang file is installed in /usr/shar/doc should be copied to 
-/usr/share/gtksourceview-2.0/language-specs or the equivalent installation
-directory for GtkSourceView.  This then allows mscgen input files to be
-displayed with syntax highlighting in applications such a gedit and Anjuta.
+The mscgen.lang file, normally installed with mscgen to /usr/share/doc/mscgen
+but needs copying to one of two locations for GtkSourceView:
+
+  /usr/share/gtksourceview-2.0/language-specs 
+    - System wide installation
+
+  ~/.local/share/gtksourceview-2.0/language-specs  
+    - User specific installation
+
+This then allows mscgen input files to be displayed with syntax highlighting
+in applications such a gedit and Anjuta.  The language spec associates itself
+with .msc files.
 
 
 Bugs
