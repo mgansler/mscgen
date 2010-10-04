@@ -43,6 +43,7 @@ int yylex(void);
 #define YYMALLOC malloc_s
 
 unsigned long lex_getlinenum(void);
+char *lex_getline(void);
 
 /* yyerror
  *  Error handling function.  The TOK_XXX names are substituted for more
@@ -73,31 +74,31 @@ void yyerror(const char *str)
                                       "TOK_REL_LOSS_TO",        "TOK_REL_LOSS_FROM",
                                       "TOK_OPT_ARCGRADIENT",    "TOK_ATTR_ARC_SKIP" };
 
-    static const char *tokRepl[] =  { "{",             "}",
-                                      "[",             "]",
-                                      ":>",            "<:",
-                                      "->",            "<-",
-                                      "=>",            "<=",
-                                      ">>",            "<<",
-                                      "=>>",           "<<=",
-                                      "--",            "==",
-                                      "..",            "::",
-                                      "=",             ",",
-                                      ";",             "msc",
-                                      "label",         "url",
-                                      "idurl",         "id",
-                                      "linecolour",    "textcolour",
-                                      "'...', '---'",  "characters",
-                                      "string",        "quoted string",
-                                      "hscale",        "'*'",
-                                      "width",         "box",
-                                      "abox",          "rbox",
-                                      "textbgcolour",  "arctextbgcolor",
-                                      "-x",            "x-",
-                                      "arcgradient",   "arcskip" };
+    static const char *tokRepl[] =  { "'{'",             "'}'",
+                                      "'['",             "']'",
+                                      "':>'",            "'<:'",
+                                      "'->'",            "'<-'",
+                                      "'=>'",            "'<='",
+                                      "'>>'",            "'<<'",
+                                      "'=>>'",           "'<<='",
+                                      "'--'",            "'=='",
+                                      "'..'",            "'::'",
+                                      "'='",             "','",
+                                      "';'",             "'msc'",
+                                      "'label'",         "'url'",
+                                      "'idurl'",         "'id'",
+                                      "'linecolour'",    "'textcolour'",
+                                      "'...', '---'",    "characters",
+                                      "'string'",        "'quoted string'",
+                                      "'hscale'",        "'*'",
+                                      "'width'",         "'box'",
+                                      "'abox'",          "'rbox'",
+                                      "'textbgcolour'",  "'arctextbgcolor'",
+                                      "'-x'",            "'x-'",
+                                      "'arcgradient'",   "'arcskip'" };
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 
-    char *s;
+    char *s, *line;
     int   t;
 
     /* Print standard message part */
@@ -122,7 +123,7 @@ void yyerror(const char *str)
             if(strncmp(tokNames[t], str, strlen(tokNames[t])) == 0)
             {
                 /* Dump the replacement string */
-                fprintf(stderr, "'%s'", tokRepl[t]);
+                fprintf(stderr, "%s", tokRepl[t]);
 
                 /* Skip the token name */
                 str += strlen(tokNames[t]);
@@ -145,6 +146,27 @@ void yyerror(const char *str)
 
     fprintf(stderr, "%s.\n", str);
 
+    line = lex_getline();
+    if(line != NULL)
+    {
+        fprintf(stderr, "> %s\n", line);
+
+        /* If the input line contains a 'lost arc', print a helpful note since
+         *  without whitespace, this can confuse the lexer.
+         */
+        if(strstr(line, "x-") != NULL)
+        {
+            fprintf(stderr, "\nNote: This input line contains 'x-' which has special meaning as a \n"
+                            "      'lost message' arc, but may not have been recognised as such if it\n"
+                            "      is preceeded by other letters or numbers.  Please use double-quoted\n"
+                            "      strings for tokens before 'x-', or insert a preceeding whitespace if\n"
+                            "      this is what you intend.\n");
+        }
+    }
+    else
+    {
+        fprintf(stderr, ".\n");
+    }
 }
 
 int yywrap()

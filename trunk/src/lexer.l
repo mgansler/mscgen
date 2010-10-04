@@ -32,8 +32,10 @@
 #include "language.h"  /* Token definitions from Yacc/Bison */
 
 /* Counter for error reporting */
-static unsigned long lex_linenum = 1;
+static unsigned long  lex_linenum = 1;
+static char          *lex_line = NULL;
 
+void newline(const char *text, unsigned int n);
 char *trimQstring(char *s);
 
 %}
@@ -48,14 +50,16 @@ char *trimQstring(char *s);
 "*/"                                  BEGIN(INITIAL);
 [^*\n]+
 "*"
-\r\n|\r|\n                            lex_linenum++;
+(\r\n).*                              newline(yytext, 2);
+(\r|\n).*                             newline(yytext, 1);
 }
 
 
 <INITIAL>{
 "/*"                                  BEGIN(IN_COMMENT);
 
-\r\n|\r|\n                            lex_linenum++;
+(\r\n).*                              newline(yytext, 2);
+(\r|\n).*                             newline(yytext, 1);
 
 #.*$                                  /* Ignore lines after '#' */
 \/\/.*$                               /* Ignore lines after '//' */
@@ -173,6 +177,23 @@ char *trimQstring(char *s)
 unsigned long lex_getlinenum(void)
 {
     return lex_linenum;
+}
+
+char *lex_getline(void)
+{
+    return lex_line;
+}
+
+void newline(const char *text, unsigned int n)
+{
+    lex_linenum++;
+    if(lex_line != NULL)
+    {
+        free(lex_line);
+    }
+
+    lex_line = strdup(text + n);
+    yyless(n);
 }
 
 /* END OF FILE */
