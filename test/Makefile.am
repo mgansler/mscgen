@@ -9,7 +9,8 @@ EXTRA_DIST = renderercheck.sh \
 testinput0.msc   testinput11.msc  testinput4.msc  testinput7.msc \
 testinput1.msc   testinput2.msc   testinput5.msc  testinput8.msc \
 testinput10.msc  testinput3.msc   testinput6.msc  testinput9.msc \
-testinput12.msc  testinput13.msc
+testinput12.msc  testinput13.msc  testinput14.msc testinput15.msc \
+textinput16.msc 
 
 CLEANFILES = *.png *.svg *.eps
 
