@@ -1,9 +1,9 @@
-#!/usr/bin/mscgen -Tpng
+﻿#!/usr/bin/mscgen -Tpng
 #
 # testinput9.msc : Sample msc input file for UTF-8 encodings.
 #
 # Various characters encoded in UTF-8, including unicode characters.
-#  See http://www.unicode.org/ for authorative reference of codes.  
+#  See http://www.unicode.org/ for authorative reference of codes.
 #  See http://www.utf8-chartable.de/ for very helpful encodings.
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
