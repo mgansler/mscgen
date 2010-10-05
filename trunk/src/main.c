@@ -1335,6 +1335,15 @@ int main(const int argc, const char *argv[])
         MscPrint(m);
     }
 
+#ifndef USE_FREETYPE
+    if(outType == ADRAW_FMT_PNG && lex_getutf8())
+    {
+        fprintf(stderr, "Warning: Optional UTF-8 byte-order-mark detected at start of input, but mscgen\n"
+                        "         was not configured to use FreeType for text rendering.  Rendering of\n"
+                        "         UTF-8 characters in PNG output may be incorrect.\n");
+    }
+#endif
+
     /* Check if an ismap file should also be generated */
     if(strcmp(gOutType, "ismap") == 0)
     {

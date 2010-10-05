@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "lexer.h"
 #include "safe.h"
 #include "msc.h"
 
@@ -41,9 +42,6 @@ int yylex(void);
 #define YYPARSE_PARAM yyparse_result
 
 #define YYMALLOC malloc_s
-
-unsigned long lex_getlinenum(void);
-char *lex_getline(void);
 
 /* yyerror
  *  Error handling function.  The TOK_XXX names are substituted for more

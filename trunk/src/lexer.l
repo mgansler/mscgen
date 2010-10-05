@@ -28,34 +28,43 @@
 #include <string.h>
 #include <ctype.h>
 #include "msc.h"
+#include "bool.h"
 #include "safe.h"
+#include "lexer.h"
 #include "language.h"  /* Token definitions from Yacc/Bison */
 
 /* Counter for error reporting */
 static unsigned long  lex_linenum = 1;
 static char          *lex_line = NULL;
+static Boolean        lex_utf8 = FALSE;
 
-void newline(const char *text, unsigned int n);
-char *trimQstring(char *s);
+/* Local function prototypes */
+static void newline(const char *text, unsigned int n);
+static char *trimQstring(char *s);
 
 %}
 
 /* Not used, so prevent compiler warning */
-%option nounput noinput
+%option noinput
 
-%x IN_COMMENT
+%x IN_COMMENT BODY
 %%
 
+<INITIAL>{
+\xef\xbb\xbf                          lex_utf8 = TRUE; BEGIN(BODY);
+.                                     unput(yytext[0]); BEGIN(BODY);
+}
+
 <IN_COMMENT>{
-"*/"                                  BEGIN(INITIAL);
+"*/"                                  BEGIN(BODY);
 [^*\n]+
 "*"
 (\r\n).*                              newline(yytext, 2);
 (\r|\n).*                             newline(yytext, 1);
 }
 
+<BODY>{
 
-<INITIAL>{
 "/*"                                  BEGIN(IN_COMMENT);
 
 (\r\n).*                              newline(yytext, 2);
@@ -123,6 +132,24 @@ rbox                                  yylval.arctype = MSC_ARC_RBOX;     return 
 
 %%
 
+/* Handle a new line of input.
+ *  This counts the line number and duplicates the string incase we need
+ *  it for error reporting.  The line is then returned back for parsing
+ *  without the newline characters prefixed.
+ */
+static void newline(const char *text, unsigned int n)
+{
+    lex_linenum++;
+    if(lex_line != NULL)
+    {
+        free(lex_line);
+    }
+
+    lex_line = strdup(text + n);
+    yyless(n);
+}
+
+
 /* Trim a multi-line quoted string.
  *  This allows the parsed input quoted strings to span multiple lines of
  *  input but be condensed to only a single line of output e.g.
@@ -131,7 +158,7 @@ rbox                                  yylval.arctype = MSC_ARC_RBOX;     return 
  *  Will parse to a string such as"line1\n       line1 too".  This function
  *  will collapse the \n and whitespace into a single space.
  */
-char *trimQstring(char *s)
+static char *trimQstring(char *s)
 {
     int i = 0, o = 0, skipmode = 0;
 
@@ -184,16 +211,9 @@ char *lex_getline(void)
     return lex_line;
 }
 
-void newline(const char *text, unsigned int n)
+Boolean lex_getutf8(void)
 {
-    lex_linenum++;
-    if(lex_line != NULL)
-    {
-        free(lex_line);
-    }
-
-    lex_line = strdup(text + n);
-    yyless(n);
+    return lex_utf8;
 }
 
 /* END OF FILE */
