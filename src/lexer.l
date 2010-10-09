@@ -195,7 +195,7 @@ static char *trimQstring(char *s)
     s[o] = '\0';
 
     /* Remove trailing " */
-    if(o > 1 && s[o - 1] == '\"')
+    if(o >= 1 && s[o - 1] == '\"')
         s[o-1] = '\0';
 
     return s;
