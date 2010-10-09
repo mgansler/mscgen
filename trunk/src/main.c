@@ -77,6 +77,9 @@ typedef struct GlobalOptionsTag
     /** Radius of rounded box corner arcs. */
     unsigned int rboxArc;
 
+    /** Size of 'corner' added to note boxes. */
+    unsigned int noteCorner;
+
     /** Anguluar box slope in pixels. */
     unsigned int aboxSlope;
 
@@ -139,6 +142,7 @@ static GlobalOptions gOpts =
     0,      /* arcGradient */
     8,      /* boxSpacing */
     6,      /* rboxArc */
+    12,     /* noteCorner */
     6,      /* aboxSlope */
 
     /* Arrow options */
@@ -322,7 +326,8 @@ static int getArcGradient(Msc m)
  */
 static Boolean isBoxArc(const MscArcType a)
 {
-    return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  || a == MSC_ARC_ABOX;
+    return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  ||
+           a == MSC_ARC_ABOX || a== MSC_ARC_NOTE;
 }
 
 
@@ -714,6 +719,15 @@ static void entityBox(unsigned int       ymin,
             drw.line(&drw, x1, ymax, x2, ymax);
             drw.line(&drw, x1, ymin, x1, ymax);
             drw.line(&drw, x2, ymin, x2, ymax);
+            break;
+
+        case MSC_ARC_NOTE:
+            drw.line(&drw, x1, ymin, x2, ymin);
+            drw.line(&drw, x1, ymax, x2, ymax);
+            drw.line(&drw, x1, ymin, x1, ymax);
+            drw.line(&drw, x2, ymin, x2, ymax);
+            drw.line(&drw, x2 - gOpts.noteCorner, ymin,
+                           x2, ymin + gOpts.noteCorner);
             break;
 
         case MSC_ARC_RBOX:

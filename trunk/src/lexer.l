@@ -112,10 +112,11 @@ ARCSKIP|arcskip                       yylval.attribType = MSC_ATTR_ARC_SKIP;    
 \<\<=\>\>                             yylval.arctype = MSC_ARC_CALLBACK; return TOK_REL_CALLBACK_BI;    /* <<=>> */
 =\>\>                                 yylval.arctype = MSC_ARC_CALLBACK; return TOK_REL_CALLBACK_TO;    /* =>> */
 \<\<=                                 yylval.arctype = MSC_ARC_CALLBACK; return TOK_REL_CALLBACK_FROM;  /* <<= */
-box                                   yylval.arctype = MSC_ARC_BOX;      return TOK_REL_BOX;            /* box */
-abox                                  yylval.arctype = MSC_ARC_ABOX;     return TOK_REL_ABOX;           /* abox */
-rbox                                  yylval.arctype = MSC_ARC_RBOX;     return TOK_REL_RBOX;           /* rbox */
-[A-Za-z0-9_]+                         yylval.string = strdup_s(yytext); return TOK_STRING;
+BOX|box                               yylval.arctype = MSC_ARC_BOX;      return TOK_REL_BOX;            /* box */
+ABOX|abox                             yylval.arctype = MSC_ARC_ABOX;     return TOK_REL_ABOX;           /* abox */
+RBOX|rbox                             yylval.arctype = MSC_ARC_RBOX;     return TOK_REL_RBOX;           /* rbox */
+NOTE|note                             yylval.arctype = MSC_ARC_NOTE;     return TOK_REL_NOTE;           /* note */
+[A-Za-z0-9_]+                         yylval.string = strdup_s(yytext);  return TOK_STRING;
 \"(\\\"|[^\"])*\"                     yylval.string = trimQstring(strdup_s(yytext)); return TOK_QSTRING;
 =                                     return TOK_EQUAL;
 ,                                     return TOK_COMMA;

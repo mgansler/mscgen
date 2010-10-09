@@ -16,6 +16,8 @@
       Parse UTF-8 byte order mark and print a warning if parsing UTF-8 to
        generate a PNG when configured without FreeType.  Otherwise ignore
        the BOM (issue #7).
+      Add support for 'note' arcs which draw a box with the corner turned down.
+      Enable box arc names to be in upper or lower case in the input file.
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.

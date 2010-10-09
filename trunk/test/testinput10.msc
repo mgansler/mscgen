@@ -26,11 +26,12 @@ msc {
    |||;
    A abox B [label="abox"];
    |||;
-   B rbox C [label="rbox"];
+   B RBOX C [label="rbox"];
    |||;
    A box A [label="box"],
    B rbox B [label="rbox"],
-   C abox C [label="abox"],
+   C abox C [label="abox"];
+   A note C [label="note"];
    ---;
    ---;
 
