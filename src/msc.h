@@ -78,6 +78,7 @@ typedef enum
     MSC_ARC_BOX,
     MSC_ARC_ABOX,
     MSC_ARC_RBOX,
+    MSC_ARC_NOTE,
     MSC_ARC_LOSS,       /* -x or x- */
 
     MSC_INVALID_ARC_TYPE
