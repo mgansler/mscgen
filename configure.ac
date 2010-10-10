@@ -10,6 +10,7 @@ AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([test/Makefile])
 AC_CONFIG_FILES([examples/Makefile])
 AC_CONFIG_HEADERS([config.h])
+AC_HEADER_STDC
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AM_PROG_CC_C_O

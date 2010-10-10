@@ -181,11 +181,13 @@ unsigned int gdoTextWidth(struct ADrawTag *ctx,
                           const char *string)
 {
 #ifndef USE_FREETYPE
+    const unsigned int l = strlen(string);
+
     /* Remove 1 pixel since there is usually an uneven gap at
      *  the right of the last character for the fixed width
      *  font.
      */
-    return (getGdoCtx(ctx)->font->w * strlen(string)) - 1;
+    return l == 0 ? 0 : (getGdoCtx(ctx)->font->w * l) - 1;
 #else
     GdoContext *context = getGdoCtx(ctx);
     int         rect[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };

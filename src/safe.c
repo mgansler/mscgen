@@ -63,6 +63,15 @@ static void checkNotNull(void *p, const char *message)
  * Global Function Definitions
  *****************************************************************************/
 
+void *realloc_s(void *ptr, size_t size)
+{
+    void *r = realloc(ptr, size);
+
+    checkNotNull(r, "realloc() failed");
+
+    return r;
+}
+
 void *malloc_s(size_t size)
 {
     void *r = malloc(size);

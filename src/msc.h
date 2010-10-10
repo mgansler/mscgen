@@ -35,7 +35,8 @@ typedef enum MscOptTypeTag
 {
     MSC_OPT_HSCALE,
     MSC_OPT_WIDTH,
-    MSC_OPT_ARCGRADIENT
+    MSC_OPT_ARCGRADIENT,
+    MSC_OPT_WORDWRAPARCS
 }
 MscOptType;
 
@@ -158,6 +159,8 @@ Msc           MscAlloc(MscOpt        optList,
                        MscEntityList entityList,
                        MscArcList    arcList);
 
+void          MscFree(struct MscTag *m);
+
 /** Print the passed msc in textual form to stdout.
  * This prints a human readable format of the parsed msc to stdout.  This
  * is primarily of use in debugging the parser.
@@ -179,7 +182,18 @@ unsigned int  MscGetNumOpts(Msc m);
  * \param[in,out] f      Pointer to be filled with parsed value.
  * \retval TRUE  If the option was found and parsed successfully.
  */
-Boolean       MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *f);
+Boolean       MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *const f);
+
+/** Get an MSC option, returning the value as a Boolean.
+ *
+ * \param[in]     m      The MSC to analyse.
+ * \param[in]     type   The option type to retrieve.
+ * \param[in,out] b      Pointer to be filled with parsed value.
+ * \retval TRUE  If the option was found and parsed successfully,
+ *                otherwise FALSE in which case *b is unmodified.
+ *
+ */
+Boolean      MscGetOptAsBoolean(struct MscTag *m, MscOptType type, Boolean *const b);
 
 /** Get the index of some entity.
  * This returns the column index for the entity identified by the passed

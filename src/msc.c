@@ -113,6 +113,19 @@ static const char *findAttrib(const struct MscAttribTag *attr, MscAttribType a)
 }
 
 
+/** Free the memory underlying a list of attributes.
+ */
+static void freeAttribList(struct MscAttribTag *attr)
+{
+    while(attr)
+    {
+        struct MscAttribTag *next = attr->next;
+        free(attr->value);
+        free(attr);
+        attr = next;
+    }
+}
+
 /***************************************************************************
  * Option Functions
  ***************************************************************************/
@@ -224,7 +237,6 @@ struct MscEntityListTag *MscLinkEntity(struct MscEntityListTag *list,
     if(list == NULL)
     {
         list = zalloc_s(sizeof(struct MscEntityListTag));
-
     }
 
     /* Check for an empty list */
@@ -481,6 +493,50 @@ struct MscTag *MscAlloc(struct MscOptTag        *optList,
     return m;
 }
 
+void MscFree(struct MscTag *m)
+{
+    struct MscOptTag    *opt    = m->optList;
+    struct MscEntityTag *entity = m->entityList->head;
+    struct MscArcTag    *arc    = m->arcList->head;
+
+    while(opt)
+    {
+        struct MscOptTag *next = opt->next;
+
+        free(opt->value);
+        free(opt);
+
+        opt = next;
+    }
+
+    while(entity)
+    {
+        struct MscEntityTag *next = entity->next;
+
+        freeAttribList(entity->attr);
+        free(entity->label);
+        free(entity);
+
+        entity = next;
+    }
+
+    while(arc)
+    {
+        struct MscArcTag *next = arc->next;
+
+        freeAttribList(arc->attr);
+        free(arc->dst);
+        free(arc->src);
+        free(arc);
+
+        arc = next;
+    }
+
+    free(m->entityList);
+    free(m->arcList);
+    free(m);
+}
+
 void MscPrint(struct MscTag *m)
 {
     printf("Option list (%d options)\n", MscGetNumOpts(m));
@@ -684,7 +740,7 @@ const char *MscGetCurrentArcAttrib(struct MscTag *m, MscAttribType a)
 
 }
 
-Boolean MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *f)
+Boolean MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *const f)
 {
     struct MscOptTag *opt = MscFindOpt(m->optList, type);
 
@@ -697,4 +753,36 @@ Boolean MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *f)
     return FALSE;
 }
 
+Boolean MscGetOptAsBoolean(struct MscTag *m, MscOptType type, Boolean *const b)
+{
+    struct MscOptTag *opt = MscFindOpt(m->optList, type);
+
+    if(opt != NULL)
+    {
+        const char *v = opt->value;
+
+        if(strcasecmp(v, "true") == 0 || strcasecmp(v, "yes") == 0 ||
+           strcasecmp(v, "on") == 0 || strcasecmp(v, "1") == 0)
+        {
+            *b = TRUE;
+            return TRUE;
+        }
+        else if(strcasecmp(v, "false") == 0 || strcasecmp(v, "no") == 0 ||
+                strcasecmp(v, "off") == 0 || strcasecmp(v, "0") == 0)
+        {
+            *b = FALSE;
+            return TRUE;
+        }
+        else
+        {
+            fprintf(stderr, "Warning: Unrecognised boolean option value '%s'.  Valid values are 'true',\n"
+                            "         'false', 'yes', 'no', 'on', 'off', '1' and '0'.\n",
+                            v);
+            return FALSE;
+        }
+    }
+
+    return FALSE;
+}
 /* END OF FILE */
+

@@ -77,6 +77,7 @@ msc                                   return TOK_MSC;
 HSCALE|hscale                         yylval.optType = MSC_OPT_HSCALE;                return TOK_OPT_HSCALE;
 WIDTH|width                           yylval.optType = MSC_OPT_WIDTH;                 return TOK_OPT_WIDTH;
 ARCGRADIENT|arcgradient               yylval.optType = MSC_OPT_ARCGRADIENT;           return TOK_OPT_ARCGRADIENT;
+WORDWRAPARCS|wordwraparcs             yylval.optType = MSC_OPT_WORDWRAPARCS;          return TOK_OPT_WORDWRAPARCS;
 URL|url                               yylval.attribType = MSC_ATTR_URL;               return TOK_ATTR_URL;
 LABEL|label                           yylval.attribType = MSC_ATTR_LABEL;             return TOK_ATTR_LABEL;
 IDURL|idurl                           yylval.attribType = MSC_ATTR_IDURL;             return TOK_ATTR_IDURL;
@@ -159,7 +160,7 @@ static void newline(const char *text, unsigned int n)
  *  Will parse to a string such as"line1\n       line1 too".  This function
  *  will collapse the \n and whitespace into a single space.
  */
-static char *trimQstring(char *s)
+static char *trimQstring(char *const s)
 {
     int i = 0, o = 0, skipmode = 0;
 
@@ -210,6 +211,15 @@ unsigned long lex_getlinenum(void)
 char *lex_getline(void)
 {
     return lex_line;
+}
+
+void lex_destroy(void)
+{
+    if(lex_line != NULL)
+    {
+        free(lex_line);
+        lex_line = NULL;
+    }
 }
 
 Boolean lex_getutf8(void)

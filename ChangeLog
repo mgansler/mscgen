@@ -18,6 +18,9 @@
        the BOM (issue #7).
       Add support for 'note' arcs which draw a box with the corner turned down.
       Enable box arc names to be in upper or lower case in the input file.
+      Add word wrapping for arc labels in boxes.  Wrapping for all arc labels
+       can also be enabled with the new "wordwraparcs" msc attribute.
+       (issue #48)
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
