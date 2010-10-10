@@ -30,11 +30,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef  HAVE_LIMITS_H
+#include <limits.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include <ctype.h>
 #include <assert.h>
 #include "cmdparse.h"
+#include "lexer.h"
 #include "usage.h"
 #include "adraw.h"
 #include "safe.h"
@@ -74,6 +79,9 @@ typedef struct GlobalOptionsTag
     /** Gap between adjacent boxes. */
     unsigned int boxSpacing;
 
+    /** Minimum distance between box edges and text. */
+    unsigned int boxInternalBorder;
+
     /** Radius of rounded box corner arcs. */
     unsigned int rboxArc;
 
@@ -82,6 +90,9 @@ typedef struct GlobalOptionsTag
 
     /** Anguluar box slope in pixels. */
     unsigned int aboxSlope;
+
+    /** If TRUE, wrap arc text as well as box contents. */
+    Boolean      wordWrapArcLabels;
 
     /** Horizontal width of the arrow heads. */
     unsigned int arrowWidth;
@@ -141,9 +152,11 @@ static GlobalOptions gOpts =
     26,     /* arcSpacing */
     0,      /* arcGradient */
     8,      /* boxSpacing */
+    4,      /* boxInternalBorder */
     6,      /* rboxArc */
     12,     /* noteCorner */
     6,      /* aboxSlope */
+    FALSE,  /* wordWrapArcLabels */
 
     /* Arrow options */
     10, 6,
@@ -199,6 +212,16 @@ static void trimExtension(char *s)
     }
 }
 
+
+/** Check if some arc type indicates a box.
+ */
+static Boolean isBoxArc(const MscArcType a)
+{
+    return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  ||
+           a == MSC_ARC_ABOX || a== MSC_ARC_NOTE;
+}
+
+
 /** Count the number of lines in some string.
  * This counts line breaks that are written as a literal '\n' in the line to
  * determine how many lines of output are needed.
@@ -220,6 +243,186 @@ static unsigned int countLines(const char *l)
     while(l != NULL);
 
     return c;
+}
+
+
+/** Word wrap a line of text until the first line is less than \a width wide.
+ * This removes words from the input line and builds them into a 2nd new
+ * string until the input line is shorter than the supplied width.  The
+ * input string is directly truncated, while the remaining characters are
+ * returned in a new memory allocation.  On return, the input line of text
+ * will be shorter than \a width, while the newly returned string will contain
+ * all the remaining characters.
+ *
+ * If the input line is already shorter than \a width, the function returns
+ * NULL and does not modify the input line of text.
+ *
+ * \param[in,out] l     Input line of text which maybe modified if needed.
+ * \param[in]     width Maximum allowable text line width.
+ * \returns       NULL if \a l was already less then \a width long,
+ *                 otherwise a new string giving the remained of the string.
+ */
+static char *splitStringToWidth(char *l, unsigned int width)
+{
+    char *p = l + strlen(l);
+    char *orig = NULL;
+    int   m, n;
+
+    if(drw.textWidth(&drw, l) > width)
+    {
+        /* Duplicate the original string */
+        orig = strdup_s(l);
+
+        /* Now remove words from the line until it fits the available width */
+        do
+        {
+            /* Skip back 1 word */
+            while(!isspace(*p) && p > l)
+            {
+                p--;
+            }
+
+            *p = '\0';
+        }
+        while(drw.textWidth(&drw, l) > width && p > l);
+
+        /* Copy the remaining line to the start of the string */
+        m = 0;
+        n = (p - l);
+
+        while(isspace(orig[n]) && orig[n] != '\0')
+        {
+            n++;
+        }
+
+        do
+        {
+            orig[m++] = orig[n++];
+        }
+        while(orig[m - 1] != '\0');
+    }
+
+    return orig;
+}
+
+
+/** Split an input arc label into lines, word-wrapping if needed.
+ * This takes the literal label supplied from the input and splits it into an
+ * array of char * text lines.  Splitting is first done according to literal
+ * '\n' character sequences added by the user, then according to word wrapping
+ * to fit available space, if appropriate.
+ *
+ * \param[in]     m         The MSC for which the lines are to be split.
+ * \param[in]     arcType   The type of the arc being labelled.
+ * \param[in,out] lines     Pointer to be filled with output line array.
+ * \param[in]     label     Original arc label from input file.
+ * \param[in]     startCol  Column in which the arc starts.
+ * \param[in]     endCol    Column in which the arc ends, or -1 for broadcast arcs.
+ *
+ * \note The returned strings and array must be free()'d.  freeLabelLines() can
+ *        be used for this purpose.
+ */
+static unsigned int computeLabelLines(Msc               m,
+                                      const MscArcType  arcType,
+                                      char           ***lines,
+                                      const char       *label,
+                                      int               startCol,
+                                      int               endCol)
+{
+    unsigned int  width;
+    unsigned int  nAllocLines = 8;
+    char        **retLines = malloc_s(sizeof(char *) * nAllocLines);
+    unsigned int  c = 0;
+
+    assert(startCol >= 0 && startCol < (signed)MscGetNumEntities(m));
+    assert(startCol >= -1 && startCol < (signed)MscGetNumEntities(m));
+
+    /* Compute available width for text */
+    if(isBoxArc(arcType) || gOpts.wordWrapArcLabels)
+    {
+        if(endCol == -1)
+        {
+            /* This is a special case for a broadcast arc */
+            width = gOpts.entitySpacing * MscGetNumEntities(m);
+        }
+        else if(startCol < endCol)
+        {
+            width = gOpts.entitySpacing * (1 + (endCol - startCol));
+        }
+        else
+        {
+            width = gOpts.entitySpacing * (1 + (startCol - endCol));
+        }
+
+        /* Reduce the width due to the box borders */
+        if(isBoxArc(arcType))
+        {
+            width -= (gOpts.boxSpacing + gOpts.boxInternalBorder) * 2;
+        }
+    }
+    else
+    {
+        width = UINT_MAX;
+    }
+
+    /* Split the input label into lines */
+    while(label != NULL)
+    {
+        /* First split around user specified lines with literal '\n' */
+        char *nextLine = strstr(label, "\\n");
+        if(nextLine)
+        {
+            const int lineLen = nextLine - label;
+
+            /* Allocate storage and duplicate the line */
+            retLines[c] = malloc_s(lineLen + 1);
+            memcpy(retLines[c], label, lineLen);
+            retLines[c][lineLen] = '\0';
+
+            /* Advance the label */
+            label = nextLine + 2;
+        }
+        else
+        {
+            /* Duplicate the final line */
+            retLines[c] = strdup_s(label);
+            label = NULL;
+        }
+
+        /* Now split the line as required to wrap into the space available */
+        do
+        {
+            /* Check if more storage maybe needed */
+            if(c + 2 >= nAllocLines)
+            {
+                nAllocLines += 8;
+                retLines = realloc_s(retLines, sizeof(char *) * nAllocLines);
+            }
+
+            retLines[c + 1] = splitStringToWidth(retLines[c], width);
+            c++;
+        }
+        while(retLines[c] != NULL);
+    }
+
+    /* Return the array of lines and the count */
+    *lines = retLines;
+
+    return c;
+}
+
+
+/** Free memory allocated for the label lines.
+ */
+static void freeLabelLines(unsigned int n, char **lines)
+{
+    while(n > 0)
+    {
+        n--;
+        free(lines[n]);
+    }
+
+    free(lines);
 }
 
 
@@ -319,15 +522,6 @@ static int getArcGradient(Msc m)
     }
 
     return skip;
-}
-
-
-/** Check if some arc type indicates a box.
- */
-static Boolean isBoxArc(const MscArcType a)
-{
-    return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  ||
-           a == MSC_ARC_ABOX || a== MSC_ARC_NOTE;
 }
 
 
@@ -582,10 +776,11 @@ static void computeCanvasSize(Msc m,
     MscResetArcIterator(m);
     do
     {
-        const MscArcType   arcType       = MscGetCurrentArcType(m);
-        const char        *arcLabel      = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
-        const int          arcGradient   = getArcGradient(m);
-        const unsigned int arcLabelLines = arcLabel ? countLines(arcLabel) - 1 : 1;
+        const MscArcType   arcType           = MscGetCurrentArcType(m);
+        const int          arcGradient       = getArcGradient(m);
+        char             **arcLabelLines     = NULL;
+        unsigned int       arcLabelLineCount = 0;
+        int                startCol = -1, endCol = -1;
 
         if(arcType == MSC_ARC_PARALLEL)
         {
@@ -593,16 +788,37 @@ static void computeCanvasSize(Msc m,
         }
         else
         {
+            /* Get the entity indices */
+            if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
+            {
+                startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
+                endCol   = MscGetEntityIndex(m, MscGetCurrentArcDest(m));
+            }
+            else
+            {
+                /* Discontinuity or parallel arc spans whole chart */
+                startCol = 0;
+                endCol   = MscGetNumEntities(m) - 1;
+            }
+
+            /* Work out how the label fits the gap between entities */
+            arcLabelLineCount = computeLabelLines(m, arcType, &arcLabelLines,
+                                                  MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL),
+                                                  startCol, endCol);
+
+            /* Advance Y position */
             if(addLines)
             {
                 ymin = nextYmin;
                 ymax = ymin + gOpts.arcSpacing;
 
-                if(arcLabelLines > 1)
+                if(arcLabelLineCount > 1)
                 {
-                    ymax += (arcLabelLines - 2) * textHeight;
+                    ymax += (arcLabelLineCount - 2) * textHeight;
                 }
             }
+
+            freeLabelLines(arcLabelLineCount, arcLabelLines);
 
             addLines = TRUE;
             nextYmin = ymax + 1;
@@ -779,8 +995,8 @@ static void entityBox(unsigned int       ymin,
  * \param ymin           Co-ordinate of the row on which the text should be placed.
  * \param startCol       The column at which the arc being labelled starts.
  * \param endCol         The column at which the arc being labelled ends.
- * \param arcLabel       The label to render.
- * \param arcLabelLines  Count of lines of text in arcLabel.
+ * \param arcLabelLineCount  Count of lines of text in arcLabelLines.
+ * \param arcLabelLines  Array of lines of text from 0 to arcLabelLineCount - 1.
  * \param arcUrl         The URL for rendering the label as a hyperlink.  This
  *                        maybe \a NULL if not required.
  * \param arcId          The text identifier for the arc.
@@ -797,8 +1013,8 @@ static void arcText(Msc                m,
                     int                ygradient,
                     unsigned int       startCol,
                     unsigned int       endCol,
-                    const char        *arcLabel,
-                    const unsigned int arcLabelLines,
+                    const unsigned int arcLabelLineCount,
+                    char             **arcLabelLines,
                     const char        *arcUrl,
                     const char        *arcId,
                     const char        *arcIdUrl,
@@ -807,12 +1023,11 @@ static void arcText(Msc                m,
                     const char        *arcLineColour,
                     const MscArcType   arcType)
 {
-    char         lineBuffer[1024];
     unsigned int l;
 
-    for(l = 0; l < arcLabelLines; l++)
+    for(l = 0; l < arcLabelLineCount; l++)
     {
-        char *lineLabel = getLine(arcLabel, l, lineBuffer, sizeof(lineBuffer));
+        const char *lineLabel = arcLabelLines[l];
         unsigned int y = ymin + ((gOpts.arcSpacing + ygradient) / 2) +
                           (l * drw.textHeight(&drw));
         unsigned int width = drw.textWidth(&drw, lineLabel);
@@ -822,11 +1037,11 @@ static void arcText(Msc                m,
          *  label is above the rendered arc (or horizontally in the
          *  centre of a non-straight arc).
          */
-        if(arcType == MSC_ARC_DISCO || arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE ||
-           isBoxArc(arcType))
+        if(arcLabelLineCount == 1 &&
+           (arcType == MSC_ARC_DISCO || arcType == MSC_ARC_DIVIDER ||
+            arcType == MSC_ARC_SPACE || isBoxArc(arcType)))
         {
-            if(arcLabelLines == 1)
-                y += drw.textHeight(&drw) / 2;
+            y += drw.textHeight(&drw) / 2;
         }
 
         if(startCol != endCol || isBoxArc(arcType))
@@ -919,7 +1134,7 @@ static void arcText(Msc                m,
         }
 
         /* Dividers also have a horizontal line at the middle */
-        if(l == (arcLabelLines / 2) && arcType == MSC_ARC_DIVIDER)
+        if(l == (arcLabelLineCount / 2) && arcType == MSC_ARC_DIVIDER)
         {
             const unsigned int margin = gOpts.entitySpacing / 4;
 
@@ -929,7 +1144,7 @@ static void arcText(Msc                m,
             }
 
             /* Check for an even number of lines */
-            if((arcLabelLines & 1) == 0)
+            if((arcLabelLineCount & 1) == 0)
             {
                 /* Even, the divider falls between the two lines */
                 y -= drw.textHeight(&drw);
@@ -1394,6 +1609,9 @@ int main(const int argc, const char *argv[])
         gOpts.arcSpacing += gOpts.arcGradient;
     }
 
+    /* Check if word wrapping on arcs other than boxes should be used */
+    MscGetOptAsBoolean(m, MSC_OPT_WORDWRAPARCS, &gOpts.wordWrapArcLabels);
+
     /* Work out the entitySpacing */
     if(gOpts.idealCanvasWidth / MscGetNumEntities(m) > gOpts.entitySpacing)
     {
@@ -1473,19 +1691,19 @@ int main(const int argc, const char *argv[])
     MscResetArcIterator(m);
     do
     {
-        const MscArcType   arcType         = MscGetCurrentArcType(m);
-        const char        *arcUrl          = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
-        const char        *arcLabel        = MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL);
-        const char        *arcId           = MscGetCurrentArcAttrib(m, MSC_ATTR_ID);
-        const char        *arcIdUrl        = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
-        const char        *arcTextColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
-        const char        *arcTextBgColour = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_BGCOLOUR);
-        const char        *arcLineColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
-        const int          arcGradient     = getArcGradient(m);
-        const int          arcHasArrows    = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
-        const int          arcHasBiArrows  = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
-        const unsigned int arcLabelLines   = arcLabel ? countLines(arcLabel) - 1 : 1;
-        int                startCol, endCol;
+        const MscArcType   arcType           = MscGetCurrentArcType(m);
+        const char        *arcUrl            = MscGetCurrentArcAttrib(m, MSC_ATTR_URL);
+        const char        *arcId             = MscGetCurrentArcAttrib(m, MSC_ATTR_ID);
+        const char        *arcIdUrl          = MscGetCurrentArcAttrib(m, MSC_ATTR_IDURL);
+        const char        *arcTextColour     = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
+        const char        *arcTextBgColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_BGCOLOUR);
+        const char        *arcLineColour     = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
+        const int          arcGradient       = getArcGradient(m);
+        const int          arcHasArrows      = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
+        const int          arcHasBiArrows    = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
+        char             **arcLabelLines     = NULL;
+        unsigned int       arcLabelLineCount = 0;
+        int                startCol = -1, endCol = -1;
 
         if(arcType == MSC_ARC_PARALLEL)
         {
@@ -1493,18 +1711,6 @@ int main(const int argc, const char *argv[])
         }
         else
         {
-            /* Advance position */
-            if(addLines)
-            {
-                ymin = nextYmin;
-                ymax = ymin + gOpts.arcSpacing;
-
-                if(arcLabelLines > 1)
-                {
-                    ymax += (arcLabelLines - 2) * drw.textHeight(&drw);
-                }
-            }
-
             /* Get the entity indices */
             if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
             {
@@ -1551,6 +1757,23 @@ int main(const int argc, const char *argv[])
                 /* Discontinuity or parallel arc spans whole chart */
                 startCol = 0;
                 endCol   = MscGetNumEntities(m) - 1;
+            }
+
+            /* Work out how the label fits the gap between entities */
+            arcLabelLineCount = computeLabelLines(m, arcType, &arcLabelLines,
+                                                  MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL),
+                                                  startCol, endCol);
+
+            /* Advance Y position */
+            if(addLines)
+            {
+                ymin = nextYmin;
+                ymax = ymin + gOpts.arcSpacing;
+
+                if(arcLabelLineCount > 1)
+                {
+                    ymax += (arcLabelLineCount - 2) * drw.textHeight(&drw);
+                }
             }
 
             /* Check if this is a broadcast message */
@@ -1612,13 +1835,16 @@ int main(const int argc, const char *argv[])
             }
 
             /* All may have text */
-            if(arcLabel)
+            if(arcLabelLineCount > 0)
             {
                 arcText(m, ismap, w, ymin, arcGradient,
-                        startCol, endCol, arcLabel, arcLabelLines,
+                        startCol, endCol,
+                        arcLabelLineCount, arcLabelLines,
                         arcUrl, arcId, arcIdUrl,
                         arcTextColour, arcTextBgColour, arcLineColour, arcType);
             }
+
+            freeLabelLines(arcLabelLineCount, arcLabelLines);
 
             addLines = TRUE;
             nextYmin = ymax + 1;
@@ -1637,6 +1863,12 @@ int main(const int argc, const char *argv[])
     {
         fclose(ismap);
     }
+
+#ifndef NDEBUG
+    /* Free the allocated memory to allow leak detection */
+    free(entColourRef);
+    MscFree(m);
+#endif
 
     /* Close the context */
     drw.close(&drw);

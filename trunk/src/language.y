@@ -32,8 +32,9 @@
 #include "safe.h"
 #include "msc.h"
 
-/* Lexer prototype to prevent compiler warning */
+/* Lexer prototypes to prevent compiler warnings */
 int yylex(void);
+int yylex_destroy(void);
 
 /* Use verbose error reporting such that the expected token names are dumped */
 #define YYERROR_VERBOSE
@@ -70,7 +71,8 @@ void yyerror(const char *str)
                                       "TOK_ARC_ABOX",           "TOK_ARC_RBOX",
                                       "TOK_ATTR_TEXT_BGCOLOUR", "TOK_ATTR_ARC_TEXT_BGCOLOUR",
                                       "TOK_REL_LOSS_TO",        "TOK_REL_LOSS_FROM",
-                                      "TOK_OPT_ARCGRADIENT",    "TOK_ATTR_ARC_SKIP" };
+                                      "TOK_OPT_ARCGRADIENT",    "TOK_ATTR_ARC_SKIP",
+                                      "TOK_OPT_WORDWRAPARCS" };
 
     static const char *tokRepl[] =  { "'{'",             "'}'",
                                       "'['",             "']'",
@@ -93,7 +95,9 @@ void yyerror(const char *str)
                                       "'abox'",          "'rbox'",
                                       "'textbgcolour'",  "'arctextbgcolor'",
                                       "'-x'",            "'x-'",
-                                      "'arcgradient'",   "'arcskip'" };
+                                      "'arcgradient'",   "'arcskip'",
+                                      "'wordwraparcs'" };
+
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 
     char *s, *line;
@@ -173,25 +177,24 @@ int yywrap()
 }
 
 
-char *removeEscapes(const char *in)
+char *removeEscapes(char *in)
 {
     const uint16_t l = strlen(in);
     char          *r = malloc_s(l + 1);
     uint16_t       t, u;
 
-    if(r != NULL)
+    for(t = u = 0; t < l; t++)
     {
-        for(t = u = 0; t < l; t++)
+        r[u] = in[t];
+        if(in[t] != '\\' || in[t + 1] != '\"')
         {
-            r[u] = in[t];
-            if(in[t] != '\\' || in[t + 1] != '\"')
-            {
-                u++;
-            }
+            u++;
         }
-
-        r[u] = '\0';
     }
+
+    r[u] = '\0';
+
+    free(in);
 
     return r;
 }
@@ -207,14 +210,15 @@ Msc MscParse(FILE *in)
     yyin = in;
 
     /* Parse, and check that no errors are found */
-    if(yyparse((void *)&m) == 0)
+    if(yyparse((void *)&m) != 0)
     {
-        return m;
+        m = NULL;
     }
-    else
-    {
-        return NULL;
-    }
+
+    lex_destroy();
+    yylex_destroy();
+
+    return m;
 }
 
 
@@ -235,6 +239,7 @@ Msc MscParse(FILE *in)
        TOK_REL_RBOX        TOK_REL_NOTE
        TOK_SPECIAL_ARC     TOK_OPT_HSCALE
        TOK_OPT_WIDTH       TOK_OPT_ARCGRADIENT
+       TOK_OPT_WORDWRAPARCS
        TOK_ASTERISK        TOK_UNKNOWN
        TOK_REL_SIG TOK_REL_METHOD TOK_REL_RETVAL TOK_REL_DOUBLE
        TOK_ATTR_ARC_SKIP
@@ -256,7 +261,7 @@ Msc MscParse(FILE *in)
 
 %type <msc>        msc
 %type <opt>        optlist opt
-%type <optType>    optval TOK_OPT_HSCALE TOK_OPT_WIDTH TOK_OPT_ARCGRADIENT
+%type <optType>    optval TOK_OPT_HSCALE TOK_OPT_WIDTH TOK_OPT_ARCGRADIENT TOK_OPT_WORDWRAPARCS
 %type <arc>        arc arcrel
 %type <arclist>    arclist
 %type <entity>     entity
@@ -267,7 +272,7 @@ Msc MscParse(FILE *in)
                    TOK_REL_SIG_FROM TOK_REL_METHOD_FROM TOK_REL_RETVAL_FROM TOK_REL_CALLBACK_FROM
                    TOK_REL_DOUBLE_TO TOK_REL_DOUBLE_FROM
                    TOK_REL_LOSS_TO TOK_REL_LOSS_FROM
-                   TOK_SPECIAL_ARC TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX
+                   TOK_SPECIAL_ARC TOK_REL_BOX TOK_REL_ABOX TOK_REL_RBOX TOK_REL_NOTE
                    TOK_REL_SIG TOK_REL_METHOD TOK_REL_RETVAL TOK_REL_DOUBLE
 %type <attrib>     attrlist attr
 %type <attribType> attrval
@@ -303,7 +308,7 @@ opt:         optval TOK_EQUAL string
     $$ = MscAllocOpt($1, $3);
 };
 
-optval:      TOK_OPT_HSCALE | TOK_OPT_WIDTH | TOK_OPT_ARCGRADIENT;
+optval:      TOK_OPT_HSCALE | TOK_OPT_WIDTH | TOK_OPT_ARCGRADIENT | TOK_OPT_WORDWRAPARCS;
 
 entitylist:   entity
 {
@@ -360,7 +365,7 @@ arcrel:       TOK_SPECIAL_ARC
             | string relation_bi string
 {
     MscArc arc = MscAllocArc($1, $3, $2);
-    MscArcLinkAttrib(arc, MscAllocAttrib(MSC_ATTR_BI_ARROWS, "true"));
+    MscArcLinkAttrib(arc, MscAllocAttrib(MSC_ATTR_BI_ARROWS, strdup_s("true")));
     $$ = arc;
 }
             | string relation_to string
@@ -370,7 +375,7 @@ arcrel:       TOK_SPECIAL_ARC
             | string relation_line string
 {
     MscArc arc = MscAllocArc($1, $3, $2);
-    MscArcLinkAttrib(arc, MscAllocAttrib(MSC_ATTR_NO_ARROWS, "true"));
+    MscArcLinkAttrib(arc, MscAllocAttrib(MSC_ATTR_NO_ARROWS, strdup_s("true")));
     $$ = arc;
 }
             | string relation_from string
@@ -379,11 +384,11 @@ arcrel:       TOK_SPECIAL_ARC
 }
             | string relation_to TOK_ASTERISK
 {
-    $$ = MscAllocArc($1, "*", $2);
+    $$ = MscAllocArc($1, strdup_s("*"), $2);
 }
             | TOK_ASTERISK relation_from string
 {
-    $$ = MscAllocArc($3, "*", $2);
+    $$ = MscAllocArc($3, strdup_s("*"), $2);
 };
 
 relation_box:  TOK_REL_BOX | TOK_REL_ABOX | TOK_REL_RBOX | TOK_REL_NOTE;

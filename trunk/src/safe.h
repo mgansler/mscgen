@@ -43,6 +43,7 @@
  * Global Function Declarations
  *****************************************************************************/
 
+void *realloc_s(void *ptr, size_t size);
 void *malloc_s(size_t size);
 void *zalloc_s(size_t size);
 char *strdup_s(const char *s);

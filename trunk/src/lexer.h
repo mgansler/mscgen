@@ -49,6 +49,7 @@
 unsigned long  lex_getlinenum(void);
 char          *lex_getline(void);
 Boolean        lex_getutf8(void);
+void           lex_destroy(void);
 
 #endif /* LEXER_H */
 
