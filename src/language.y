@@ -72,7 +72,7 @@ void yyerror(const char *str)
                                       "TOK_ATTR_TEXT_BGCOLOUR", "TOK_ATTR_ARC_TEXT_BGCOLOUR",
                                       "TOK_REL_LOSS_TO",        "TOK_REL_LOSS_FROM",
                                       "TOK_OPT_ARCGRADIENT",    "TOK_ATTR_ARC_SKIP",
-                                      "TOK_OPT_WORDWRAPARCS" };
+                                      "TOK_OPT_WORDWRAPARCS",   "TOK_REL_NOTE" };
 
     static const char *tokRepl[] =  { "'{'",             "'}'",
                                       "'['",             "']'",
@@ -96,7 +96,7 @@ void yyerror(const char *str)
                                       "'textbgcolour'",  "'arctextbgcolor'",
                                       "'-x'",            "'x-'",
                                       "'arcgradient'",   "'arcskip'",
-                                      "'wordwraparcs'" };
+                                      "'wordwraparcs'",  "'note'" };
 
     static const int tokArrayLen = sizeof(tokNames) / sizeof(char *);
 

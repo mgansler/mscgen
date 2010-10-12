@@ -25,12 +25,13 @@ sed "s/TOK_EQUAL/'='/g" |
 sed "s/TOK_OPT_HSCALE/'hscale'/g" |
 sed "s/TOK_OPT_WIDTH/'width'/g" |
 sed "s/TOK_OPT_ARCGRADIENT/'arcgradient'/g" |
+sed "s/TOK_OPT_WORDWRAPARCS/'wordwraparcs'/g" |
 sed "s/TOK_STRING/[A-Za-z0-9_]+/g" |
 sed "s/TOK_QSTRING/\"[^\"]+\"/g"  |
 sed "s/TOK_SPECIAL_ARC/\"\.\.\.\" | \"---\" \| \"|||\" /g" |
-sed "s/TOK_REL_BOX/box/g" |
-sed "s/TOK_REL_ABOX/abox/g" |
-sed "s/TOK_REL_RBOX/rbox/g" |
+sed "s/TOK_REL_BOX/'box'/g" |
+sed "s/TOK_REL_ABOX/'abox'/g" |
+sed "s/TOK_REL_RBOX/'rbox'/g" |
 sed "s/TOK_REL_SIG_BI/'<->'/g" |
 sed "s/TOK_REL_SIG_TO/'->'/g" |
 sed "s/TOK_REL_SIG_FROM/'<-'/g" |
@@ -53,6 +54,7 @@ sed "s/TOK_REL_CALLBACK_FROM/'<<='/g" |
 sed "s/TOK_REL_METHOD/'=='/g" |
 sed "s/TOK_REL_LOSS_TO/'-x'/g" |
 sed "s/TOK_REL_LOSS_FROM/'x-'/g" |
+sed "s/TOK_REL_NOTE/'note'/g" |
 sed "s/TOK_ATTR_LABEL/'label'/g" |
 sed "s/TOK_ATTR_URL/'url'/g" |
 sed "s/TOK_ATTR_IDURL/'idurl'/g" |
