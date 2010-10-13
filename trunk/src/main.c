@@ -359,6 +359,11 @@ static unsigned int computeLabelLines(Msc               m,
         {
             width -= (gOpts.boxSpacing + gOpts.boxInternalBorder) * 2;
         }
+
+        if(arcType == MSC_ARC_NOTE)
+        {
+            width -= gOpts.noteCorner;
+        }
     }
     else
     {
@@ -938,12 +943,16 @@ static void entityBox(unsigned int       ymin,
             break;
 
         case MSC_ARC_NOTE:
-            drw.line(&drw, x1, ymin, x2, ymin);
+            drw.line(&drw, x1, ymin, x2 - gOpts.noteCorner, ymin);
             drw.line(&drw, x1, ymax, x2, ymax);
             drw.line(&drw, x1, ymin, x1, ymax);
-            drw.line(&drw, x2, ymin, x2, ymax);
+            drw.line(&drw, x2, ymin + gOpts.noteCorner, x2, ymax);
             drw.line(&drw, x2 - gOpts.noteCorner, ymin,
                            x2, ymin + gOpts.noteCorner);
+            drw.line(&drw, x2 - gOpts.noteCorner, ymin,
+                           x2 - gOpts.noteCorner, ymin + gOpts.noteCorner);
+            drw.line(&drw, x2, ymin + gOpts.noteCorner,
+                           x2 - gOpts.noteCorner, ymin + gOpts.noteCorner);
             break;
 
         case MSC_ARC_RBOX:
