@@ -183,7 +183,7 @@ typedef struct ADrawTag
      * \param ctx    The drawing context.
      *
      */
-             int (*textHeight)    (struct ADrawTag *ctx);
+    int          (*textHeight)    (struct ADrawTag *ctx);
 
     void         (*filledRectangle)(struct ADrawTag *ctx,
                                     unsigned int x1,
@@ -198,6 +198,11 @@ typedef struct ADrawTag
                                    unsigned int y2,
                                    unsigned int x3,
                                    unsigned int y3);
+
+    void           (*filledCircle)(struct ADrawTag *ctx,
+                                   unsigned int x,
+                                   unsigned int y,
+                                   unsigned int r);
 
     /** Draw an arc.
      * This draws an arc centred at (cx,cy) which fits in a box of \a w by \a h.

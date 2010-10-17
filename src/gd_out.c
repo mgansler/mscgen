@@ -403,6 +403,16 @@ void gdoFilledTriangle(struct ADrawTag *ctx,
 }
 
 
+void gdoFilledCircle(struct ADrawTag *ctx,
+                     unsigned int x,
+                     unsigned int y,
+                     unsigned int r)
+{
+    gdImageSetAntiAliased(getGdoImg(ctx), getGdoPen(ctx));
+    gdImageFilledEllipse(getGdoImg(ctx), x, y, r * 2, r * 2, gdAntiAliased);
+}
+
+
 void gdoArc(struct ADrawTag *ctx,
             unsigned int cx,
             unsigned int cy,
@@ -572,6 +582,7 @@ Boolean GdoInit(unsigned int     w,
     outContext->textHeight      = gdoTextHeight;
     outContext->filledRectangle = gdoFilledRectangle;
     outContext->filledTriangle  = gdoFilledTriangle;
+    outContext->filledCircle    = gdoFilledCircle;
     outContext->arc             = gdoArc;
     outContext->dottedArc       = gdoDottedArc;
     outContext->setPen          = gdoSetPen;
