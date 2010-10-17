@@ -148,19 +148,19 @@ static int getSpace(struct ADrawTag *ctx, long thousanths)
  * \param[in] a       Angle in degrees.
  * \param[in,out] x,y Pointer to be populated with result co-ordinates.
  */
-static void arcPoint(unsigned int cx,
-                     unsigned int cy,
-                     unsigned int w,
-                     unsigned int h,
-                     unsigned int a,
+static void arcPoint(float         cx,
+                     float         cy,
+                     float         w,
+                     float         h,
+                     float         a,
                      unsigned int *x,
                      unsigned int *y)
 {
     float rad = (a * M_PI) / 180.0f;
 
     /* Compute point, noting this is for SVG co-ordinate system */
-    *x = cx + ((w / 2.0f) * cos(rad));
-    *y = cy + ((h / 2.0f) * sin(rad));
+    *x = round(cx + ((w / 2.0f) * cos(rad)));
+    *y = round(cy + ((h / 2.0f) * sin(rad)));
 }
 
 
