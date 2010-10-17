@@ -948,9 +948,38 @@ static void entityBox(unsigned int       ymin,
     unsigned int x2 = gOpts.entitySpacing * (boxEnd + 1) - gOpts.boxSpacing;
     unsigned int ymid = (ymin + ymax) / 2;
 
-    /* Draw a while box to overwrite the entity lines */
+    /* Draw a white box to overwrite the entity lines */
     drw.setPen(&drw, ADRAW_COL_WHITE);
-    drw.filledRectangle(&drw, x1, ymin, x2, ymax);
+
+    switch(boxType)
+    {
+        case MSC_ARC_BOX:
+        case MSC_ARC_RBOX:
+            drw.filledRectangle(&drw, x1, ymin, x2, ymax);
+            break;
+
+        case MSC_ARC_NOTE:
+            drw.filledRectangle(&drw, x1, ymin, x2 - gOpts.noteCorner, ymax);
+            drw.filledRectangle(&drw, x1, ymin + gOpts.noteCorner, x2, ymax);
+            drw.filledTriangle(&drw, x2 - gOpts.noteCorner, ymin,
+                                     x2, ymin + gOpts.noteCorner,
+                                     x2 - gOpts.noteCorner, ymin + gOpts.noteCorner);
+            break;
+
+        case MSC_ARC_ABOX:
+            drw.filledRectangle(&drw, x1 + gOpts.aboxSlope, ymin, x2 - gOpts.aboxSlope, ymax);
+            drw.filledTriangle(&drw, x1 + gOpts.aboxSlope, ymin,
+                                     x1 + gOpts.aboxSlope, ymax,
+                                     x1, ymid);
+            drw.filledTriangle(&drw, x2 - gOpts.aboxSlope, ymin,
+                                     x2 - gOpts.aboxSlope, ymax,
+                                     x2, ymid);
+            break;
+
+        default:
+            assert(0);
+    }
+
 
     /* Setup the colour for rendering the boxes */
     if(lineColour)
