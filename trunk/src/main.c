@@ -3,7 +3,7 @@
  * $Id$
  *
  * This file is part of mscgen, a message sequence chart renderer.
- * Copyright (C) 2007 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
+ * Copyright (C) 2010 Michael C McTernan, Michael.McTernan.2001@cs.bris.ac.uk
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -792,7 +792,7 @@ static unsigned int *computeCanvasSize(Msc           m,
     do
     {
         const MscArcType   arcType           = MscGetCurrentArcType(m);
-        const int          arcGradient       = getArcGradient(m);
+        const int          arcGradient       = isBoxArc(arcType) ? 0 : getArcGradient(m);
         char             **arcLabelLines     = NULL;
         unsigned int       arcLabelLineCount = 0;
         int                startCol = -1, endCol = -1;
@@ -1775,7 +1775,7 @@ int main(const int argc, const char *argv[])
         const char        *arcTextColour     = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
         const char        *arcTextBgColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_BGCOLOUR);
         const char        *arcLineColour     = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
-        const int          arcGradient       = getArcGradient(m);
+        const int          arcGradient       = isBoxArc(arcType) ? 0 : getArcGradient(m);
         const int          arcHasArrows      = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
         const int          arcHasBiArrows    = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
         char             **arcLabelLines     = NULL;
