@@ -762,17 +762,27 @@ static void entityText(FILE             *ismap,
 
 
 /** Compute the output canvas size required for some MSC.
+ * This computes the dimensions for the canvas as well as the height for each
+ * row.
+ *
  * \param[in]     m    The MSC to analyse.
  * \param[in,out] w    Pointer to be filled with the output width.
  * \param[in,out] h    Pointer to be filled with the output height.
+ * \returns  An array giving the height of each row.
  */
-static void computeCanvasSize(Msc m,
-                              unsigned int *w,
-                              unsigned int *h)
+static unsigned int *computeCanvasSize(Msc           m,
+                                       unsigned int *w,
+                                       unsigned int *h)
 {
+    const unsigned int rowCount = MscGetNumArcs(m) - MscGetNumParallelArcs(m);
     const unsigned int textHeight = drw.textHeight(&drw);
-    unsigned int nextYmin, ymin, ymax, yskipmax;
-    Boolean      addLines = TRUE;
+    unsigned int *rowHeight;
+    unsigned int  nextYmin, ymin, ymax, yskipmax, row, height;
+    Boolean       addLines = TRUE;
+
+    /* Allocate storage for the height of each row */
+    rowHeight = zalloc_s(sizeof(unsigned int) * rowCount);
+    row = -1;
 
     nextYmin = ymin = gOpts.entityHeadGap;
     ymax = gOpts.entityHeadGap + gOpts.arcSpacing;
@@ -811,22 +821,39 @@ static void computeCanvasSize(Msc m,
                                                   MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL),
                                                   startCol, endCol);
 
-            /* Advance Y position */
+            /* Advance Y position if not in a parallel arc */
             if(addLines)
             {
                 ymin = nextYmin;
-                ymax = ymin + gOpts.arcSpacing;
-
-                if(arcLabelLineCount > 1)
-                {
-                    ymax += (arcLabelLineCount - 2) * textHeight;
-                }
+                row++;
             }
+
+            /* Compute the height of this arc */
+            height = gOpts.arcSpacing;
+            if(arcLabelLineCount > 1)
+            {
+                height += (arcLabelLineCount - 2) * textHeight;
+            }
+
+            /* Update the height of the row */
+            if(height > rowHeight[row])
+            {
+                assert(row < rowCount);
+                rowHeight[row] = height;
+            }
+
+            /* Compute row bounds */
+            ymax = ymin + height;
 
             freeLabelLines(arcLabelLineCount, arcLabelLines);
 
             addLines = TRUE;
-            nextYmin = ymax + 1;
+
+            /* Update next potential row start */
+            if(ymax + 1 > nextYmin)
+            {
+                nextYmin = ymax + 1;
+            }
         }
 
         /* Keep a track of where the gradient may cause the graph to end */
@@ -844,12 +871,15 @@ static void computeCanvasSize(Msc m,
     /* Set the return values */
     *w = MscGetNumEntities(m) * gOpts.entitySpacing;
     *h = ymax + 1;
+
+    return rowHeight;
 }
 
 
 /** Draw vertical lines stemming from entities.
  * This function will draw a single segment of the vertical line that
  * drops from an entity.
+ *
  * \param m          The \a Msc for which the lines are drawn
  * \param ymin       Top of the row.
  * \param ymax       Bottom of the row.
@@ -1413,7 +1443,8 @@ int main(const int argc, const char *argv[])
     ADrawColour     *entColourRef;
     char            *outImage;
     Msc              m;
-    unsigned int     ymin, ymax, nextYmin, w, h, col;
+    unsigned int     ymin, ymax, w, h, row, col;
+    unsigned int    *rowHeights;
     Boolean          addLines;
     float            f;
 
@@ -1645,7 +1676,7 @@ int main(const int argc, const char *argv[])
     }
 
     /* Work out the width and height of the canvas */
-    computeCanvasSize(m, &w , &h);
+    rowHeights = computeCanvasSize(m, &w , &h);
 
     /* Close the temporary output file */
     drw.close(&drw);
@@ -1694,8 +1725,8 @@ int main(const int argc, const char *argv[])
 
     /* Draw the arcs */
     addLines = TRUE;
-    nextYmin = ymin = gOpts.entityHeadGap;
-    ymax = gOpts.entityHeadGap + gOpts.arcSpacing;
+    ymin = gOpts.entityHeadGap;
+    row = 0;
 
     MscResetArcIterator(m);
     do
@@ -1717,6 +1748,11 @@ int main(const int argc, const char *argv[])
         if(arcType == MSC_ARC_PARALLEL)
         {
             addLines = FALSE;
+
+            /* Rewind the row */
+            assert(row > 1);
+            row--;
+            ymin -= rowHeights[row] + 1;
         }
         else
         {
@@ -1773,16 +1809,11 @@ int main(const int argc, const char *argv[])
                                                   MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL),
                                                   startCol, endCol);
 
-            /* Advance Y position */
-            if(addLines)
+            /* Compute the height of this arc */
+            ymax = ymin + gOpts.arcSpacing;
+            if(arcLabelLineCount > 1)
             {
-                ymin = nextYmin;
-                ymax = ymin + gOpts.arcSpacing;
-
-                if(arcLabelLineCount > 1)
-                {
-                    ymax += (arcLabelLineCount - 2) * drw.textHeight(&drw);
-                }
+                ymax += (arcLabelLineCount - 2) * drw.textHeight(&drw);
             }
 
             /* Check if this is a broadcast message */
@@ -1793,7 +1824,7 @@ int main(const int argc, const char *argv[])
                 /* Add in the entity lines */
                 if(addLines)
                 {
-                    entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
+                    entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
                 }
 
                 /* Draw arcs to each entity */
@@ -1817,26 +1848,26 @@ int main(const int argc, const char *argv[])
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
+                        entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
                     }
                     entityBox(ymin, ymax, startCol, endCol, arcType, arcLineColour);
                 }
                 else if(arcType == MSC_ARC_DISCO && addLines)
                 {
-                    entityLines(m, ymin, ymax + 1, TRUE /* dotted */, entColourRef);
+                    entityLines(m, ymin, ymin + rowHeights[row], TRUE /* dotted */, entColourRef);
                 }
                 else if(arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
+                        entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
                     }
                 }
                 else
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + 1, FALSE, entColourRef);
+                        entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
                     }
                     arcLine(m, ymin, ymax, arcGradient, startCol, endCol,
                             arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
@@ -1855,16 +1886,19 @@ int main(const int argc, const char *argv[])
 
             freeLabelLines(arcLabelLineCount, arcLabelLines);
 
+            /* Advance Y position */
+            ymin += rowHeights[row] + 1;
+            row++;
+
             addLines = TRUE;
-            nextYmin = ymax + 1;
         }
     }
     while(MscNextArc(m));
 
     /* The computed canvas size may have been extended for skip arcs */
-    if(nextYmin < h)
+    if(ymax < h)
     {
-        entityLines(m, nextYmin, h, FALSE, entColourRef);
+        entityLines(m, ymax, h, FALSE, entColourRef);
     }
 
     /* Close the image map if needed */
@@ -1876,6 +1910,7 @@ int main(const int argc, const char *argv[])
 #ifndef NDEBUG
     /* Free the allocated memory to allow leak detection */
     free(entColourRef);
+    free(rowHeights);
     MscFree(m);
 #endif
 

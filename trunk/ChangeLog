@@ -21,6 +21,8 @@
       Add word wrapping for arc labels in boxes.  Wrapping for all arc labels
        can also be enabled with the new "wordwraparcs" msc attribute.
        (issue #45)
+      Fix rendering of different sized boxes when using parallel arcs.
+       (issue #50)
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
