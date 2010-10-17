@@ -954,8 +954,16 @@ static void entityBox(unsigned int       ymin,
     switch(boxType)
     {
         case MSC_ARC_BOX:
-        case MSC_ARC_RBOX:
             drw.filledRectangle(&drw, x1, ymin, x2, ymax);
+            break;
+
+        case MSC_ARC_RBOX:
+            drw.filledRectangle(&drw, x1 + gOpts.rboxArc, ymin, x2 - gOpts.rboxArc, ymax);
+            drw.filledRectangle(&drw, x1, ymin + gOpts.rboxArc, x2, ymax - gOpts.rboxArc);
+            drw.filledCircle(&drw, x1 + gOpts.rboxArc, ymin + gOpts.rboxArc, gOpts.rboxArc);
+            drw.filledCircle(&drw, x2 - gOpts.rboxArc, ymin + gOpts.rboxArc, gOpts.rboxArc);
+            drw.filledCircle(&drw, x1 + gOpts.rboxArc, ymax - gOpts.rboxArc, gOpts.rboxArc);
+            drw.filledCircle(&drw, x2 - gOpts.rboxArc, ymax - gOpts.rboxArc, gOpts.rboxArc);
             break;
 
         case MSC_ARC_NOTE:

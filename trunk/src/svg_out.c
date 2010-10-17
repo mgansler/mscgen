@@ -374,6 +374,18 @@ void SvgFilledTriangle(struct ADrawTag *ctx,
 }
 
 
+void SvgFilledCircle(struct ADrawTag *ctx,
+                     unsigned int x,
+                     unsigned int y,
+                     unsigned int r)
+{
+    fprintf(getSvgFile(ctx),
+            "<circle fill=\"%s\" cx=\"%u\" cy=\"%u\" r=\"%u\"/>\n",
+            getSvgPen(ctx),
+            x, y, r);
+}
+
+
 void SvgFilledRectangle(struct ADrawTag *ctx,
                         unsigned int x1,
                         unsigned int y1,
@@ -548,6 +560,7 @@ Boolean SvgInit(unsigned int     w,
     outContext->textHeight      = SvgTextHeight;
     outContext->filledRectangle = SvgFilledRectangle;
     outContext->filledTriangle  = SvgFilledTriangle;
+    outContext->filledCircle    = SvgFilledCircle;
     outContext->arc             = SvgArc;
     outContext->dottedArc       = SvgDottedArc;
     outContext->setPen          = SvgSetPen;

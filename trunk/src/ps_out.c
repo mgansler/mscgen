@@ -376,6 +376,20 @@ void PsFilledTriangle(struct ADrawTag *ctx,
 }
 
 
+void PsFilledCircle(struct ADrawTag *ctx,
+                     unsigned int x,
+                     unsigned int y,
+                     unsigned int r)
+{
+    fprintf(getPsFile(ctx),
+            "newpath "
+            "%d %d %d 0 360 arc "
+            "closepath "
+            "fill\n",
+            x, -y, r);
+}
+
+
 void PsArc(struct ADrawTag *ctx,
             unsigned int cx,
             unsigned int cy,
@@ -558,6 +572,7 @@ Boolean PsInit(unsigned int     w,
     outContext->textHeight      = PsTextHeight;
     outContext->filledRectangle = PsFilledRectangle;
     outContext->filledTriangle  = PsFilledTriangle;
+    outContext->filledCircle    = PsFilledCircle;
     outContext->arc             = PsArc;
     outContext->dottedArc       = PsDottedArc;
     outContext->setPen          = PsSetPen;
