@@ -27,6 +27,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -128,5 +129,14 @@ ADrawColour ADrawGetColour(const char *colour)
     return ADRAW_COL_BLACK;
 }
 
+
+void ADrawComputeArcPoint(float cx, float cy, float w, float h, float degrees,
+                          unsigned int *x, unsigned int *y)
+{
+    float rad = (degrees * M_PI) / 180.0f;
+
+    *x = round(cx + ((w / 2.0f) * cos(rad)));
+    *y = round(cy + ((h / 2.0f) * sin(rad)));
+}
 
 /* END OF FILE */

@@ -31,6 +31,9 @@ A<<B [label="return"];
 A=>>B [label="call-back"];
 A<<=B [label="call-back", URL="www.google.com"];
 
+A x- B [label="loss"];
+A -x B [label="loss"];
+
 --- [label="Left arcs", ID="2", IDURL="www.google.co.uk"];
 
 A->A [label="signal"];
@@ -46,6 +49,9 @@ A<<A [label="return"];
 A=>>A [label="call-back"];
 A<<=A [label="call-back", URL="www.google.com", ID="3"];
 
+A x- A [label="loss"];
+A -x A [label="loss"];
+
 --- [label="Right arcs"];
 
 B->B [label="signal"];
@@ -60,6 +66,9 @@ B<<B [label="return"];
 
 B=>>B [label="call-back", ID="4"];
 B<<=B [label="call-back", URL="www.google.com"];
+
+B x- B [label="loss"];
+B -x B [label="loss"];
 
 --- [label="End of arcs", URL="www.google.com"];
 

@@ -303,7 +303,7 @@ void SvgTextR(struct ADrawTag *ctx,
 {
     SvgContext *context = getSvgCtx(ctx);
 
-    svgRect(ctx, getSvgBgPen(ctx), x - 2, y - SvgTextHeight(ctx), x + SvgTextWidth(ctx, string), y - 1);
+    svgRect(ctx, getSvgBgPen(ctx), x - 2, y - SvgTextHeight(ctx) + 1, x + SvgTextWidth(ctx, string), y - 1);
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
@@ -322,7 +322,7 @@ void SvgTextL(struct ADrawTag *ctx,
 {
     SvgContext *context = getSvgCtx(ctx);
 
-    svgRect(ctx, getSvgBgPen(ctx), x - (SvgTextWidth(ctx, string) + 2), y - SvgTextHeight(ctx), x, y - 1);
+    svgRect(ctx, getSvgBgPen(ctx), x - (SvgTextWidth(ctx, string) + 2), y - SvgTextHeight(ctx) + 1, x, y - 1);
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
@@ -344,7 +344,7 @@ void SvgTextC(struct ADrawTag *ctx,
     SvgContext  *context = getSvgCtx(ctx);
     unsigned int hw = SvgTextWidth(ctx, string) / 2;
 
-    svgRect(ctx, getSvgBgPen(ctx), x - (hw + 2), y - SvgTextHeight(ctx), x + hw, y - 1);
+    svgRect(ctx, getSvgBgPen(ctx), x - (hw + 2), y - SvgTextHeight(ctx) + 1, x + hw, y - 1);
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
