@@ -46,6 +46,12 @@
 #include "msc.h"
 
 /***************************************************************************
+ * Macro definitions
+ ***************************************************************************/
+
+#define M_Max(a, b) (((a) > (b)) ? (a) : (b))
+
+/***************************************************************************
  * Types
  ***************************************************************************/
 
@@ -68,13 +74,13 @@ typedef struct GlobalOptionsTag
     /** Gap at the top of the page. */
     unsigned int entityHeadGap;
 
-    /** Vertical spacing between arc. */
+    /** Vertical spacing between arcs. */
     unsigned int arcSpacing;
 
     /** Arc gradient.
      * Y offset of arc head, relative to tail, in pixels.
      */
-    int arcGradient;
+    int          arcGradient;
 
     /** Gap between adjacent boxes. */
     unsigned int boxSpacing;
@@ -100,6 +106,9 @@ typedef struct GlobalOptionsTag
     /** Vertical depth of the arrow heads. */
     unsigned int arrowHeight;
 
+    /** Height of an arc which loops back to itself. */
+    unsigned int loopArcHeight;
+
     /** Horizontal gap between text and horizontal lines. */
     unsigned int textHGapPre;
 
@@ -108,6 +117,24 @@ typedef struct GlobalOptionsTag
 }
 GlobalOptions;
 
+
+/** Information about each out row.
+ */
+typedef struct
+{
+    /** Minimum Y value. */
+    unsigned int ymin;
+
+    /** Y position of the arc on the row. */
+    unsigned int arcliney;
+
+    /** Maximum Y value. */
+    unsigned int ymax;
+
+    /** Maximum lines of text on the row. */
+    unsigned int maxTextLines;
+}
+RowInfo;
 
 /***************************************************************************
  * Local Variables.
@@ -149,7 +176,7 @@ static GlobalOptions gOpts =
 
     80,     /* entitySpacing */
     20,     /* entityHeadGap */
-    26,     /* arcSpacing */
+    6,      /* arcSpacing */
     0,      /* arcGradient */
     8,      /* boxSpacing */
     4,      /* boxInternalBorder */
@@ -160,6 +187,9 @@ static GlobalOptions gOpts =
 
     /* Arrow options */
     10, 6,
+
+    /* loopArcHeight */
+    12,
 
     /* textHGapPre, textHGapPost */
     2, 2
@@ -654,7 +684,7 @@ static void arrowL(unsigned int x,
  * Draw the text for some entity.
  * \param  ismap       If not \a NULL, write an ismap description here.
  * \param  x           The x position at which the entity text should be centered.
- * \param  y           The y position where the text should be placed
+ * \param  y           The y position where the text should be placed.
  * \param  entLabel    The label to render, which maybe \a NULL in which case
  *                       no ouput is produced.
  * \param  entUrl      The URL for rendering the label as a hyperlink.  This
@@ -770,22 +800,20 @@ static void entityText(FILE             *ismap,
  * \param[in,out] h    Pointer to be filled with the output height.
  * \returns  An array giving the height of each row.
  */
-static unsigned int *computeCanvasSize(Msc           m,
-                                       unsigned int *w,
-                                       unsigned int *h)
+static RowInfo *computeCanvasSize(Msc           m,
+                                  unsigned int *w,
+                                  unsigned int *h)
 {
     const unsigned int rowCount = MscGetNumArcs(m) - MscGetNumParallelArcs(m);
     const unsigned int textHeight = drw.textHeight(&drw);
-    unsigned int *rowHeight;
-    unsigned int  nextYmin, ymin, ymax, yskipmax, row, height;
-    Boolean       addLines = TRUE;
+    RowInfo      *rowHeight;
+    unsigned int  nextYmin, ymin, ymax, yskipmax, row;
 
     /* Allocate storage for the height of each row */
-    rowHeight = zalloc_s(sizeof(unsigned int) * rowCount);
-    row = -1;
+    rowHeight = zalloc_s(sizeof(RowInfo) * rowCount);
+    row = 0;
 
     nextYmin = ymin = gOpts.entityHeadGap;
-    ymax = gOpts.entityHeadGap + gOpts.arcSpacing;
     yskipmax = 0;
 
     MscResetArcIterator(m);
@@ -799,7 +827,12 @@ static unsigned int *computeCanvasSize(Msc           m,
 
         if(arcType == MSC_ARC_PARALLEL)
         {
-            addLines = FALSE;
+            assert(row > 0);
+
+            row--;
+
+            ymin = rowHeight[row].ymin;
+            nextYmin = rowHeight[row].ymax;
         }
         else
         {
@@ -821,39 +854,42 @@ static unsigned int *computeCanvasSize(Msc           m,
                                                   MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL),
                                                   startCol, endCol);
 
-            /* Advance Y position if not in a parallel arc */
-            if(addLines)
-            {
-                ymin = nextYmin;
-                row++;
-            }
+            assert(row < rowCount);
 
-            /* Compute the height of this arc */
-            height = gOpts.arcSpacing;
-            if(arcLabelLineCount > 1)
+            /* Update the max line count for the row */
+            if(arcLabelLineCount > rowHeight[row].maxTextLines)
             {
-                height += (arcLabelLineCount - 2) * textHeight;
+                rowHeight[row].maxTextLines = arcLabelLineCount;
             }
-
-            /* Update the height of the row */
-            if(height > rowHeight[row])
-            {
-                assert(row < rowCount);
-                rowHeight[row] = height;
-            }
-
-            /* Compute row bounds */
-            ymax = ymin + height;
 
             freeLabelLines(arcLabelLineCount, arcLabelLines);
 
-            addLines = TRUE;
+            /* Compute the height of this arc */
+            if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
+            {
+                ymax = ymin + gOpts.arcSpacing;
+                ymax += (M_Max(rowHeight[row].maxTextLines, 2) * textHeight);
+            }
+            else
+            {
+                ymax = ymin + gOpts.arcSpacing;
+                ymax += (M_Max(rowHeight[row].maxTextLines, 1) * textHeight);
+            }
 
             /* Update next potential row start */
-            if(ymax + 1 > nextYmin)
+            if(ymax > nextYmin)
             {
-                nextYmin = ymax + 1;
+                nextYmin = ymax;
             }
+
+            /* Compute the dimensions for the completed row */
+            rowHeight[row].ymin     = ymin;
+            rowHeight[row].ymax     = nextYmin - (gOpts.arcSpacing + 1);
+            rowHeight[row].arcliney = rowHeight[row].ymin + (rowHeight[row].ymax - rowHeight[row].ymin) / 2;
+            row++;
+
+            /* Start new row */
+            ymin = nextYmin;
         }
 
         /* Keep a track of where the gradient may cause the graph to end */
@@ -866,11 +902,11 @@ static unsigned int *computeCanvasSize(Msc           m,
     while(MscNextArc(m));
 
     if(ymax < yskipmax)
-      ymax = yskipmax;
+        ymax = yskipmax;
 
     /* Set the return values */
     *w = MscGetNumEntities(m) * gOpts.entitySpacing;
-    *h = ymax + 1;
+    *h = ymax;
 
     return rowHeight;
 }
@@ -942,8 +978,6 @@ static void entityBox(unsigned int       ymin,
     }
 
     /* Now draw the box */
-    ymax--;
-
     unsigned int x1 = (gOpts.entitySpacing * boxStart) + gOpts.boxSpacing;
     unsigned int x2 = gOpts.entitySpacing * (boxEnd + 1) - gOpts.boxSpacing;
     unsigned int ymid = (ymin + ymax) / 2;
@@ -1068,7 +1102,7 @@ static void entityBox(unsigned int       ymin,
  * \param m              The Msc for which the text is being rendered.
  * \param ismap          If not \a NULL, write an ismap description here.
  * \param outwidth       Width of the output image.
- * \param ymin           Co-ordinate of the row on which the text should be placed.
+ * \param ymid           Co-ordinate of the row on which the text should be aligned.
  * \param startCol       The column at which the arc being labelled starts.
  * \param endCol         The column at which the arc being labelled ends.
  * \param arcLabelLineCount  Count of lines of text in arcLabelLines.
@@ -1085,7 +1119,7 @@ static void entityBox(unsigned int       ymin,
 static void arcText(Msc                m,
                     FILE              *ismap,
                     unsigned int       outwidth,
-                    unsigned int       ymin,
+                    unsigned int       ymid,
                     int                ygradient,
                     unsigned int       startCol,
                     unsigned int       endCol,
@@ -1096,29 +1130,31 @@ static void arcText(Msc                m,
                     const char        *arcIdUrl,
                     const char        *arcTextColour,
                     const char        *arcTextBgColour,
-                    const char        *arcLineColour,
                     const MscArcType   arcType)
 {
     unsigned int l;
+    unsigned int y;
+
+    /* A single line of normal text is above the midline */
+    if(arcLabelLineCount == 1 && !isBoxArc(arcType) &&
+       arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER &&
+       arcType != MSC_ARC_SPACE)
+    {
+        y = ymid + (ygradient / 2) - drw.textHeight(&drw);
+    }
+    else /* Text is vertically centered on the midline */
+    {
+        int yoff = ygradient - (drw.textHeight(&drw) * arcLabelLineCount);
+        y = ymid + (yoff / 2);
+    }
 
     for(l = 0; l < arcLabelLineCount; l++)
     {
         const char *lineLabel = arcLabelLines[l];
-        unsigned int y = ymin + ((gOpts.arcSpacing + ygradient) / 2) +
-                          (l * drw.textHeight(&drw));
         unsigned int width = drw.textWidth(&drw, lineLabel);
         int x = ((startCol + endCol + 1) * gOpts.entitySpacing) / 2;
 
-        /* Discontinuity arcs have central text, otherwise the
-         *  label is above the rendered arc (or horizontally in the
-         *  centre of a non-straight arc).
-         */
-        if(arcLabelLineCount == 1 &&
-           (arcType == MSC_ARC_DISCO || arcType == MSC_ARC_DIVIDER ||
-            arcType == MSC_ARC_SPACE || isBoxArc(arcType)))
-        {
-            y += drw.textHeight(&drw) / 2;
-        }
+        y += drw.textHeight(&drw);
 
         if(startCol != endCol || isBoxArc(arcType))
         {
@@ -1172,7 +1208,6 @@ static void arcText(Msc                m,
             drw.setBgPen(&drw, ADrawGetColour(arcTextBgColour));
         }
 
-
         /* Render text and restore pen */
         drw.textR (&drw, x, y, lineLabel);
         drw.setPen(&drw, ADRAW_COL_BLACK);
@@ -1208,49 +1243,6 @@ static void arcText(Msc                m,
             drw.setPen(&drw, ADRAW_COL_BLACK);
             drw.setFontSize(&drw, ADRAW_FONT_SMALL);
         }
-
-        /* Dividers also have a horizontal line at the middle */
-        if(l == (arcLabelLineCount / 2) && arcType == MSC_ARC_DIVIDER)
-        {
-            const unsigned int margin = gOpts.entitySpacing / 4;
-
-            if(arcLineColour != NULL)
-            {
-                drw.setPen(&drw, ADrawGetColour(arcLineColour));
-            }
-
-            /* Check for an even number of lines */
-            if((arcLabelLineCount & 1) == 0)
-            {
-                /* Even, the divider falls between the two lines */
-                y -= drw.textHeight(&drw);
-
-                /* Draw line through middle of text */
-                drw.dottedLine(&drw,
-                               margin, y,
-                               (MscGetNumEntities(m) * gOpts.entitySpacing) - margin,  y);
-            }
-            else
-            {
-                /* Odd, the divider is in the middle of the line */
-                y -= drw.textHeight(&drw) / 2;
-
-                /* Draw lines to skip the text */
-                drw.dottedLine(&drw,
-                              margin, y,
-                              x - gOpts.textHGapPre, y);
-                drw.dottedLine(&drw,
-                              x + width + gOpts.textHGapPost,
-                              y,
-                              (MscGetNumEntities(m) * gOpts.entitySpacing) - margin,
-                              y);
-            }
-
-            if(arcLineColour != NULL)
-            {
-                drw.setPen(&drw, ADRAW_COL_BLACK);
-            }
-        }
     }
 }
 
@@ -1271,17 +1263,15 @@ static void arcText(Msc                m,
  * \param  arcType     The type of the arc, which dictates its rendered style.
  */
 static void arcLine(Msc               m,
-                    unsigned int      ymin,
-                    unsigned int      ymax,
+                    unsigned int      y,
                     unsigned int      ygradient,
                     unsigned int      startCol,
                     unsigned int      endCol,
                     const char       *arcLineCol,
-                    int               hasArrows,
+                    Boolean           hasArrows,
                     const int         hasBiArrows,
                     const MscArcType  arcType)
 {
-    const unsigned int y  = (ymin + ymax) / 2;
     const unsigned int sx = (startCol * gOpts.entitySpacing) +
                              (gOpts.entitySpacing / 2);
     const unsigned int dx = (endCol * gOpts.entitySpacing) +
@@ -1354,7 +1344,7 @@ static void arcLine(Msc               m,
             drw.dottedArc(&drw,
                           sx, y,
                           gOpts.entitySpacing,
-                          gOpts.arcSpacing / 2,
+                          gOpts.loopArcHeight,
                           90,
                           270);
         }
@@ -1363,46 +1353,51 @@ static void arcLine(Msc               m,
             drw.arc(&drw,
                     sx, y - 1,
                     gOpts.entitySpacing,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     90,
                     270);
             drw.arc(&drw,
                     sx, y + 1,
                     gOpts.entitySpacing,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     90,
                     270);
         }
         else if(arcType == MSC_ARC_LOSS)
         {
-            unsigned int mx = sx - (gOpts.entitySpacing / 2) + 4;
+            unsigned int px, py;
 
             drw.arc(&drw,
                     sx, y - 1,
                     gOpts.entitySpacing - 8,
-                    gOpts.arcSpacing / 2,
-                    180,
+                    gOpts.loopArcHeight,
+                    180 - 45,
                     270);
 
-            hasArrows = 0;
+            hasArrows = FALSE;
+
+            /* Get co-ordinates of the arc end-point */
+            ADrawComputeArcPoint(sx, y - 1, gOpts.entitySpacing - 8,
+                                 gOpts.loopArcHeight, 180 - 45,
+                                 &px, &py);
 
             /* Draw a cross */
-            drw.line(&drw, mx - 4, y - 5, mx + 4, y + 3);
-            drw.line(&drw, mx + 4, y - 5, mx - 4, y + 3);
+            drw.line(&drw, px - 4, py - 4, px + 4, py + 4);
+            drw.line(&drw, px + 4, py - 4, px - 4, py + 4);
         }
         else
         {
             drw.arc(&drw,
                     sx, y,
                     gOpts.entitySpacing - 4,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     90,
                     270);
         }
 
         if(hasArrows)
         {
-            arrowR(dx, y + (gOpts.arcSpacing / 4), arcType);
+            arrowR(dx, y + (gOpts.loopArcHeight / 2), arcType);
         }
     }
     else
@@ -1413,7 +1408,7 @@ static void arcLine(Msc               m,
             drw.dottedArc(&drw,
                           sx, y,
                           gOpts.entitySpacing,
-                          gOpts.arcSpacing / 2,
+                          gOpts.loopArcHeight,
                           270,
                           90);
         }
@@ -1422,46 +1417,51 @@ static void arcLine(Msc               m,
             drw.arc(&drw,
                     sx, y - 1,
                     gOpts.entitySpacing,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     270,
                     90);
             drw.arc(&drw,
                     sx, y + 1,
                     gOpts.entitySpacing,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     270,
                     90);
         }
         else if(arcType == MSC_ARC_LOSS)
         {
-            unsigned int mx = sx + (gOpts.entitySpacing / 2) - 4;
+            unsigned int px, py;
 
             drw.arc(&drw,
                     sx, y - 1,
                     gOpts.entitySpacing - 8,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     270,
-                    0);
+                    45);
 
-            hasArrows = 0;
+            hasArrows = FALSE;
+
+            /* Get co-ordinates of the arc end-point */
+            ADrawComputeArcPoint(sx, y - 1, gOpts.entitySpacing - 8,
+                                 gOpts.loopArcHeight, 45,
+                                 &px, &py);
 
             /* Draw a cross */
-            drw.line(&drw, mx - 4, y - 5, mx + 4, y + 3);
-            drw.line(&drw, mx + 4, y - 5, mx - 4, y + 3);
+            drw.line(&drw, px - 4, py - 4, px + 4, py + 4);
+            drw.line(&drw, px + 4, py - 4, px - 4, py + 4);
         }
         else
         {
             drw.arc(&drw,
                     sx, y,
                     gOpts.entitySpacing,
-                    gOpts.arcSpacing / 2,
+                    gOpts.loopArcHeight,
                     270,
                     90);
         }
 
         if(hasArrows)
         {
-            arrowL(dx, y + (gOpts.arcSpacing / 4), arcType);
+            arrowL(dx, y + (gOpts.loopArcHeight / 2), arcType);
         }
     }
 
@@ -1480,8 +1480,8 @@ int main(const int argc, const char *argv[])
     ADrawColour     *entColourRef;
     char            *outImage;
     Msc              m;
-    unsigned int     ymin, ymax, w, h, row, col;
-    unsigned int    *rowHeights;
+    unsigned int     w, h, row, col;
+    RowInfo         *rowInfo;
     Boolean          addLines;
     float            f;
 
@@ -1713,7 +1713,20 @@ int main(const int argc, const char *argv[])
     }
 
     /* Work out the width and height of the canvas */
-    rowHeights = computeCanvasSize(m, &w , &h);
+    rowInfo = computeCanvasSize(m, &w , &h);
+
+    if(gPrintParsePresent)
+    {
+        unsigned int t;
+
+        printf("\nRow heights:\n");
+
+        for(t = 0; t < MscGetNumArcs(m) - MscGetNumParallelArcs(m); t++)
+        {
+            printf(" %3u: min=%u arcliney=%u max=%u maxTextLines=%u\n",
+                   t, rowInfo[t].ymin, rowInfo[t].arcliney, rowInfo[t].ymax, rowInfo[t].maxTextLines);
+        }
+    }
 
     /* Close the temporary output file */
     drw.close(&drw);
@@ -1762,7 +1775,6 @@ int main(const int argc, const char *argv[])
 
     /* Draw the arcs */
     addLines = TRUE;
-    ymin = gOpts.entityHeadGap;
     row = 0;
 
     MscResetArcIterator(m);
@@ -1787,12 +1799,20 @@ int main(const int argc, const char *argv[])
             addLines = FALSE;
 
             /* Rewind the row */
-            assert(row > 1);
+            assert(row > 0);
             row--;
-            ymin -= rowHeights[row] + 1;
         }
         else
         {
+            const unsigned int ymin = rowInfo[row].ymin;
+            const unsigned int ymid = rowInfo[row].arcliney;
+            const unsigned int ymax = rowInfo[row].ymax;
+#if 0
+            /* For debug, mark the row spacing */
+            drw.line(&drw, 0, ymin, 10, ymin);
+            drw.line(&drw, 0, ymid, 5, ymid);
+            drw.line(&drw, 0, ymax, 10, ymax);
+#endif
             /* Get the entity indices */
             if(arcType != MSC_ARC_DISCO && arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
             {
@@ -1846,13 +1866,6 @@ int main(const int argc, const char *argv[])
                                                   MscGetCurrentArcAttrib(m, MSC_ATTR_LABEL),
                                                   startCol, endCol);
 
-            /* Compute the height of this arc */
-            ymax = ymin + gOpts.arcSpacing;
-            if(arcLabelLineCount > 1)
-            {
-                ymax += (arcLabelLineCount - 2) * drw.textHeight(&drw);
-            }
-
             /* Check if this is a broadcast message */
             if(isBroadcastArc(MscGetCurrentArcDest(m)))
             {
@@ -1861,7 +1874,7 @@ int main(const int argc, const char *argv[])
                 /* Add in the entity lines */
                 if(addLines)
                 {
-                    entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
+                    entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
                 }
 
                 /* Draw arcs to each entity */
@@ -1869,8 +1882,9 @@ int main(const int argc, const char *argv[])
                 {
                     if((signed)t != startCol)
                     {
-                        arcLine(m, ymin, ymax, arcGradient, startCol, t,
-                                arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
+                        arcLine(m, ymid, arcGradient, startCol,
+                                t, arcLineColour, arcHasArrows,
+                                arcHasBiArrows, arcType);
                     }
                 }
 
@@ -1885,58 +1899,76 @@ int main(const int argc, const char *argv[])
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
                     }
                     entityBox(ymin, ymax, startCol, endCol, arcType, arcLineColour);
                 }
                 else if(arcType == MSC_ARC_DISCO && addLines)
                 {
-                    entityLines(m, ymin, ymin + rowHeights[row], TRUE /* dotted */, entColourRef);
+                    entityLines(m, ymin, ymax + gOpts.arcSpacing, TRUE /* dotted */, entColourRef);
                 }
                 else if(arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
+                    }
+
+                    /* Dividers also have a horizontal line at the middle */
+                    if(arcType == MSC_ARC_DIVIDER)
+                    {
+                        const unsigned int margin = gOpts.entitySpacing / 4;
+
+                        if(arcLineColour != NULL)
+                        {
+                            drw.setPen(&drw, ADrawGetColour(arcLineColour));
+                        }
+
+                        /* Draw line through middle of text */
+                        drw.dottedLine(&drw,
+                                        margin, ymid,
+                                        (MscGetNumEntities(m) * gOpts.entitySpacing) - margin,  ymid);
+
+                        if(arcLineColour != NULL)
+                        {
+                            drw.setPen(&drw, ADRAW_COL_BLACK);
+                        }
                     }
                 }
                 else
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymin + rowHeights[row], FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
                     }
-                    arcLine(m, ymin, ymax, arcGradient, startCol, endCol,
-                            arcLineColour, arcHasArrows, arcHasBiArrows, arcType);
+                    arcLine(m, ymid, arcGradient, startCol, endCol, arcLineColour,
+                            arcHasArrows, arcHasBiArrows, arcType);
                 }
             }
 
             /* All may have text */
             if(arcLabelLineCount > 0)
             {
-                arcText(m, ismap, w, ymin, arcGradient,
+                arcText(m, ismap, w, ymid, arcGradient,
                         startCol, endCol,
                         arcLabelLineCount, arcLabelLines,
                         arcUrl, arcId, arcIdUrl,
-                        arcTextColour, arcTextBgColour, arcLineColour, arcType);
+                        arcTextColour, arcTextBgColour, arcType);
             }
 
             freeLabelLines(arcLabelLineCount, arcLabelLines);
 
-            /* Advance Y position */
-            ymin += rowHeights[row] + 1;
+            /* Advance the row */
             row++;
-
             addLines = TRUE;
         }
     }
     while(MscNextArc(m));
 
-    /* The computed canvas size may have been extended for skip arcs */
-    if(ymax < h)
-    {
-        entityLines(m, ymax, h, FALSE, entColourRef);
-    }
+    /* Skip arcs may require the entity lines to be extended */
+    entityLines(m,
+                rowInfo[(MscGetNumArcs(m) - MscGetNumParallelArcs(m)) - 1].ymax,
+                h, FALSE, entColourRef);
 
     /* Close the image map if needed */
     if(ismap)
@@ -1947,7 +1979,7 @@ int main(const int argc, const char *argv[])
 #ifndef NDEBUG
     /* Free the allocated memory to allow leak detection */
     free(entColourRef);
-    free(rowHeights);
+    free(rowInfo);
     MscFree(m);
 #endif
 

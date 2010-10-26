@@ -26,6 +26,7 @@
       Improve background to boxes to make it correctly fit abox, rbox 
        and note types.
       Improve rounded corners in SVG output.
+      Improve vertical layout.
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.

@@ -274,6 +274,27 @@ Boolean ADrawOpen(unsigned int     w,
  */
 ADrawColour ADrawGetColour(const char *colour);
 
+/** Compute the position of a point on an arc.
+ * This allows co-ordinates on arc drawn using arc() or dottedArc() to be
+ * computed.  The centre and bounding box for the arc are supplied as well
+ * as an angular offset.
+ *
+ * \param[in] cx        Center of the arc.
+ * \param[in] cy        Center of the arc.
+ * \param[in] w         Arc x-diameter (width).
+ * \param[in] h         Arc y-diameter (height).
+ * \param[in] degrees   Position on the arc to be returned.
+ * \param[in,out] x     Pointer to fill with x coordinate.
+ * \param[in,out] y     Pointer to fill with y coordinate.
+ */
+void ADrawComputeArcPoint(float cx,
+                          float cy,
+                          float w,
+                          float h,
+                          float degrees,
+                          unsigned int *x,
+                          unsigned int *y);
+
 #endif /* ADRAW_H */
 
 /* END OF FILE */

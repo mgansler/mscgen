@@ -302,7 +302,7 @@ void gdoTextR(struct ADrawTag *ctx,
     {
         gdImageFilledRectangle(getGdoImg(ctx),
                               x,
-                              y - (gdoTextHeight(ctx) - 1),
+                              y - (gdoTextHeight(ctx) - 2),
                               x + textWidth,
                               y - 2,
                               context->bgpen);
