@@ -24,6 +24,12 @@ msc {
  a=>b [label="data2", arcskip="1"];
  |||;
  a<=b [label="ack3",arcskip="2"];
+ |||;
+ |||;
+ a=>b [label="data4",arcskip="3"];
+ |||;
+ |||;
+ |||;
 }
 
 

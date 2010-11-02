@@ -50,6 +50,7 @@
  ***************************************************************************/
 
 #define M_Max(a, b) (((a) > (b)) ? (a) : (b))
+#define M_Min(a, b) (((a) < (b)) ? (a) : (b))
 
 /***************************************************************************
  * Types
@@ -539,16 +540,22 @@ static Boolean isBroadcastArc(const char *entity)
 
 /** Get the skip value in pixels for some the current arc in the Msc.
  */
-static int getArcGradient(Msc m)
+static int getArcGradient(Msc m, const RowInfo *rowInfo, unsigned int row)
 {
-    const char  *s    = MscGetCurrentArcAttrib(m, MSC_ATTR_ARC_SKIP);
-    unsigned int skip = gOpts.arcGradient;
+    const char   *s = MscGetCurrentArcAttrib(m, MSC_ATTR_ARC_SKIP);
+    unsigned int  v = gOpts.arcGradient;
 
-    if(s != NULL)
+    if(s != NULL && rowInfo != NULL)
     {
-        if(sscanf(s, "%d", &skip) == 1)
+        const unsigned int rowCount = MscGetNumArcs(m) - MscGetNumParallelArcs(m);
+        unsigned int       skip;
+
+        if(sscanf(s, "%u", &skip) == 1)
         {
-            skip = (skip * gOpts.arcSpacing) + gOpts.arcGradient;
+            unsigned int ystart = rowInfo[row].arcliney;
+            unsigned int yend   = rowInfo[M_Min(rowCount - 1, row + skip)].arcliney;
+
+            v += yend - ystart;
         }
         else
         {
@@ -556,7 +563,7 @@ static int getArcGradient(Msc m)
         }
     }
 
-    return skip;
+    return v;
 }
 
 
@@ -820,7 +827,7 @@ static RowInfo *computeCanvasSize(Msc           m,
     do
     {
         const MscArcType   arcType           = MscGetCurrentArcType(m);
-        const int          arcGradient       = isBoxArc(arcType) ? 0 : getArcGradient(m);
+        const int          arcGradient       = isBoxArc(arcType) ? 0 : getArcGradient(m, NULL, 0);
         char             **arcLabelLines     = NULL;
         unsigned int       arcLabelLineCount = 0;
         int                startCol = -1, endCol = -1;
@@ -1787,7 +1794,7 @@ int main(const int argc, const char *argv[])
         const char        *arcTextColour     = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_COLOUR);
         const char        *arcTextBgColour   = MscGetCurrentArcAttrib(m, MSC_ATTR_TEXT_BGCOLOUR);
         const char        *arcLineColour     = MscGetCurrentArcAttrib(m, MSC_ATTR_LINE_COLOUR);
-        const int          arcGradient       = isBoxArc(arcType) ? 0 : getArcGradient(m);
+        const int          arcGradient       = isBoxArc(arcType) ? 0 : getArcGradient(m, rowInfo, row);
         const int          arcHasArrows      = MscGetCurrentArcAttrib(m, MSC_ATTR_NO_ARROWS) == NULL;
         const int          arcHasBiArrows    = MscGetCurrentArcAttrib(m, MSC_ATTR_BI_ARROWS) != NULL;
         char             **arcLabelLines     = NULL;
