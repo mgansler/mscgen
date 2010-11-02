@@ -27,6 +27,7 @@
        and note types.
       Improve rounded corners in SVG output.
       Improve vertical layout.
+      Make arcskip land an arc where a subsequent arc would start.
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
