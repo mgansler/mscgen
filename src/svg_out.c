@@ -136,7 +136,7 @@ static const char *getSvgBgPen(struct ADrawTag *ctx)
  */
 static int getSpace(struct ADrawTag *ctx, long thousanths)
 {
-    return (thousanths * getSvgCtx(ctx)->fontPoints) / 1000;
+    return ((thousanths * getSvgCtx(ctx)->fontPoints) + 500) / 1000;
 }
 
 
