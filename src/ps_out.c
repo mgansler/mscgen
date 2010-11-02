@@ -513,7 +513,7 @@ Boolean PsInit(unsigned int     w,
 
     /* Write the header */
     fprintf(context->of, "%%!PS-Adobe-3.0 EPSF-2.0\n"
-                         "%%%%BoundingBox: 0 0 %f %f\n", w * PS_OUT_SCALE, h * PS_OUT_SCALE);
+                         "%%%%BoundingBox: 0 0 %.0f %.0f\n", w * PS_OUT_SCALE, h * PS_OUT_SCALE);
     fprintf(context->of, "%%%%Creator: mscgen %s\n", PACKAGE_VERSION);
     fprintf(context->of, "%%%%EndComments\n");
 
