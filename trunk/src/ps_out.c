@@ -134,7 +134,7 @@ static FILE *getPsFile(struct ADrawTag *ctx)
  */
 static int getSpace(struct ADrawTag *ctx, long thousanths)
 {
-    return (thousanths * getPsCtx(ctx)->fontPoints) / 1000;
+    return ((thousanths * getPsCtx(ctx)->fontPoints) + 500) / 1000;
 }
 
 /** Write out a line of text, escaping special characters.
@@ -286,7 +286,7 @@ void PsTextR(struct ADrawTag *ctx,
                             "neg 0 rlineto "      /* Back to bottom left */
                             "closepath fill\n",   /* Done */
                             x, -y - getSpace(ctx, PsHelvetica.descender),
-                            PsTextHeight(ctx));
+                            getSpace(ctx, PsHelvetica.ascender));
 
     /* Restore pen and show the string */
     setColour(ctx, context->penColour);
@@ -346,7 +346,7 @@ void PsTextC(struct ADrawTag *ctx,
                             "neg 0 rlineto "           /* Back to bottom left */
                             "closepath fill\n",        /* Done */
                             x, -y,
-                            PsTextHeight(ctx));
+                            getSpace(ctx, PsHelvetica.ascender));
 
     /* Restore pen and show the string */
     setColour(ctx, context->penColour);
