@@ -891,7 +891,7 @@ static RowInfo *computeCanvasSize(Msc           m,
 
             /* Compute the dimensions for the completed row */
             rowHeight[row].ymin     = ymin;
-            rowHeight[row].ymax     = nextYmin - (gOpts.arcSpacing + 1);
+            rowHeight[row].ymax     = nextYmin - gOpts.arcSpacing;
             rowHeight[row].arcliney = rowHeight[row].ymin + (rowHeight[row].ymax - rowHeight[row].ymin) / 2;
             row++;
 
