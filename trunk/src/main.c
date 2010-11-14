@@ -979,13 +979,15 @@ static void entityLines(Msc                m,
  * \param boxEnd        Column in which the box ends.
  * \param boxType       The type of box to draw, MSC_ARC_BOX, MSC_ARC_RBOX etc.
  * \param lineColour    Colour of the lines to use for rendering the box.
+ * \param bgColour      Background colour for rendering the box.
  */
-static void entityBox(unsigned int       ymin,
-                      unsigned int       ymax,
-                      unsigned int       boxStart,
-                      unsigned int       boxEnd,
-                      MscArcType         boxType,
-                      const char        *lineColour)
+static void arcBox(unsigned int       ymin,
+                   unsigned int       ymax,
+                   unsigned int       boxStart,
+                   unsigned int       boxEnd,
+                   MscArcType         boxType,
+                   const char        *lineColour,
+                   const char        *bgColour)
 {
     unsigned int t;
 
@@ -1002,9 +1004,17 @@ static void entityBox(unsigned int       ymin,
     unsigned int x2 = gOpts.entitySpacing * (boxEnd + 1) - gOpts.boxSpacing;
     unsigned int ymid = (ymin + ymax) / 2;
 
-    /* Draw a white box to overwrite the entity lines */
-    drw.setPen(&drw, ADRAW_COL_WHITE);
+    /* Set colour for the background area */
+    if(bgColour != NULL)
+    {
+        drw.setPen(&drw, ADrawGetColour(bgColour));
+    }
+    else
+    {
+        drw.setPen(&drw, ADRAW_COL_WHITE);
+    }
 
+    /* Draw the background to overwrite the entity lines */
     switch(boxType)
     {
         case MSC_ARC_BOX:
@@ -1041,7 +1051,6 @@ static void entityBox(unsigned int       ymin,
         default:
             assert(0);
     }
-
 
     /* Setup the colour for rendering the boxes */
     if(lineColour)
@@ -1921,7 +1930,7 @@ int main(const int argc, const char *argv[])
                     {
                         entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
                     }
-                    entityBox(ymin, ymax, startCol, endCol, arcType, arcLineColour);
+                    arcBox(ymin, ymax, startCol, endCol, arcType, arcLineColour, arcTextBgColour);
                 }
                 else if(arcType == MSC_ARC_DISCO && addLines)
                 {

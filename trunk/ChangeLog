@@ -23,13 +23,14 @@
        (issue #45)
       Fix rendering of different sized boxes when using parallel arcs.
        (issue #50)
-      Improve background to boxes to make it correctly fit abox, rbox 
+      Improve background to boxes to make it correctly fit abox, rbox
        and note types.
       Improve rounded corners in SVG output.
       Improve vertical layout.
       Make arcskip land an arc where a subsequent arc would start.
       Ensure eps file BoundingBox is given in integer dimensions.
        [Thanks to walter.stanish for the patch]
+      Textbgcolour now fills background of box arcs (rbox, abox etc..).
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
