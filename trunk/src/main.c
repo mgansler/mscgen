@@ -313,9 +313,22 @@ static char *splitStringToWidth(char *l, unsigned int width)
                 p--;
             }
 
-            *p = '\0';
+            if(p > l)
+            {
+                *p = '\0';
+            }
         }
         while(drw.textWidth(&drw, l) > width && p > l);
+
+        /* Check if the first word is longer than the line */
+        if(p == l)
+        {
+            /* Unconditionally split after the first word */
+            while(!isspace(*p) && *p != '\0')
+            {
+                p++;
+            }
+        }
 
         /* Copy the remaining line to the start of the string */
         m = 0;
