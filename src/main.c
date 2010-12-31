@@ -36,6 +36,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include <errno.h>
 #include <ctype.h>
 #include <assert.h>
 #include "cmdparse.h"
@@ -1685,8 +1686,7 @@ int main(const int argc, const char *argv[])
         ismap = fopen(gOutputFile, "w");
         if(!ismap)
         {
-            fprintf(stderr, "Failed to open output file '%s':\n", gOutputFile);
-            perror(NULL);
+            fprintf(stderr, "Failed to open output file '%s': %s\n", gOutputFile, strerror(errno));
             return EXIT_FAILURE;
         }
     }

@@ -24,6 +24,7 @@
 #include "config.h"
 #endif
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "adraw_int.h"
@@ -506,8 +507,7 @@ Boolean PsInit(unsigned int     w,
     context->of = fopen(file, "wb");
     if(!context->of)
     {
-        fprintf(stderr, "PsInit: Failed to open output file '%s':\n", file);
-        perror(NULL);
+        fprintf(stderr, "PsInit: Failed to open output file '%s': %s\n", file, strerror(errno));
         return FALSE;
     }
 

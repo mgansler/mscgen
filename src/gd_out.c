@@ -25,6 +25,7 @@
 #endif
 #ifndef REMOVE_PNG_OUTPUT
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -543,8 +544,7 @@ Boolean GdoInit(unsigned int     w,
     context->outFile = fopen(file, "wb");
     if(!context->outFile)
     {
-        fprintf(stderr, "GdoInit: Failed to open output file '%s':\n", file);
-        perror(NULL);
+        fprintf(stderr, "GdoInit: Failed to open output file '%s': %s\n", file, strerror(errno));
         return FALSE;
     }
 
