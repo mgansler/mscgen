@@ -25,6 +25,7 @@
 #endif
 #include <math.h>
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "adraw_int.h"
@@ -529,8 +530,7 @@ Boolean SvgInit(unsigned int     w,
     context->of = fopen(file, "wb");
     if(!context->of)
     {
-        fprintf(stderr, "SvgInit: Failed to open output file '%s':\n", file);
-        perror(NULL);
+        fprintf(stderr, "SvgInit: Failed to open output file '%s': %s\n", file, strerror(errno));
         return FALSE;
     }
 

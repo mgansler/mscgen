@@ -31,6 +31,9 @@
       Ensure eps file BoundingBox is given in integer dimensions.
        [Thanks to walter.stanish for the patch]
       Textbgcolour now fills background of box arcs (rbox, abox etc..).
+      Fix incorrect use of perror() after fprintf() which may not have
+       resulted in the right error being reported.
+       (issue #57, thanks Neils!)
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
