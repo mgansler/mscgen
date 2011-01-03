@@ -46,8 +46,8 @@ diff -Nrup origsrc/mscgen/CYGWIN-PATCHES/README src/mscgen/CYGWIN-PATCHES/README
 +
 +Port Notes:
 +
-+----------  mscgen-0.19-1 -- 26/08/2010 -----------
-+Version bump following upstream release
++----------  mscgen-0.19-1 -- 01/01/2011 -----------
++New version following upstream release
 +
 +----------  mscgen-0.18-1 -- 26/08/2010 -----------
 +Initial cygport release
