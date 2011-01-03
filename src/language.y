@@ -160,8 +160,8 @@ void yyerror(const char *str)
         {
             fprintf(stderr, "\nNote: This input line contains 'x-' which has special meaning as a \n"
                             "      'lost message' arc, but may not have been recognised as such if it\n"
-                            "      is preceeded by other letters or numbers.  Please use double-quoted\n"
-                            "      strings for tokens before 'x-', or insert a preceeding whitespace if\n"
+                            "      is preceded by other letters or numbers.  Please use double-quoted\n"
+                            "      strings for tokens before 'x-', or insert a preceding whitespace if\n"
                             "      this is what you intend.\n");
         }
     }
