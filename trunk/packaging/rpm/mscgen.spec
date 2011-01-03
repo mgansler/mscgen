@@ -1,6 +1,6 @@
 Name:           mscgen
-Version:        0.19
-Release:        2%{?dist}
+Version:        0.20
+Release:        1%{?dist}
 Summary:        Message Sequence Chart rendering program 
 Group:          Applications/Multimedia 
 License:        GPLv2+
