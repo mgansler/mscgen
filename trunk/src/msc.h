@@ -130,9 +130,10 @@ MscOpt        MscAllocOpt(MscOptType  type,
 MscOpt        MscLinkOpt(MscOpt head,
                          MscOpt newHead);
 
-MscArc        MscAllocArc(char      *srcEntity,
-                          char      *dstEntity,
-                          MscArcType type);
+MscArc        MscAllocArc(char        *srcEntity,
+                          char        *dstEntity,
+                          MscArcType   type,
+                          unsigned int inputLine);
 
 MscArcList    MscLinkArc (MscArcList list,
                           MscArc     elem);
@@ -279,6 +280,11 @@ MscArcType    MscGetCurrentArcType(struct MscTag *m);
  * \retval The attribute string, or NULL if unset.
  */
 const char   *MscGetCurrentArcAttrib(Msc m, MscAttribType a);
+
+/** Get the line of the input file at which the current arc was defined.
+ * \retval The line number of the input file.
+ */
+unsigned int  MscGetCurrentArcInputLine(Msc m);
 
 /** @} */
 

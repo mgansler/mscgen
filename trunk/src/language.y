@@ -104,7 +104,7 @@ void yyerror(const char *str)
     int   t;
 
     /* Print standard message part */
-    fprintf(stderr,"Error detected at line %lu: ", lex_getlinenum());
+    fprintf(stderr, "Error detected at line %lu: ", lex_getlinenum());
 
     /* Search for TOK */
     s = strstr(str, "TOK_");
@@ -342,7 +342,7 @@ arclist:      arc
               | arclist TOK_COMMA arc
 {
     /* Add a special 'parallel' arc */
-    $$ = MscLinkArc(MscLinkArc($1, MscAllocArc(NULL, NULL, MSC_ARC_PARALLEL)), $3);
+    $$ = MscLinkArc(MscLinkArc($1, MscAllocArc(NULL, NULL, MSC_ARC_PARALLEL, lex_getlinenum())), $3);
 };
 ;
 
@@ -356,39 +356,39 @@ arc:          arcrel TOK_OSBRACKET attrlist TOK_CSBRACKET
 
 arcrel:       TOK_SPECIAL_ARC
 {
-    $$ = MscAllocArc(NULL, NULL, $1);
+    $$ = MscAllocArc(NULL, NULL, $1, lex_getlinenum());
 }
             | string relation_box string
 {
-    $$ = MscAllocArc($1, $3, $2);
+    $$ = MscAllocArc($1, $3, $2, lex_getlinenum());
 }
             | string relation_bi string
 {
-    MscArc arc = MscAllocArc($1, $3, $2);
+    MscArc arc = MscAllocArc($1, $3, $2, lex_getlinenum());
     MscArcLinkAttrib(arc, MscAllocAttrib(MSC_ATTR_BI_ARROWS, strdup_s("true")));
     $$ = arc;
 }
             | string relation_to string
 {
-    $$ = MscAllocArc($1, $3, $2);
+    $$ = MscAllocArc($1, $3, $2, lex_getlinenum());
 }
             | string relation_line string
 {
-    MscArc arc = MscAllocArc($1, $3, $2);
+    MscArc arc = MscAllocArc($1, $3, $2, lex_getlinenum());
     MscArcLinkAttrib(arc, MscAllocAttrib(MSC_ATTR_NO_ARROWS, strdup_s("true")));
     $$ = arc;
 }
             | string relation_from string
 {
-    $$ = MscAllocArc($3, $1, $2);
+    $$ = MscAllocArc($3, $1, $2, lex_getlinenum());
 }
             | string relation_to TOK_ASTERISK
 {
-    $$ = MscAllocArc($1, strdup_s("*"), $2);
+    $$ = MscAllocArc($1, strdup_s("*"), $2, lex_getlinenum());
 }
             | TOK_ASTERISK relation_from string
 {
-    $$ = MscAllocArc($3, strdup_s("*"), $2);
+    $$ = MscAllocArc($3, strdup_s("*"), $2, lex_getlinenum());
 };
 
 relation_box:  TOK_REL_BOX | TOK_REL_ABOX | TOK_REL_RBOX | TOK_REL_NOTE;
