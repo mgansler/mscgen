@@ -49,6 +49,7 @@ struct MscArcTag
 {
     char                *src, *dst;
     MscArcType           type;
+    unsigned int         inputLine;
     struct MscAttribTag *attr;
     struct MscArcTag    *next;
 };
@@ -277,9 +278,10 @@ void MscPrintEntityList(struct MscEntityListTag *list)
 /* MscAllocArc
  *  Allocate an arc, filling in the src and dst entities.
  */
-struct MscArcTag *MscAllocArc(char       *srcEntity,
-                              char       *dstEntity,
-                              MscArcType  type)
+struct MscArcTag *MscAllocArc(char        *srcEntity,
+                              char        *dstEntity,
+                              MscArcType   type,
+                              unsigned int inputLine)
 {
     struct MscArcTag *a = malloc_s(sizeof(struct MscArcTag));
 
@@ -289,6 +291,7 @@ struct MscArcTag *MscAllocArc(char       *srcEntity,
         assert(srcEntity == NULL && dstEntity == NULL);
     }
 
+    a->inputLine = inputLine;
     a->src  = srcEntity;
     a->dst  = dstEntity;
     a->type = type;
@@ -751,6 +754,18 @@ Boolean MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *const f)
     }
 
     return FALSE;
+}
+
+unsigned int MscGetCurrentArcInputLine(struct MscTag *m)
+{
+    if(m->nextArc)
+    {
+       return m->nextArc->inputLine;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 Boolean MscGetOptAsBoolean(struct MscTag *m, MscOptType type, Boolean *const b)

@@ -1503,6 +1503,48 @@ static void arcLine(Msc               m,
 }
 
 
+/* Perform post-parsing validation of the MSC.
+ *  This checks the passed MSC for various rules which can't easily be tested
+ *  at parse time.
+ */
+Boolean checkMsc(Msc m)
+{
+    /* Check all arc entites are known */
+    MscResetArcIterator(m);
+    do
+    {
+        const MscArcType arcType  = MscGetCurrentArcType(m);
+
+        if(arcType != MSC_ARC_PARALLEL && arcType != MSC_ARC_DISCO &&
+           arcType != MSC_ARC_DIVIDER && arcType != MSC_ARC_SPACE)
+        {
+            const char *src = MscGetCurrentArcSource(m);
+            const char *dst = MscGetCurrentArcDest(m);
+            const int   startCol = MscGetEntityIndex(m, src);
+            const int   endCol   = MscGetEntityIndex(m, dst);
+
+            /* Check the start column is valid */
+            if(startCol == -1)
+            {
+                fprintf(stderr, "Error detected at line %lu: Unknown source entity '%s'.\n",
+                        MscGetCurrentArcInputLine(m), src);
+                return FALSE;
+            }
+
+            if(endCol == -1 && !isBroadcastArc(dst))
+            {
+                fprintf(stderr, "Error detected at line %lu: Unknown destination entity '%s'.\n",
+                        MscGetCurrentArcInputLine(m), dst);
+                return FALSE;
+            }
+        }
+    }
+    while(MscNextArc(m));
+
+    return TRUE;
+}
+
+
 int main(const int argc, const char *argv[])
 {
     FILE            *ismap = NULL;
@@ -1659,8 +1701,8 @@ int main(const int argc, const char *argv[])
         m = MscParse(stdin);
     }
 
-    /* Check if the parse was okay */
-    if(!m)
+    /* Check if the parse was okay and the MSC good */
+    if(!m || !checkMsc(m))
     {
         return EXIT_FAILURE;
     }
@@ -1848,23 +1890,11 @@ int main(const int argc, const char *argv[])
                 startCol = MscGetEntityIndex(m, MscGetCurrentArcSource(m));
                 endCol   = MscGetEntityIndex(m, MscGetCurrentArcDest(m));
 
-                /* Check that the start column is known */
-                if(startCol == -1)
-                {
-                    fprintf(stderr,
-                            "Unknown source entity '%s'\n",
-                            MscGetCurrentArcSource(m));
-                    return EXIT_FAILURE;
-                }
-
-                /* Check that the end column is known, or it's a broadcast arc */
-                if(endCol == -1 && !isBroadcastArc(MscGetCurrentArcDest(m)))
-                {
-                    fprintf(stderr,
-                            "Unknown destination entity '%s'\n",
-                            MscGetCurrentArcDest(m));
-                    return EXIT_FAILURE;
-                }
+                /* Check that the start column is known and the end column is
+                 *  known, or that it's a broadcast arc
+                 */
+                assert(startCol != -1);
+                assert(endCol != -1 || isBroadcastArc(MscGetCurrentArcDest(m)));
 
                 /* Check for entity colouring if not set explicity on the arc */
                 if(arcTextColour == NULL)

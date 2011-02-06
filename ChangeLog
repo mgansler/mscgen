@@ -1,5 +1,10 @@
 0.20:
       Fix spelling errors (issue #58)
+      Add a MSC validation phase to check that all the entity names are known
+       before rendering is started.  This now also outputs the input line 
+       number at which a problem was detected e.g.
+         Error detected at line 10: Unknown source entity 'xyz'.
+	 (issue #62)
 
 0.19: 01/01/2011
       Configure script changes to be more thorough about gdlib and FreeType
