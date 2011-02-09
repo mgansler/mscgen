@@ -5,6 +5,8 @@
        number at which a problem was detected e.g.
          Error detected at line 10: Unknown source entity 'xyz'.
 	 (issue #62)
+      Add width and height attributes to svg output.
+         (Thanks hwmaier for pointing this out, issue #63)
 
 0.19: 01/01/2011
       Configure script changes to be more thorough about gdlib and FreeType
