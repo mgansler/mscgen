@@ -321,14 +321,29 @@ static char *splitStringToWidth(char *l, unsigned int width)
         }
         while(drw.textWidth(&drw, l) > width && p > l);
 
-        /* Check if the first word is longer than the line */
+        /* Check if the first word is bigger than the available space;
+         *  we need to hyphenate in this case.
+         */
         if(p == l)
         {
-            /* Unconditionally split after the first word */
+            const unsigned int hyphenWidth = drw.textWidth(&drw, "-");
+
+            /* Find the end of the first word */
             while(!isspace(*p) && *p != '\0')
             {
                 p++;
             }
+
+            /* Start removing characters from the word */
+            do
+            {
+                *p = '\0';
+                p--;
+            }
+            while(drw.textWidth(&drw, l) + hyphenWidth > width && p > l);
+
+            /* Add a hyphen */
+            *p = '-';
         }
 
         /* Copy the remaining line to the start of the string */

@@ -7,6 +7,9 @@
 	 (issue #62)
       Add width and height attributes to svg output.
          (Thanks hwmaier for pointing this out, issue #63)
+      When wrapping words in boxes, hypenate very long words if needed to fit
+       the available space.
+       (issue #59)
 
 0.19: 01/01/2011
       Configure script changes to be more thorough about gdlib and FreeType
