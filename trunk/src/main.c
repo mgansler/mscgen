@@ -1541,14 +1541,14 @@ Boolean checkMsc(Msc m)
             /* Check the start column is valid */
             if(startCol == -1)
             {
-                fprintf(stderr, "Error detected at line %lu: Unknown source entity '%s'.\n",
+                fprintf(stderr, "Error detected at line %u: Unknown source entity '%s'.\n",
                         MscGetCurrentArcInputLine(m), src);
                 return FALSE;
             }
 
             if(endCol == -1 && !isBroadcastArc(dst))
             {
-                fprintf(stderr, "Error detected at line %lu: Unknown destination entity '%s'.\n",
+                fprintf(stderr, "Error detected at line %u: Unknown destination entity '%s'.\n",
                         MscGetCurrentArcInputLine(m), dst);
                 return FALSE;
             }
