@@ -12,7 +12,7 @@ BuildRequires:  gd-devel
 %description
 Mscgen is a small program that parses textual Message Sequence Chart 
 descriptions and produces PNG, SVG, EPS or server side image maps 
-(ismaps) as the output.
+as the output.
 
 %prep
 %setup -q
@@ -38,14 +38,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-# due to this entry, %doc must not be used to add any other files
+# due to this entry, doc must not be used to add any other files
 %{_defaultdocdir}/%{name}-%{version}/
 %{_bindir}/mscgen
 %{_mandir}/man1/mscgen.1.*
 
 %changelog
 * Mon Jan 3 2011 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.19-2
-- Add comment in spec file warning of %doc use.
+- Add comment in spec file warning of doc use.
 
 * Wed Sep 15 2010 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.19-1
 - Version bump following upstream release. 
