@@ -79,20 +79,20 @@ if test "x$with_libgd" != "xno"; then
   AC_MSG_CHECKING([if gdImageColorAllocate() can be linked])
   gdlib=no
 
-  AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]]),
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]])],
                  gdlib=yes,
                  gdlib=no)
 
   if test "x$gdlib" = xno; then
     LIBS="$LIBS -lgd"
-    AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]]),
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]])],
                    gdlib="yes (-lgd)",
                    gdlib=no)
   fi
 
   if test "x$gdlib" = xno; then
     LIBS="$LIBS -lm"
-    AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]]),
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageColorAllocate(0,0,0,0);]])],
                    gdlib="yes (-lgd -lm)",
                    gdlib=no)
   fi
@@ -110,7 +110,7 @@ if test "x$with_libgd" != "xno"; then
 
     AC_MSG_CHECKING([if gdImageStringFT() can be linked])
 
-    AC_LINK_IFELSE(AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageStringFT(0,0,0,0,0,0,0,0,0);]]),
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gd.h>]],[[gdImageStringFT(0,0,0,0,0,0,0,0,0);]])],
                    with_freetype=yes,
                    with_freetype=no)
 
