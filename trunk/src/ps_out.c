@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "adraw_int.h"
 #include "utf8.h"
 #include "safe.h"
