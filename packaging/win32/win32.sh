@@ -8,8 +8,8 @@ HERE="`pwd`"
 export PKG_CONFIG=true  
 export CFLAGS="-mno-cygwin"
 export LDFLAGS="-mno-cygwin"
-export GDLIB_CFLAGS="-I\"$HERE/../../gdwin32/include\"" 
-export GDLIB_LIBS="-L\"$HERE/../../gdwin32/lib\" -lbgd"
+export GDLIB_CFLAGS="-I$HERE/../../gdwin32/include" 
+export GDLIB_LIBS="-L$HERE/../../gdwin32/lib -lbgd"
 
 (cd ../../
  make distclean
@@ -38,8 +38,13 @@ chmod a+x binstage/w32/mscgen-$DIST_VER/bin/bgd.dll
 (cd binstage/w32 && zip -r mscgen-w32-$DIST_VER.zip mscgen-$DIST_VER && mv mscgen-w32-$DIST_VER.zip ../..)
 md5sum mscgen-w32-$DIST_VER.zip > mscgen-w32-$DIST_VER.zip.md5
 
+# Create the installer
+sed "s/\!define VERSION.*$/\!define VERSION $DIST_VER/" installer.nsi > installer-fixed.nsi
+
+makensis installer-fixed.nsi
+
 # Clean up
-rm -rf binstage buildstage mscgen-$DIST_VER mscgen-$DIST_VER.tar.gz
+rm -rf binstage buildstage mscgen-$DIST_VER mscgen-$DIST_VER.tar.gz installer-fixed.nsi
 
 
 # END OF FILE
