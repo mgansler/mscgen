@@ -1977,9 +1977,12 @@ int main(const int argc, const char *argv[])
                     }
                     arcBox(ymin, ymax, startCol, endCol, arcType, arcLineColour, arcTextBgColour);
                 }
-                else if(arcType == MSC_ARC_DISCO && addLines)
+                else if(arcType == MSC_ARC_DISCO)
                 {
-                    entityLines(m, ymin, ymax + gOpts.arcSpacing, TRUE /* dotted */, entColourRef);
+                    if(addLines)
+                    {
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, TRUE /* dotted */, entColourRef);
+                    }
                 }
                 else if(arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
                 {
