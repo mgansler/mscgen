@@ -17,4 +17,7 @@ msc {
   1, 2;
   1 box 1 [ label="Antidisestablishmentarianism\nLine2", textcolour="#ff0000" ],
   2 box 2 [ label="Supercalifragilisticexpialidocious", textcolour="#0000ff" ];
+  ..., 1->2, ...;
+  |||, 1->2, |||;
+  ---, 1->2, ---;
 }

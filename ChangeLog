@@ -47,6 +47,8 @@
       Fix incorrect use of perror() after fprintf() which may not have
        resulted in the right error being reported.
        (issue #57, thanks Neils!)
+      Fix assertion if ... is placed on the same line as another arc, but
+       after the arc has been specified.
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
