@@ -52,6 +52,8 @@ static char *trimQstring(char *s);
 
 <INITIAL>{
 \xef\xbb\xbf                          lex_utf8 = TRUE; BEGIN(BODY);
+(\r\n).*                              newline(yytext, 2); BEGIN(BODY);
+(\r|\n).*                             newline(yytext, 1); BEGIN(BODY);
 .                                     unput(yytext[0]); BEGIN(BODY);
 }
 
@@ -128,9 +130,11 @@ NOTE|note                             yylval.arctype = MSC_ARC_NOTE;     return 
 \]                                    return TOK_CSBRACKET;
 \*                                    return TOK_ASTERISK;
 [ \t]+                                /* ignore whitespace */;
-<*>.|\n                               return TOK_UNKNOWN;
 
 }
+
+
+<*>.|\n|\r                            return TOK_UNKNOWN;
 
 %%
 
