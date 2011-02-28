@@ -1,6 +1,8 @@
-#!/usr/bin/mscgen -Tpng
+
+
 #
-# testinput20.msc : Sample msc input file for word hypenation
+# testinput20.msc : Sample msc input file for word hypenation and some other
+#                    oddities.
 #
 # This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
 # transmitted, used, modified, built upon, or otherwise exploited by
