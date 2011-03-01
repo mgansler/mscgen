@@ -502,7 +502,10 @@ Boolean SvgClose(struct ADrawTag *ctx)
     fprintf(context->of, "</svg>\n");
 
     /* Close the output file */
-    fclose(context->of);
+    if(context->of != stdout)
+    {
+        fclose(context->of);
+    }
 
     /* Free and destroy context */
     free(context);
@@ -528,11 +531,18 @@ Boolean SvgInit(unsigned int     w,
     }
 
     /* Open the output file */
-    context->of = fopen(file, "wb");
-    if(!context->of)
+    if(strcmp(file, "-") == 0)
     {
-        fprintf(stderr, "SvgInit: Failed to open output file '%s': %s\n", file, strerror(errno));
-        return FALSE;
+        context->of = stdout;
+    }
+    else
+    {
+        context->of = fopen(file, "wb");
+        if(!context->of)
+        {
+            fprintf(stderr, "SvgInit: Failed to open output file '%s': %s\n", file, strerror(errno));
+            return FALSE;
+        }
     }
 
     /* Set the initial pen state */
