@@ -1,7 +1,7 @@
 0.20:
       Fix spelling errors (issue #58)
       Add a MSC validation phase to check that all the entity names are known
-       before rendering is started.  This now also outputs the input line 
+       before rendering is started.  This now also outputs the input line
        number at which a problem was detected e.g.
          Error detected at line 10: Unknown source entity 'xyz'.
 	 (issue #62)
@@ -10,6 +10,11 @@
       When wrapping words in boxes, hypenate very long words if needed to fit
        the available space.
        (issue #59)
+      Fix assertion if ... is placed on the same line as another arc, but
+       after the arc has been specified.
+      Fix regression where blank lines at the start of input would be
+       rejected and parsing stopped.
+       (Thanks Bernhard for the report and example)
 
 0.19: 01/01/2011
       Configure script changes to be more thorough about gdlib and FreeType
@@ -47,11 +52,6 @@
       Fix incorrect use of perror() after fprintf() which may not have
        resulted in the right error being reported.
        (issue #57, thanks Neils!)
-      Fix assertion if ... is placed on the same line as another arc, but
-       after the arc has been specified.
-      Fix regression where blank lines at the start of input would be 
-       rejected and parsing stopped.
-       (Thanks Bernhard for the report and example)
 
 0.18: 30/08/2010
       Fix bad strncat() use allowing possible overrun.
