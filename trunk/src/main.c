@@ -1749,7 +1749,7 @@ int main(const int argc, const char *argv[])
     }
 
     /* Open the drawing context with dummy dimensions */
-    if(!ADrawOpen(10, 10, outImage, gOutputFont, outType, &drw))
+    if(!ADrawOpen(10, 10, "/dev/null", gOutputFont, outType, &drw))
     {
         fprintf(stderr, "Failed to create output context\n");
         return EXIT_FAILURE;

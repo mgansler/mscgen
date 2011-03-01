@@ -500,7 +500,10 @@ Boolean gdoClose(struct ADrawTag *ctx)
 
     /* Output the image to the disk file in PNG format. */
     gdImagePng(getGdoImg(ctx), context->outFile);
-    fclose(context->outFile);
+    if(context->outFile != stdout)
+    {
+        fclose(context->outFile);
+    }
 
     /* Destroy the image in memory */
     gdImageDestroy(context->img);
@@ -541,11 +544,18 @@ Boolean GdoInit(unsigned int     w,
     }
 
     /* Open the output file */
-    context->outFile = fopen(file, "wb");
-    if(!context->outFile)
+    if(strcmp(file, "-") == 0)
     {
-        fprintf(stderr, "GdoInit: Failed to open output file '%s': %s\n", file, strerror(errno));
-        return FALSE;
+        context->outFile = stdout;
+    }
+    else
+    {
+        context->outFile = fopen(file, "wb");
+        if(!context->outFile)
+        {
+            fprintf(stderr, "GdoInit: Failed to open output file '%s': %s\n", file, strerror(errno));
+            return FALSE;
+        }
     }
 
 #ifdef USE_FREETYPE
