@@ -13,6 +13,6 @@ testinput12.msc  testinput13.msc  testinput14.msc testinput15.msc \
 testinput16.msc  testinput17.msc  testinput18.msc testinput19.msc \
 testinput20.msc
 
-CLEANFILES = *.png *.svg *.eps
+CLEANFILES = *.png *.svg *.eps *.ismap
 
 # END OF FILE

@@ -12,7 +12,7 @@
 ; The name of the installer
 Name Mscgen
 
-!define VERSION 0.20
+!define VERSION dev
 
 !define FILES binstage\w32\mscgen-${VERSION}
 

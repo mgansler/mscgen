@@ -17,7 +17,7 @@
        (Thanks Bernhard for the report and example)
       Allow output to stdout if - is specified as the output filename.
       Fix opening and closing the output file twice - the dummy output in the
-       first layout run now goes to /dev/null.
+       first layout run now goes to /dev/null (or a temp file on Win32).
 
 0.19: 01/01/2011
       Configure script changes to be more thorough about gdlib and FreeType
