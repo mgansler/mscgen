@@ -3,7 +3,7 @@
 # $Id$
 #
 # Script to run tests for mscgen
-# Copyright (C) 2009, Michael McTernan, Michael.McTernan.2001@cs.bris.ac.uk
+# Copyright (C) 2011, Michael McTernan, Michael.McTernan.2001@cs.bris.ac.uk
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@ for F in `cd $srcdir && ls *.msc` ; do
     [ "$NO_PNG" == 1 ] || $VALGRIND $top_builddir/src/mscgen -T png -i $srcdir/$F -o $F.png || exit $?
     $VALGRIND $top_builddir/src/mscgen -T svg -i $srcdir/$F -o $F.svg || exit $?
     $VALGRIND $top_builddir/src/mscgen -T eps -i $srcdir/$F -o $F.eps || exit $?
+    $VALGRIND $top_builddir/src/mscgen -T ismap -i $srcdir/$F -o $F.ismap || exit $?
 done
 
 # END OF SCRIPT

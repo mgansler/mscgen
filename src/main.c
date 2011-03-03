@@ -1635,6 +1635,20 @@ int main(const int argc, const char *argv[])
                       "      with USE_FREETYPE.\n");
     }
 #endif
+
+#ifdef __WIN32__
+    /* On Windows, create a temporary file */
+    deleteTmpFilename = tempnam(NULL, "mscgen");
+    if(!deleteTmpFilename)
+    {
+        perror("tempnam() failed");
+        return EXIT_FAILURE;
+    }
+
+    /* Schedule the temp file to be deleted */
+    atexit(deleteTmp);
+#endif
+
     /* Determine the output type */
     if(strcmp(gOutType, "png") == 0)
     {
@@ -1654,20 +1668,9 @@ int main(const int argc, const char *argv[])
     else if(strcmp(gOutType, "ismap") == 0)
     {
 #ifdef __WIN32__
-        /* When building for Windows , use the 'dangerous' tempnam()
-         *  as mkstemp() isn't present.
-         */
+        /* Use the temp file */
         outType  = ADRAW_FMT_PNG;
-        outImage = tempnam(NULL, "png");
-        if(!outImage)
-        {
-            perror("tempnam() failed");
-            return EXIT_FAILURE;
-        }
-
-        /* Schedule the temp file to be deleted */
-        deleteTmpFilename = outImage;
-        atexit(deleteTmp);
+        outImage = deleteTmpFilename;
 #else
         static char tmpTemplate[] = "/tmp/mscgenXXXXXX";
         int h;
@@ -1749,7 +1752,11 @@ int main(const int argc, const char *argv[])
     }
 
     /* Open the drawing context with dummy dimensions */
+#ifdef __WIN32__
+    if(!ADrawOpen(10, 10, deleteTmpFilename, gOutputFont, outType, &drw))
+#else
     if(!ADrawOpen(10, 10, "/dev/null", gOutputFont, outType, &drw))
+#endif
     {
         fprintf(stderr, "Failed to create output context\n");
         return EXIT_FAILURE;
