@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/mscgen.1.*
 
 %changelog
+* Sat Mar 5 2011 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.20-1
+- Version bump following upstream release.
+
 * Mon Jan 3 2011 Michael McTernan <Michael.McTernan.2001@cs.bris.ac.uk> 0.19-2
 - Add comment in spec file warning of doc use.
 
