@@ -1,0 +1,71 @@
+diff -Nrup origsrc/mscgen/CYGWIN-PATCHES/README src/mscgen/CYGWIN-PATCHES/README
+--- origsrc/mscgen/CYGWIN-PATCHES/README	1970-01-01 01:00:00.000000000 +0100
++++ src/mscgen/CYGWIN-PATCHES/README	2010-08-31 18:28:47.855716745 +0100
+@@ -0,0 +1,50 @@
++mscgen
++------------------------------------------
++A message sequence chart renderer.
++
++Runtime requirements:
++  cygwin-1.5.18 or newer
++  libgd2
++
++Build requirements:
++  cygwin-1.5.18 or newer
++  gcc-3.4.4-1 or newer
++  binutils-20050610-1 or newer
++  libgd-devel-2.0.36RC1-11 or newer
++
++Canonical homepage:
++  http://www.mcternan.co.uk/mscgen
++
++Canonical download:
++  http://www.mcternan.co.uk/mscgen/software/mscgen-src-0.20.tar.gz
++
++License:
++  GPL
++
++Language:
++  C
++
++------------------------------------
++
++Build instructions:
++  unpack mscgen-0.20-1-src.tar.bz2
++    if you use setup to install this src package, it will be
++         unpacked under /usr/src automatically
++  cd /usr/src
++  cygport ./mscgen-0.20-1.cygport all
++
++This will create:
++  /usr/src/mscgen-0.20-1-src.tar.bz2
++  /usr/src/mscgen-0.20-1.tar.bz2
++
++
++------------------
++
++Port Notes:
++
++----------  mscgen-0.20-1 -- 05/03/2011 -----------
++New version following upstream release
++
++----------  mscgen-0.19-1 -- 01/01/2011 -----------
++New version following upstream release
++
++----------  mscgen-0.18-1 -- 26/08/2010 -----------
++Initial cygport release
++
++
++For more information about this package, see the upstream documentation in
++/usr/share/doc/mscgen.
++
++Cygwin port maintained by: Michael McTernan, Michael.McTernan.2001@cs.bris.ac.uk
++Please address all questions to the Cygwin mailing list at <cygwin@cygwin.com>
+diff -Nrup origsrc/mscgen/CYGWIN-PATCHES/setup.hint src/mscgen/CYGWIN-PATCHES/setup.hint
+--- origsrc/mscgen/CYGWIN-PATCHES/setup.hint	1970-01-01 01:00:00.000000000 +0100
++++ src/mscgen/CYGWIN-PATCHES/setup.hint	2010-08-31 18:28:47.855716745 +0100
+@@ -0,0 +1,4 @@
++category: Graphics
++requires: libgd2
++sdesc: "A Message Sequence Chart Renderer"
++ldesc: "A Message Sequence Chart Renderer."
