@@ -1,4 +1,4 @@
-0.20:
+0.20: 05/03/2011
       Fix spelling errors (issue #58)
       Add a MSC validation phase to check that all the entity names are known
        before rendering is started.  This now also outputs the input line
