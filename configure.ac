@@ -2,7 +2,7 @@
 # $Id$
 #
 
-AC_INIT([mscgen],[0.20],[Michael.McTernan.2001@cs.bris.ac.uk])
+AC_INIT([mscgen],[0.21],[Michael.McTernan.2001@cs.bris.ac.uk])
 AC_PREREQ(2.59)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
