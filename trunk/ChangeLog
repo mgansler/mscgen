@@ -1,4 +1,5 @@
 0.21:
+      Apply patch from damian.sparrow to fix warning in usage.c (issue #72).
 
 
 0.20: 05/03/2011
