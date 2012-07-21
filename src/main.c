@@ -1388,24 +1388,24 @@ static void arcLine(Msc               m,
         if(arcType == MSC_ARC_RETVAL)
         {
             drw.dottedArc(&drw,
-                          sx, y,
+                          sx, y + ygradient/2,
                           gOpts.entitySpacing,
-                          gOpts.loopArcHeight,
+                          gOpts.loopArcHeight + ygradient,
                           90,
                           270);
         }
         else if(arcType == MSC_ARC_DOUBLE)
         {
             drw.arc(&drw,
-                    sx, y - 1,
+                    sx, y - 1 + ygradient/2,
                     gOpts.entitySpacing,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     90,
                     270);
             drw.arc(&drw,
-                    sx, y + 1,
+                    sx, y + 1 + ygradient/2,
                     gOpts.entitySpacing,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     90,
                     270);
         }
@@ -1414,17 +1414,17 @@ static void arcLine(Msc               m,
             unsigned int px, py;
 
             drw.arc(&drw,
-                    sx, y - 1,
+                    sx, y - 1 + ygradient/2,
                     gOpts.entitySpacing - 8,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     180 - 45,
                     270);
 
             hasArrows = FALSE;
 
             /* Get co-ordinates of the arc end-point */
-            ADrawComputeArcPoint(sx, y - 1, gOpts.entitySpacing - 8,
-                                 gOpts.loopArcHeight, 180 - 45,
+            ADrawComputeArcPoint(sx, y - 1 + ygradient/2, gOpts.entitySpacing - 8,
+                                 gOpts.loopArcHeight + ygradient, 180 - 45,
                                  &px, &py);
 
             /* Draw a cross */
@@ -1434,16 +1434,16 @@ static void arcLine(Msc               m,
         else
         {
             drw.arc(&drw,
-                    sx, y,
+                    sx, y + ygradient/2,
                     gOpts.entitySpacing - 4,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     90,
                     270);
         }
 
         if(hasArrows)
         {
-            arrowR(dx, y + (gOpts.loopArcHeight / 2), arcType);
+            arrowR(dx, y + ygradient + (gOpts.loopArcHeight / 2), arcType);
         }
     }
     else
@@ -1452,24 +1452,24 @@ static void arcLine(Msc               m,
         if(arcType == MSC_ARC_RETVAL)
         {
             drw.dottedArc(&drw,
-                          sx, y,
+                          sx, y + ygradient/2,
                           gOpts.entitySpacing,
-                          gOpts.loopArcHeight,
+                          gOpts.loopArcHeight + ygradient,
                           270,
                           90);
         }
         else if(arcType == MSC_ARC_DOUBLE)
         {
             drw.arc(&drw,
-                    sx, y - 1,
+                    sx, y - 1 + ygradient/2,
                     gOpts.entitySpacing,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     270,
                     90);
             drw.arc(&drw,
-                    sx, y + 1,
+                    sx, y + 1 + ygradient/2,
                     gOpts.entitySpacing,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     270,
                     90);
         }
@@ -1478,17 +1478,17 @@ static void arcLine(Msc               m,
             unsigned int px, py;
 
             drw.arc(&drw,
-                    sx, y - 1,
+                    sx, y - 1 + ygradient/2,
                     gOpts.entitySpacing - 8,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     270,
                     45);
 
             hasArrows = FALSE;
 
             /* Get co-ordinates of the arc end-point */
-            ADrawComputeArcPoint(sx, y - 1, gOpts.entitySpacing - 8,
-                                 gOpts.loopArcHeight, 45,
+            ADrawComputeArcPoint(sx, y - 1 + ygradient/2, gOpts.entitySpacing - 8,
+                                 gOpts.loopArcHeight + ygradient, 45,
                                  &px, &py);
 
             /* Draw a cross */
@@ -1498,16 +1498,16 @@ static void arcLine(Msc               m,
         else
         {
             drw.arc(&drw,
-                    sx, y,
+                    sx, y + ygradient/2,
                     gOpts.entitySpacing,
-                    gOpts.loopArcHeight,
+                    gOpts.loopArcHeight + ygradient,
                     270,
                     90);
         }
 
         if(hasArrows)
         {
-            arrowL(dx, y + (gOpts.loopArcHeight / 2), arcType);
+            arrowL(dx, y + ygradient + (gOpts.loopArcHeight / 2), arcType);
         }
     }
 

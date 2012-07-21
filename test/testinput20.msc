@@ -1,5 +1,4 @@
-
-
+#!/usr/bin/mscgen -Tpng
 #
 # testinput20.msc : Sample msc input file for word hypenation and some other
 #                    oddities.

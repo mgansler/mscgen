@@ -1,0 +1,190 @@
+#!/usr/bin/mscgen -Tpng
+#
+# testinput21.msc : Sample msc input file for arcskip tests.
+#
+# This file is PUBLIC DOMAIN and may be freely reproduced,  distributed,
+# transmitted, used, modified, built upon, or otherwise exploited by
+# anyone for any purpose, commercial or non-commercial, and in any way,
+# including by methods that have not yet been invented or conceived.
+#
+# This file is provided "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+# EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+
+msc {
+	hscale = 3;
+
+	count  [label="counter"],
+	SigL   [label="signal"],
+	MetL   [label="method"],
+	RetL   [label="return"],
+	CBL    [label="callback"],
+	EmpL   [label="emphasised"],
+	LostL  [label="lost"],
+	middle,
+	SigR   [label="signal"],
+	MetR   [label="method"],
+	RetR   [label="return"],
+	CBR    [label="callback"],
+	EmpR   [label="emphasised"],
+	LostR  [label="lost"];
+
+	--- [label="Self arrows with arcskip"];
+
+	count >> count  [label="1\nskip=0"],
+	SigL  -> SigL   [arcskip=0],
+	MetL  => MetL   [arcskip=0],
+	RetL  >> RetL   [arcskip=0],
+	CBL  =>> CBL    [arcskip=0],
+	EmpL  :> EmpL   [arcskip=0],
+	LostL -x LostL  [arcskip=0],
+	SigR  -> SigR   [arcskip=0],
+	MetR  => MetR   [arcskip=0],
+	RetR  >> RetR   [arcskip=0],
+	CBR  =>> CBR    [arcskip=0],
+	EmpR  :> EmpR   [arcskip=0],
+	LostR -x LostR  [arcskip=0];
+
+	count >> count  [label="2\nskip=1"],
+	SigL  -> SigL   [arcskip=1],
+	MetL  => MetL   [arcskip=1],
+	RetL  >> RetL   [arcskip=1],
+	CBL  =>> CBL    [arcskip=1],
+	EmpL  :> EmpL   [arcskip=1],
+	LostL -x LostL  [arcskip=1],
+	SigR  -> SigR   [arcskip=1],
+	MetR  => MetR   [arcskip=1],
+	RetR  >> RetR   [arcskip=1],
+	CBR  =>> CBR    [arcskip=1],
+	EmpR  :> EmpR   [arcskip=1],
+	LostR -x LostR  [arcskip=1];
+
+	count >> count  [label="3"];
+
+	count >> count  [label="4\nskip=2"],
+	SigL  -> SigL   [arcskip=2],
+	MetL  => MetL   [arcskip=2],
+	RetL  >> RetL   [arcskip=2],
+	CBL  =>> CBL    [arcskip=2],
+	EmpL  :> EmpL   [arcskip=2],
+	LostL -x LostL  [arcskip=2],
+	SigR  -> SigR   [arcskip=2],
+	MetR  => MetR   [arcskip=2],
+	RetR  >> RetR   [arcskip=2],
+	CBR  =>> CBR    [arcskip=2],
+	EmpR  :> EmpR   [arcskip=2],
+	LostR -x LostR  [arcskip=2];
+
+	count >> count  [label="5\nskip=3"],
+	SigL  -> SigL   [arcskip=3],
+	MetL  => MetL   [arcskip=3],
+	RetL  >> RetL   [arcskip=3],
+	CBL  =>> CBL    [arcskip=3],
+	EmpL  :> EmpL   [arcskip=3],
+	LostL -x LostL  [arcskip=3],
+	SigR  -> SigR   [arcskip=3],
+	MetR  => MetR   [arcskip=3],
+	RetR  >> RetR   [arcskip=3],
+	CBR  =>> CBR    [arcskip=3],
+	EmpR  :> EmpR   [arcskip=3],
+	LostR -x LostR  [arcskip=3];
+
+	count >> count  [label="6"];
+
+	count >> count  [label="7"];
+
+	count >> count  [label="8"];
+
+	...;
+	--- [label="Arrows with arcskip"];
+
+	count >> count  [label="11\nskip=0"],
+	SigL  -> MetL   [arcskip=0],
+	MetL  => RetL   [arcskip=0],
+	RetL  >> CBL    [arcskip=0],
+	CBL  =>> EmpL   [arcskip=0],
+	EmpL  :> LostL  [arcskip=0],
+	LostL -x middle [arcskip=0],
+	SigR  -> middle [arcskip=0],
+	MetR  => SigR   [arcskip=0],
+	RetR  >> MetR   [arcskip=0],
+	CBR  =>> RetR   [arcskip=0],
+	EmpR  :> CBR    [arcskip=0],
+	LostR -x EmpR   [arcskip=0];
+
+	count >> count  [label="12\nskip=1"],
+	SigL  -> MetL   [arcskip=1],
+	MetL  => RetL   [arcskip=1],
+	RetL  >> CBL    [arcskip=1],
+	CBL  =>> EmpL   [arcskip=1],
+	EmpL  :> LostL  [arcskip=1],
+	LostL -x middle [arcskip=1],
+	SigR  -> middle [arcskip=1],
+	MetR  => SigR   [arcskip=1],
+	RetR  >> MetR   [arcskip=1],
+	CBR  =>> RetR   [arcskip=1],
+	EmpR  :> CBR    [arcskip=1],
+	LostR -x EmpR   [arcskip=1];
+
+	count >> count  [label="13"];
+
+	count >> count  [label="14\nskip=2"],
+	SigL  -> MetL   [arcskip=2],
+	MetL  => RetL   [arcskip=2],
+	RetL  >> CBL    [arcskip=2],
+	CBL  =>> EmpL   [arcskip=2],
+	EmpL  :> LostL  [arcskip=2],
+	LostL -x middle [arcskip=2],
+	SigR  -> middle [arcskip=2],
+	MetR  => SigR   [arcskip=2],
+	RetR  >> MetR   [arcskip=2],
+	CBR  =>> RetR   [arcskip=2],
+	EmpR  :> CBR    [arcskip=2],
+	LostR -x EmpR   [arcskip=2];
+
+	count >> count  [label="15\nskip=3"],
+	SigL  -> MetL   [arcskip=3],
+	MetL  => RetL   [arcskip=3],
+	RetL  >> CBL    [arcskip=3],
+	CBL  =>> EmpL   [arcskip=3],
+	EmpL  :> LostL  [arcskip=3],
+	LostL -x middle [arcskip=3],
+	SigR  -> middle [arcskip=3],
+	MetR  => SigR   [arcskip=3],
+	RetR  >> MetR   [arcskip=3],
+	CBR  =>> RetR   [arcskip=3],
+	EmpR  :> CBR    [arcskip=3],
+	LostR -x EmpR   [arcskip=3];
+
+	count >> count  [label="16"];
+
+	count >> count  [label="17"];
+
+	count >> count  [label="18"];
+
+	...;
+	--- [label="Broadcast with arcskip"];
+
+	count >> count  [label="21\nskip=0"],
+	middle ->*      [arcskip=0];
+
+	count >> count  [label="22\nskip=1"],
+	middle ->*      [arcskip=1];
+
+	count >> count  [label="23"];
+
+	count >> count  [label="24\nskip=2"],
+	middle ->*      [arcskip=2];
+
+	count >> count  [label="25\nskip=3"],
+	middle ->*      [arcskip=3];
+
+	count >> count  [label="26"];
+
+	count >> count  [label="27"];
+
+	count >> count  [label="28"];
+}
+
+
