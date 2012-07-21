@@ -851,6 +851,7 @@ static RowInfo *computeCanvasSize(Msc           m,
 
     nextYmin = ymin = gOpts.entityHeadGap;
     yskipmax = 0;
+    ymax = 0;
 
     MscResetArcIterator(m);
     do
