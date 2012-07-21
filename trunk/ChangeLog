@@ -2,6 +2,9 @@
       Apply patch from damian.sparrow to fix warning in usage.c (issue #72).
       Fix lack of initialisation for ymax producing a compiler warning (issue
       #73).
+      Apply patch from Michel Palleau which fixes self arcs with the arcskip
+       attribute.  Previously the attribute was ignored for self-arcs, this 
+       patch and testcase fixes that.
 
 0.20: 05/03/2011
       Fix spelling errors (issue #58)
