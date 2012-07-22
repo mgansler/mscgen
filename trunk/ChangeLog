@@ -5,6 +5,7 @@
       Apply patch from Michel Palleau which fixes self arcs with the arcskip
        attribute.  Previously the attribute was ignored for self-arcs, this 
        patch and testcase fixes that.
+      Ignore '\\n' so that litteral '\n' can be output (issue #66). 
 
 0.20: 05/03/2011
       Fix spelling errors (issue #58)
