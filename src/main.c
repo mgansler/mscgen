@@ -219,6 +219,37 @@ static void deleteTmp()
     }
 }
 
+
+/** Find the next newline in some string.
+ * This returns a pointer to the start of the next newline in a
+ * string, roughly equivalent to strstr(line, "\n"), but ignoring
+ * escaped newlines such as "\\n".
+ */
+static char *strnl(const char *line)
+{
+    const char *nl = line;
+
+    do
+    {
+        nl = strstr(nl, "\\n");
+        if(nl)
+        {
+            if(nl == line || nl[-1] != '\\')
+            {
+                return (char *)nl;
+            }
+            else
+            {
+                nl += 2;
+            }
+        }
+    }
+    while(nl);
+
+	return NULL;
+}
+
+
 /** Remove any file extension from the passed filename.
  */
 static void trimExtension(char *s)
@@ -434,7 +465,7 @@ static unsigned int computeLabelLines(Msc               m,
     while(label != NULL)
     {
         /* First split around user specified lines with literal '\n' */
-        char *nextLine = strstr(label, "\\n");
+        char *nextLine = strnl(label);
         if(nextLine)
         {
             const int lineLen = nextLine - label;
@@ -527,7 +558,7 @@ static char *getLine(const char        *string,
         }
 
         /* Search for next delimited */
-        lineEnd = strstr(lineStart, "\\n");
+        lineEnd = strnl(lineStart);
 
         line--;
     }
