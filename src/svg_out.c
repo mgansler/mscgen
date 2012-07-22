@@ -310,10 +310,10 @@ void SvgTextR(struct ADrawTag *ctx,
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
-            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\">\n",
+            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\">",
             x - 1, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
     writeEscaped(ctx, string);
-    fprintf(getSvgFile(ctx), "\n</text>\n");
+    fprintf(getSvgFile(ctx), "</text>\n");
 }
 
 
@@ -329,10 +329,10 @@ void SvgTextL(struct ADrawTag *ctx,
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
-            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"end\">\n",
+            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"end\">",
             x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
     writeEscaped(ctx, string);
-    fprintf(getSvgFile(ctx), "\n</text>\n");
+    fprintf(getSvgFile(ctx), "</text>\n");
 
 
 }
@@ -351,10 +351,10 @@ void SvgTextC(struct ADrawTag *ctx,
     y += getSpace(ctx, SvgHelvetica.descender);
 
     fprintf(getSvgFile(ctx),
-            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"middle\">\n\n",
+            "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"middle\">",
             x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
     writeEscaped(ctx, string);
-    fprintf(getSvgFile(ctx), "\n</text>\n");
+    fprintf(getSvgFile(ctx), "</text>\n");
 }
 
 
