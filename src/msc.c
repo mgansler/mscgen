@@ -172,12 +172,13 @@ const char *MscPrettyOptType(MscOptType t)
 {
     switch(t)
     {
-        case MSC_OPT_HSCALE:      return "hscale";
-        case MSC_OPT_WIDTH:       return "width";
-        case MSC_OPT_ARCGRADIENT: return "arcgradient";
-        default:
-            return "unknown";
+        case MSC_OPT_HSCALE:       return "hscale";
+        case MSC_OPT_WIDTH:        return "width";
+        case MSC_OPT_ARCGRADIENT:  return "arcgradient";
+        case MSC_OPT_WORDWRAPARCS: return "wordwraparcs";
     }
+    
+    return "<unknown>";
 }
 
 struct MscOptTag *MscFindOpt(struct MscOptTag *list,
@@ -467,10 +468,11 @@ const char *MscPrettyAttribType(MscAttribType t)
         case MSC_ATTR_ARC_TEXT_COLOUR:   return "arctextcolour";
         case MSC_ATTR_ARC_TEXT_BGCOLOUR: return "arctextbgcolour";
         case MSC_ATTR_NO_ARROWS:         return "noarrows";
-        case MSC_ATTR_BI_ARROWS  :       return "biarrows";
-        default:
-            return "<unknown>";
+        case MSC_ATTR_BI_ARROWS:         return "biarrows";
+		case MSC_ATTR_ARC_SKIP:          return "arcskip";
     }
+    
+    return "<unknown>";
 }
 
 
