@@ -816,7 +816,7 @@ static void entityText(FILE             *ismap,
             }
 
             /* Render text and restore pen */
-            drw.textC (&drw, x, y, lineLabel);
+            drw.textC (&drw, x, y, lineLabel, entUrl);
             drw.setPen(&drw, ADRAW_COL_BLACK);
             drw.setBgPen(&drw, ADRAW_COL_WHITE);
 
@@ -837,7 +837,7 @@ static void entityText(FILE             *ismap,
                 if(entIdUrl)
                 {
                     drw.setPen(&drw, ADRAW_COL_BLUE);
-                    drw.textR (&drw, idx, idy, entId);
+                    drw.textR (&drw, idx, idy, entId, entIdUrl);
                     drw.setPen(&drw, ADRAW_COL_BLACK);
 
                     /* Image map output */
@@ -848,7 +848,7 @@ static void entityText(FILE             *ismap,
                 }
                 else
                 {
-                    drw.textR(&drw, idx, idy, entId);
+                    drw.textR(&drw, idx, idy, entId, NULL);
                 }
 
                 drw.setFontSize(&drw, ADRAW_FONT_SMALL);
@@ -1286,7 +1286,7 @@ static void arcText(Msc                m,
         }
 
         /* Render text and restore pen */
-        drw.textR (&drw, x, y, lineLabel);
+        drw.textR (&drw, x, y, lineLabel, arcUrl);
         drw.setPen(&drw, ADRAW_COL_BLACK);
         drw.setBgPen(&drw, ADRAW_COL_WHITE);
 
@@ -1316,7 +1316,7 @@ static void arcText(Msc                m,
             }
 
             /* Render text and restore pen and font */
-            drw.textR (&drw, idx, idy, arcId);
+            drw.textR (&drw, idx, idy, arcId, arcIdUrl);
             drw.setPen(&drw, ADRAW_COL_BLACK);
             drw.setFontSize(&drw, ADRAW_FONT_SMALL);
         }

@@ -140,11 +140,13 @@ typedef struct ADrawTag
      * \param x      The position at which the text should terminate.
      * \param y      The position above which the text will lie.
      * \param string The string to write.
+     * \param url    Hyperlink target, or NULL if not required.
      */
     void         (*textL)         (struct ADrawTag *ctx,
                                    unsigned int x,
                                    unsigned int y,
-                                   const char *string);
+                                   const char *string,
+                                   const char *url);
 
     /** Center aligned text.
      * Write a single line of text that will center on some co-ordinates.
@@ -152,11 +154,13 @@ typedef struct ADrawTag
      * \param x      The position at which the text should be centered.
      * \param y      The position above which the text will lie.
      * \param string The string to write.
+     * \param url    Hyperlink target, or NULL if not required.
      */
     void         (*textC)         (struct ADrawTag *ctx,
                                    unsigned int x,
                                    unsigned int y,
-                                   const char *string);
+                                   const char *string,
+                                   const char *url);
 
     /** Right aligned text.
      * Write a single line of text that will start at some co-ordinates.
@@ -164,11 +168,13 @@ typedef struct ADrawTag
      * \param x      The position at which the text should start.
      * \param y      The position above which the text will lie.
      * \param string The string to write.
+     * \param url    Hyperlink target, or NULL if not required.
      */
     void         (*textR)         (struct ADrawTag *ctx,
                                    unsigned int x,
                                    unsigned int y,
-                                   const char *string);
+                                   const char *string,
+                                   const char *url);
 
     /** Determine the width of some string.
      * \param ctx    The drawing context.

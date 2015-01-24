@@ -12,6 +12,8 @@
        Thanks Niels Thykier for the patch.
       Replace bool.h with stdbool.h and use bool/true/false inplace of hand
        rolled Boolean/TRUE/FALSE.  Thanks sternenfeuer for the patches.
+      Hyperlinks are now added to text on SVG output.
+       Thanks to dunbar.ian for details on how to do this (issue #76).
 
 0.20: 05/03/2011
       Fix spelling errors (issue #58)

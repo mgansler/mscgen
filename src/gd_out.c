@@ -287,7 +287,8 @@ void gdoDottedLine(struct ADrawTag *ctx,
 void gdoTextR(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url UNUSED)
 {
     GdoContext *context = getGdoCtx(ctx);
 #ifdef USE_FREETYPE
@@ -339,23 +340,25 @@ void gdoTextR(struct ADrawTag *ctx,
 void gdoTextL(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url)
 {
     x -= gdoTextWidth(ctx, string);
 
     /* Range check since gdImageFilledRectangle() takes signed values */
     if(x <= INT_MAX && y <= INT_MAX)
     {
-        gdoTextR(ctx, x, y, string);
+        gdoTextR(ctx, x, y, string, url);
     }
 }
 
 void gdoTextC(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url)
 {
-    gdoTextR(ctx, x - (gdoTextWidth(ctx, string) / 2), y, string);
+    gdoTextR(ctx, x - (gdoTextWidth(ctx, string) / 2), y, string, url);
 }
 
 void gdoFilledRectangle(struct ADrawTag *ctx,

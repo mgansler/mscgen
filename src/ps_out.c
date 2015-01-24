@@ -268,7 +268,8 @@ void PsFilledRectangle(struct ADrawTag *ctx,
 void PsTextR(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url UNUSED)
 {
     PsContext *context = getPsCtx(ctx);
 
@@ -300,7 +301,8 @@ void PsTextR(struct ADrawTag *ctx,
 void PsTextL(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url UNUSED)
 {
     PsContext *context = getPsCtx(ctx);
 
@@ -327,7 +329,8 @@ void PsTextL(struct ADrawTag *ctx,
 void PsTextC(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url UNUSED)
 {
     PsContext *context = getPsCtx(ctx);
 
