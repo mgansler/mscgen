@@ -8,6 +8,8 @@
       Ignore '\\n' so that litteral '\n' can be output (issue #66). 
       Improve rendering of SVGs in Dia by removing excess newlines in SVG
        output (issue #67).
+      Fix compile issue with newer version of Bison (>=3.0?) (issue #83).
+       Thanks Niels Thykier for the patch.
 
 0.20: 05/03/2011
       Fix spelling errors (issue #58)
