@@ -14,6 +14,8 @@
        rolled Boolean/TRUE/FALSE.  Thanks sternenfeuer for the patches.
       Hyperlinks are now added to text on SVG output.
        Thanks to dunbar.ian for details on how to do this (issue #76).
+      Fix configure --without-freetype doing the wrong thing.
+       Thanks to mdavidsaver for spotting this (issue #79).
 
 0.20: 05/03/2011
       Fix spelling errors (issue #58)

@@ -102,8 +102,7 @@ if test "x$with_libgd" != "xno"; then
 
   # Check if FreeType support needs testing
   AC_ARG_WITH([freetype],
-    [AS_HELP_STRING([--with-freetype], [Enable FreeType font rendering @<:@default=no@:>@])],
-    with_freetype=yes)
+    [AS_HELP_STRING([--with-freetype], [Enable FreeType font rendering @<:@default=no@:>@])])
 
   # Check if libgd has FreeType support and is usable (i.e. has required libs)
   if test "x$with_freetype" = xyes ; then
