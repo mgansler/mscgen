@@ -301,7 +301,8 @@ void SvgDottedLine(struct ADrawTag *ctx,
 void SvgTextR(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url)
 {
     SvgContext *context = getSvgCtx(ctx);
 
@@ -309,18 +310,29 @@ void SvgTextR(struct ADrawTag *ctx,
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
+    if(url)
+    {
+        fprintf(getSvgFile(ctx), "<a xlink:href=\"%s\">", url);
+    }
+
     fprintf(getSvgFile(ctx),
             "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\">",
             x - 1, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
     writeEscaped(ctx, string);
     fprintf(getSvgFile(ctx), "</text>\n");
+
+    if(url)
+    {
+        fprintf(getSvgFile(ctx), "</a>", url);
+    }
 }
 
 
 void SvgTextL(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url)
 {
     SvgContext *context = getSvgCtx(ctx);
 
@@ -328,20 +340,29 @@ void SvgTextL(struct ADrawTag *ctx,
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
+    if(url)
+    {
+        fprintf(getSvgFile(ctx), "<a xlink:href=\"%s\">", url);
+    }
+
     fprintf(getSvgFile(ctx),
             "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"end\">",
             x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
     writeEscaped(ctx, string);
     fprintf(getSvgFile(ctx), "</text>\n");
 
-
+    if(url)
+    {
+        fprintf(getSvgFile(ctx), "</a>", url);
+    }
 }
 
 
 void SvgTextC(struct ADrawTag *ctx,
               unsigned int     x,
               unsigned int     y,
-              const char      *string)
+              const char      *string,
+              const char      *url)
 {
     SvgContext  *context = getSvgCtx(ctx);
     unsigned int hw = SvgTextWidth(ctx, string) / 2;
@@ -350,11 +371,21 @@ void SvgTextC(struct ADrawTag *ctx,
 
     y += getSpace(ctx, SvgHelvetica.descender);
 
+    if(url)
+    {
+        fprintf(getSvgFile(ctx), "<a xlink:href=\"%s\">", url);
+    }
+
     fprintf(getSvgFile(ctx),
             "<text x=\"%u\" y=\"%u\" textLength=\"%u\" font-family=\"Helvetica\" font-size=\"%u\" fill=\"%s\" text-anchor=\"middle\">",
             x, y, SvgTextWidth(ctx, string), context->fontPoints, context->penColName);
     writeEscaped(ctx, string);
     fprintf(getSvgFile(ctx), "</text>\n");
+
+    if(url)
+    {
+        fprintf(getSvgFile(ctx), "</a>", url);
+    }
 }
 
 
@@ -558,7 +589,8 @@ bool SvgInit(unsigned int     w,
                          " width=\"%upx\" height=\"%upx\"\n"
                          " viewBox=\"0 0 %u %u\"\n"
                          " xmlns=\"http://www.w3.org/2000/svg\" shape-rendering=\"crispEdges\"\n"
-                         " stroke-width=\"1\" text-rendering=\"geometricPrecision\">\n",
+                         " stroke-width=\"1\" text-rendering=\"geometricPrecision\"\n"
+                         " xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n",
                          w, h, w, h);
 
     /* Now fill in the function pointers */

@@ -14,8 +14,8 @@
 
 msc {
   a [label="TASK_A"],
-  "b" [label = "TASK_B", URL="www.dilbert.com"],
-  c [label = "TASK_C", ID="5", IDURL="www.slashdot.org"] ;
+  "b" [label = "TASK_B", URL="http://www.dilbert.com"],
+  c [label = "TASK_C", ID="5", IDURL="http://www.slashdot.org"] ;
 
   a->b [ label = "Message 1" ] ;
   b->c [ label = "Message 1 + a" ] ;

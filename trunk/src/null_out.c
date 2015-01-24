@@ -64,7 +64,8 @@ static void NullDottedLine(struct ADrawTag *ctx UNUSED,
 static void NullTextR(struct ADrawTag *ctx UNUSED,
                       unsigned int     x UNUSED,
                       unsigned int     y UNUSED,
-                      const char      *string UNUSED)
+                      const char      *string UNUSED,
+                      const char      *url UNUSED)
 {
 }
 
@@ -72,7 +73,8 @@ static void NullTextR(struct ADrawTag *ctx UNUSED,
 static void NullTextL(struct ADrawTag *ctx UNUSED,
                       unsigned int     x UNUSED,
                       unsigned int     y UNUSED,
-                      const char      *string UNUSED)
+                      const char      *string UNUSED,
+                      const char      *url UNUSED)
 {
 }
 
@@ -80,7 +82,8 @@ static void NullTextL(struct ADrawTag *ctx UNUSED,
 static void NullTextC(struct ADrawTag *ctx UNUSED,
                       unsigned int     x UNUSED,
                       unsigned int     y UNUSED,
-                      const char      *string UNUSED)
+                      const char      *string UNUSED,
+                      const char      *url UNUSED)
 {
 }
 
