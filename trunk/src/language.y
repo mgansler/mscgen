@@ -48,7 +48,7 @@ int yylex_destroy(void);
  *  Error handling function.  The TOK_XXX names are substituted for more
  *  understandable values that make more sense to the user.
  */
-void yyerror(const char *str)
+void yyerror(void *unused, const char *str)
 {
     static const char *tokNames[] = { "TOK_OCBRACKET",          "TOK_CCBRACKET",
                                       "TOK_OSBRACKET",          "TOK_CSBRACKET",
@@ -223,6 +223,8 @@ Msc MscParse(FILE *in)
 
 
 %}
+
+%parse-param {void *YYPARSE_PARAM}
 
 %token TOK_STRING TOK_QSTRING TOK_EQUAL TOK_COMMA TOK_SEMICOLON TOK_OCBRACKET TOK_CCBRACKET
        TOK_OSBRACKET TOK_CSBRACKET TOK_MSC
