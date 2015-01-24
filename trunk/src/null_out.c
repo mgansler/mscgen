@@ -139,13 +139,13 @@ static void NullSetFontSize(struct ADrawTag *ctx UNUSED,
 }
 
 
-static Boolean NullClose(struct ADrawTag *ctx UNUSED)
+static bool NullClose(struct ADrawTag *ctx UNUSED)
 {
-    return TRUE;
+    return true;
 }
 
 
-Boolean NullInit(struct ADrawTag *outContext)
+bool NullInit(struct ADrawTag *outContext)
 {
     /* Fill in the function pointers */
     outContext->line            = NullLine;
@@ -164,7 +164,7 @@ Boolean NullInit(struct ADrawTag *outContext)
     outContext->setFontSize     = NullSetFontSize;
     outContext->close           = NullClose;
 
-    return TRUE;
+    return true;
 }
 
 /* END OF FILE */

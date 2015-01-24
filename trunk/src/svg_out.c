@@ -494,7 +494,7 @@ void SvgSetFontSize(struct ADrawTag *ctx,
 }
 
 
-Boolean SvgClose(struct ADrawTag *ctx)
+bool SvgClose(struct ADrawTag *ctx)
 {
     SvgContext *context = getSvgCtx(ctx);
 
@@ -511,15 +511,14 @@ Boolean SvgClose(struct ADrawTag *ctx)
     free(context);
     ctx->internal = NULL;
 
-    return TRUE;
+    return true;
 }
 
 
-
-Boolean SvgInit(unsigned int     w,
-                unsigned int     h,
-                const char      *file,
-                struct ADrawTag *outContext)
+bool SvgInit(unsigned int     w,
+             unsigned int     h,
+             const char      *file,
+             struct ADrawTag *outContext)
 {
     SvgContext *context;
 
@@ -527,7 +526,7 @@ Boolean SvgInit(unsigned int     w,
     context = outContext->internal = malloc_s(sizeof(SvgContext));
     if(context == NULL)
     {
-        return FALSE;
+        return false;
     }
 
     /* Open the output file */
@@ -541,7 +540,7 @@ Boolean SvgInit(unsigned int     w,
         if(!context->of)
         {
             fprintf(stderr, "SvgInit: Failed to open output file '%s': %s\n", file, strerror(errno));
-            return FALSE;
+            return false;
         }
     }
 
@@ -580,7 +579,7 @@ Boolean SvgInit(unsigned int     w,
     outContext->setFontSize     = SvgSetFontSize;
     outContext->close           = SvgClose;
 
-    return TRUE;
+    return true;
 }
 
 /* END OF FILE */

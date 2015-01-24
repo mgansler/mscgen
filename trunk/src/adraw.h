@@ -23,7 +23,7 @@
 #ifndef ADRAW_H
 #define ADRAW_H
 
-#include "bool.h"
+#include <stdbool.h>
 
 /***************************************************************************
  * Types
@@ -235,7 +235,7 @@ typedef struct ADrawTag
     void         (*setFontSize)   (struct ADrawTag *ctx,
                                    ADrawFontSize size);
 
-    Boolean      (*close)         (struct ADrawTag *context);
+    bool         (*close)         (struct ADrawTag *context);
 
     /* Internal context, not accessible by the user */
     void *internal;
@@ -259,14 +259,14 @@ ADraw;
  * \param[in] type             The output type to generate.
  * \param[in, out] *outContext Pointer to an \a ADraw structure to populate
  *                              with values.
- * \retval Boolean             On error, #FALSE will be returned.
+ * \returns                    On error, \a false will be returned.
  */
-Boolean ADrawOpen(unsigned int     w,
-                  unsigned int     h,
-                  const char      *file,
-                  const char      *fontName,
-                  ADrawOutputType  type,
-                  struct ADrawTag *outContext);
+bool ADrawOpen(unsigned int     w,
+               unsigned int     h,
+               const char      *file,
+               const char      *fontName,
+               ADrawOutputType  type,
+               struct ADrawTag *outContext);
 
 /** Given a string name for a colour, return the corresponding ADrawColour.
  *

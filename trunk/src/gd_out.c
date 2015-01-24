@@ -494,7 +494,7 @@ void gdoSetFontSize(struct ADrawTag *ctx,
 }
 
 
-Boolean gdoClose(struct ADrawTag *ctx)
+bool gdoClose(struct ADrawTag *ctx)
 {
     GdoContext *context = getGdoCtx(ctx);
 
@@ -512,16 +512,16 @@ Boolean gdoClose(struct ADrawTag *ctx)
     free(context);
     ctx->internal = NULL;
 
-    return TRUE;
+    return true;
 }
 
 
 
-Boolean GdoInit(unsigned int     w,
-                unsigned int     h,
-                const char      *file,
-                const char      *fontName UNUSED,
-                struct ADrawTag *outContext)
+bool GdoInit(unsigned int     w,
+             unsigned int     h,
+             const char      *file,
+             const char      *fontName UNUSED,
+             struct ADrawTag *outContext)
 {
     GdoContext *context;
 
@@ -540,7 +540,7 @@ Boolean GdoInit(unsigned int     w,
     context = outContext->internal = zalloc_s(sizeof(GdoContext));
     if(context == NULL)
     {
-        return FALSE;
+        return false;
     }
 
     /* Open the output file */
@@ -554,7 +554,7 @@ Boolean GdoInit(unsigned int     w,
         if(!context->outFile)
         {
             fprintf(stderr, "GdoInit: Failed to open output file '%s': %s\n", file, strerror(errno));
-            return FALSE;
+            return false;
         }
     }
 
@@ -600,7 +600,7 @@ Boolean GdoInit(unsigned int     w,
     outContext->setFontSize     = gdoSetFontSize;
     outContext->close           = gdoClose;
 
-    return TRUE;
+    return true;
 }
 
 #endif /* REMOVE_PNG_OUTPUT */

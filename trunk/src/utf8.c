@@ -64,11 +64,11 @@ static unsigned int clo(char c)
  * Global Functions
  **************************************************************************/
 
-Boolean Utf8Decode(const char *s, unsigned int *r, unsigned int *bytes)
+bool Utf8Decode(const char *s, unsigned int *r, unsigned int *bytes)
 {
     if((*s & 0x80) == 0)
     {
-        return FALSE;
+        return false;
     }
     else
     {

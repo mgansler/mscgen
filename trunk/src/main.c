@@ -99,8 +99,8 @@ typedef struct GlobalOptionsTag
     /** Anguluar box slope in pixels. */
     unsigned int aboxSlope;
 
-    /** If TRUE, wrap arc text as well as box contents. */
-    Boolean      wordWrapArcLabels;
+    /** If true, wrap arc text as well as box contents. */
+    bool         wordWrapArcLabels;
 
     /** Horizontal width of the arrow heads. */
     unsigned int arrowWidth;
@@ -142,21 +142,21 @@ RowInfo;
  * Local Variables.
  ***************************************************************************/
 
-static Boolean gInputFilePresent = FALSE;
-static char    gInputFile[4096];
+static bool gInputFilePresent = false;
+static char gInputFile[4096];
 
-static Boolean gOutputFilePresent = FALSE;
-static char    gOutputFile[4096];
+static bool gOutputFilePresent = false;
+static char gOutputFile[4096];
 
-static Boolean gOutTypePresent = FALSE;
-static char    gOutType[10];
+static bool gOutTypePresent = false;
+static char gOutType[10];
 
-static Boolean gDumpLicencePresent = FALSE;
+static bool gDumpLicencePresent = false;
 
-static Boolean gPrintParsePresent = FALSE;
+static bool gPrintParsePresent = false;
 
-static Boolean gOutputFontPresent = FALSE;
-static char    gOutputFont[256];
+static bool gOutputFontPresent = false;
+static char gOutputFont[256];
 
 /** Command line switches.
  * This gives the command line switches that can be interpreted by mscgen.
@@ -185,7 +185,7 @@ static GlobalOptions gOpts =
     6,      /* rboxArc */
     12,     /* noteCorner */
     6,      /* aboxSlope */
-    FALSE,  /* wordWrapArcLabels */
+    false,  /* wordWrapArcLabels */
 
     /* Arrow options */
     10, 6,
@@ -278,7 +278,7 @@ static void trimExtension(char *s)
 
 /** Check if some arc type indicates a box.
  */
-static Boolean isBoxArc(const MscArcType a)
+static bool isBoxArc(const MscArcType a)
 {
     return a == MSC_ARC_BOX || a == MSC_ARC_RBOX  ||
            a == MSC_ARC_ABOX || a== MSC_ARC_NOTE;
@@ -592,7 +592,7 @@ static char *getLine(const char        *string,
 
 /** Check if some arc name indicates a broadcast entity.
  */
-static Boolean isBroadcastArc(const char *entity)
+static bool isBroadcastArc(const char *entity)
 {
     return entity != NULL && (strcmp(entity, "*") == 0);
 }
@@ -987,13 +987,13 @@ static RowInfo *computeCanvasSize(Msc           m,
  * \param m          The \a Msc for which the lines are drawn
  * \param ymin       Top of the row.
  * \param ymax       Bottom of the row.
- * \param dotted     If #TRUE, produce a dotted line, otherwise solid.
+ * \param dotted     If \a true, produce a dotted line, otherwise solid.
  * \param colourRefs Colour references for each entity.
  */
 static void entityLines(Msc                m,
                         const unsigned int ymin,
                         const unsigned int ymax,
-                        Boolean            dotted,
+                        bool               dotted,
                         const ADrawColour *colourRefs)
 {
     unsigned int t;
@@ -1345,7 +1345,7 @@ static void arcLine(Msc               m,
                     unsigned int      startCol,
                     unsigned int      endCol,
                     const char       *arcLineCol,
-                    Boolean           hasArrows,
+                    bool              hasArrows,
                     const int         hasBiArrows,
                     const MscArcType  arcType)
 {
@@ -1451,7 +1451,7 @@ static void arcLine(Msc               m,
                     180 - 45,
                     270);
 
-            hasArrows = FALSE;
+            hasArrows = false;
 
             /* Get co-ordinates of the arc end-point */
             ADrawComputeArcPoint(sx, y - 1 + ygradient/2, gOpts.entitySpacing - 8,
@@ -1515,7 +1515,7 @@ static void arcLine(Msc               m,
                     270,
                     45);
 
-            hasArrows = FALSE;
+            hasArrows = false;
 
             /* Get co-ordinates of the arc end-point */
             ADrawComputeArcPoint(sx, y - 1 + ygradient/2, gOpts.entitySpacing - 8,
@@ -1550,11 +1550,11 @@ static void arcLine(Msc               m,
 }
 
 
-/* Perform post-parsing validation of the MSC.
- *  This checks the passed MSC for various rules which can't easily be tested
- *  at parse time.
+/** Perform post-parsing validation of the MSC.
+ * This checks the passed MSC for various rules which can't easily be tested
+ * at parse time.
  */
-Boolean checkMsc(Msc m)
+bool checkMsc(Msc m)
 {
     /* Check all arc entites are known */
     MscResetArcIterator(m);
@@ -1575,20 +1575,20 @@ Boolean checkMsc(Msc m)
             {
                 fprintf(stderr, "Error detected at line %u: Unknown source entity '%s'.\n",
                         MscGetCurrentArcInputLine(m), src);
-                return FALSE;
+                return false;
             }
 
             if(endCol == -1 && !isBroadcastArc(dst))
             {
                 fprintf(stderr, "Error detected at line %u: Unknown destination entity '%s'.\n",
                         MscGetCurrentArcInputLine(m), dst);
-                return FALSE;
+                return false;
             }
         }
     }
     while(MscNextArc(m));
 
-    return TRUE;
+    return true;
 }
 
 
@@ -1601,7 +1601,7 @@ int main(const int argc, const char *argv[])
     Msc              m;
     unsigned int     w, h, row, col;
     RowInfo         *rowInfo;
-    Boolean          addLines;
+    bool             addLines;
     float            f;
 
     /* Parse the command line options */
@@ -1635,7 +1635,7 @@ int main(const int argc, const char *argv[])
             return EXIT_FAILURE;
         }
 
-        gOutputFilePresent = TRUE;
+        gOutputFilePresent = true;
         snprintf(gOutputFile, sizeof(gOutputFile), "%s", gInputFile);
         trimExtension(gOutputFile);
         strncat(gOutputFile, ".", sizeof(gOutputFile) - (strlen(gOutputFile) + 1));
@@ -1899,7 +1899,7 @@ int main(const int argc, const char *argv[])
     }
 
     /* Draw the arcs */
-    addLines = TRUE;
+    addLines = true;
     row = 0;
 
     MscResetArcIterator(m);
@@ -1921,7 +1921,7 @@ int main(const int argc, const char *argv[])
 
         if(arcType == MSC_ARC_PARALLEL)
         {
-            addLines = FALSE;
+            addLines = false;
 
             /* Rewind the row */
             assert(row > 0);
@@ -1987,7 +1987,7 @@ int main(const int argc, const char *argv[])
                 /* Add in the entity lines */
                 if(addLines)
                 {
-                    entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
+                    entityLines(m, ymin, ymax + gOpts.arcSpacing, false, entColourRef);
                 }
 
                 /* Draw arcs to each entity */
@@ -2012,7 +2012,7 @@ int main(const int argc, const char *argv[])
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, false, entColourRef);
                     }
                     arcBox(ymin, ymax, startCol, endCol, arcType, arcLineColour, arcTextBgColour);
                 }
@@ -2020,14 +2020,14 @@ int main(const int argc, const char *argv[])
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + gOpts.arcSpacing, TRUE /* dotted */, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, true /* dotted */, entColourRef);
                     }
                 }
                 else if(arcType == MSC_ARC_DIVIDER || arcType == MSC_ARC_SPACE)
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, false, entColourRef);
                     }
 
                     /* Dividers also have a horizontal line at the middle */
@@ -2055,7 +2055,7 @@ int main(const int argc, const char *argv[])
                 {
                     if(addLines)
                     {
-                        entityLines(m, ymin, ymax + gOpts.arcSpacing, FALSE, entColourRef);
+                        entityLines(m, ymin, ymax + gOpts.arcSpacing, false, entColourRef);
                     }
                     arcLine(m, ymid, arcGradient, startCol, endCol, arcLineColour,
                             arcHasArrows, arcHasBiArrows, arcType);
@@ -2076,7 +2076,7 @@ int main(const int argc, const char *argv[])
 
             /* Advance the row */
             row++;
-            addLines = TRUE;
+            addLines = true;
         }
     }
     while(MscNextArc(m));
@@ -2084,7 +2084,7 @@ int main(const int argc, const char *argv[])
     /* Skip arcs may require the entity lines to be extended */
     entityLines(m,
                 rowInfo[(MscGetNumArcs(m) - MscGetNumParallelArcs(m)) - 1].ymax,
-                h, FALSE, entColourRef);
+                h, false, entColourRef);
 
     /* Close the image map if needed */
     if(ismap)

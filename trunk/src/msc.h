@@ -23,7 +23,7 @@
 #ifndef MSC_H
 #define MSC_H
 
-#include "bool.h"
+#include <stdbool.h>
 
 /***************************************************************************
  * Types
@@ -181,20 +181,20 @@ unsigned int  MscGetNumOpts(Msc m);
  * \param[in]     m      The MSC to analyse.
  * \param[in]     type   The option type to retrieve.
  * \param[in,out] f      Pointer to be filled with parsed value.
- * \retval TRUE  If the option was found and parsed successfully.
+ * \retval true  If the option was found and parsed successfully.
  */
-Boolean       MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *const f);
+bool         MscGetOptAsFloat(struct MscTag *m, MscOptType type, float *const f);
 
-/** Get an MSC option, returning the value as a Boolean.
+/** Get an MSC option, returning the value as a bool.
  *
  * \param[in]     m      The MSC to analyse.
  * \param[in]     type   The option type to retrieve.
  * \param[in,out] b      Pointer to be filled with parsed value.
- * \retval TRUE  If the option was found and parsed successfully,
- *                otherwise FALSE in which case *b is unmodified.
+ * \retval true  If the option was found and parsed successfully.
+ * \retval false On error, in which case *b is unmodified.
  *
  */
-Boolean      MscGetOptAsBoolean(struct MscTag *m, MscOptType type, Boolean *const b);
+bool         MscGetOptAsBoolean(struct MscTag *m, MscOptType type, bool *const b);
 
 /** Get the index of some entity.
  * This returns the column index for the entity identified by the passed
@@ -220,10 +220,10 @@ int           MscGetEntityIndex(struct MscTag *m, const char *label);
 void          MscResetEntityIterator(Msc m);
 
 /** Move to the next entity in the MSC.
- * \retval TRUE if there is another entity, otherwise FALSE if the end of the
- *          list has been reached.
+ * \retval true if there is another entity.
+ * \retval false if the end of the list has been reached.
  */
-Boolean       MscNextEntity(struct MscTag *m);
+bool         MscNextEntity(struct MscTag *m);
 
 /** Get the value of some attribute for the current entity.
  * \retval The attribute string, or NULL if unset.
@@ -246,21 +246,21 @@ const char   *MscGetEntAttrib(Msc m, unsigned int entIdx, MscAttribType a);
  * @{
  */
 
-/** Reset the arc interator.
+/** Reset the arc iterator.
  * This moves the pointer to the current arc to the head of the list.
  */
 void          MscResetArcIterator   (Msc m);
 
 /** Move to the next arc in the MSC.
- * \retval TRUE if there is another arc, otherwise FALSE if the end of the
- *          list has been reached.
+ * \retval true if there is another arc.
+ * \retval false if the end of the list has been reached.
  */
-Boolean       MscNextArc(struct MscTag *m);
+bool         MscNextArc(struct MscTag *m);
 
 
 /** Get the name of the entity from which the current arc originates.
- * \retvat The label for the entity from which the current arc starts.
- *          The returned string must not be modified.
+ * \returns The label for the entity from which the current arc starts.
+ *           The returned string must not be modified.
  */
 const char   *MscGetCurrentArcSource(Msc m);
 
@@ -277,12 +277,12 @@ const char   *MscGetCurrentArcDest(Msc m);
 MscArcType    MscGetCurrentArcType(struct MscTag *m);
 
 /** Get the value of some attribute for the current arc.
- * \retval The attribute string, or NULL if unset.
+ * \returns The attribute string, or NULL if unset.
  */
 const char   *MscGetCurrentArcAttrib(Msc m, MscAttribType a);
 
 /** Get the line of the input file at which the current arc was defined.
- * \retval The line number of the input file.
+ * \returns The line number of the input file.
  */
 unsigned int  MscGetCurrentArcInputLine(Msc m);
 

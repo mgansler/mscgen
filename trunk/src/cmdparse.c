@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "cmdparse.h"
-#include "bool.h"
 
 /***************************************************************************
  * Local Functions
@@ -82,20 +81,20 @@ static const CmdSwitch *findSwitch(const CmdSwitch opts[],
  *                            option is unmatched.  In such a case, the
  *                            switch table for this option is used.
  *
- * Returns:      TRUE if parsing suceeded.
+ * Returns:      true if parsing succeeded.
  *
  * Description:  Parse some list of options according to the CmdSwitch
  *                array.
  *
  ***************************************************************************/
-Boolean CmdParse(const CmdSwitch opts[],
-                 const int       nOpts,
-                 const int       argc,
-                 const char     *argv[],
-                 const char     *inputSwitch)
+bool CmdParse(const CmdSwitch opts[],
+              const int       nOpts,
+              const int       argc,
+              const char     *argv[],
+              const char     *inputSwitch)
 {
-    Boolean lastOpt = FALSE;
-    int     t;
+    bool lastOpt = false;
+    int  t;
 
     /* Parse supplied options in turn */
     for(t = 0; t < argc; t++)
@@ -107,19 +106,19 @@ Boolean CmdParse(const CmdSwitch opts[],
         if(swt == NULL && t == argc - 1)
         {
             swt = findSwitch(opts, nOpts, inputSwitch);
-            lastOpt = TRUE;
+            lastOpt = true;
         }
 
         if(swt == NULL)
         {
             fprintf(stderr, "Unrecognised option '%s'\n", argv[t]);
-            return FALSE;
+            return false;
         }
         /* Check if the option was a prefixed switch or a distinct argument */
         else if(strcmp(swt->switchString, argv[t]) == 0)
         {
             /* Indicate that the flag is present */
-            *swt->presentFlag = TRUE;
+            *swt->presentFlag = true;
 
             /* Check if an option needs parsing */
             if(swt->parseString != NULL)
@@ -131,7 +130,7 @@ Boolean CmdParse(const CmdSwitch opts[],
                 if(t >= argc)
                 {
                     fprintf(stderr, "Switch '%s' requires a parameter\n", swt->switchString);
-                    return FALSE;
+                    return false;
                 }
 
                 /* Attempt a parse */
@@ -140,7 +139,7 @@ Boolean CmdParse(const CmdSwitch opts[],
                     fprintf(stderr,
                             "Invalid or unparsable parameter to option '%s'\n",
                             swt->switchString);
-                    return FALSE;
+                    return false;
                 }
             }
         }
@@ -148,7 +147,7 @@ Boolean CmdParse(const CmdSwitch opts[],
         else
         {
             /* Indicate that the flag is present */
-            *swt->presentFlag = TRUE;
+            *swt->presentFlag = true;
 
             /* Check if an option needs parsing */
             if(swt->parseString != NULL)
@@ -164,14 +163,14 @@ Boolean CmdParse(const CmdSwitch opts[],
                     fprintf(stderr,
                             "Invalid or unparsable parameter to option '%s'\n",
                             argv[t]);
-                    return FALSE;
+                    return false;
                 }
             }
         }
 
     }
 
-    return TRUE;
+    return true;
 }
 
 
