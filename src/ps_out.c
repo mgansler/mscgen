@@ -474,7 +474,7 @@ void PsSetFontSize(struct ADrawTag *ctx,
 }
 
 
-Boolean PsClose(struct ADrawTag *ctx)
+bool PsClose(struct ADrawTag *ctx)
 {
     PsContext *context = getPsCtx(ctx);
 
@@ -488,15 +488,14 @@ Boolean PsClose(struct ADrawTag *ctx)
     free(context);
     ctx->internal = NULL;
 
-    return TRUE;
+    return true;
 }
 
 
-
-Boolean PsInit(unsigned int     w,
-               unsigned int     h,
-               const char      *file,
-               struct ADrawTag *outContext)
+bool PsInit(unsigned int     w,
+            unsigned int     h,
+            const char      *file,
+            struct ADrawTag *outContext)
 {
     PsContext *context;
 
@@ -504,7 +503,7 @@ Boolean PsInit(unsigned int     w,
     context = outContext->internal = malloc_s(sizeof(PsContext));
     if(context == NULL)
     {
-        return FALSE;
+        return false;
     }
 
     /* Open the output file */
@@ -518,7 +517,7 @@ Boolean PsInit(unsigned int     w,
         if(!context->of)
         {
             fprintf(stderr, "PsInit: Failed to open output file '%s': %s\n", file, strerror(errno));
-            return FALSE;
+            return false;
         }
     }
 
@@ -591,7 +590,7 @@ Boolean PsInit(unsigned int     w,
     outContext->setFontSize     = PsSetFontSize;
     outContext->close           = PsClose;
 
-    return TRUE;
+    return true;
 }
 
 /* END OF FILE */

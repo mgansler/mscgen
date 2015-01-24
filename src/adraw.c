@@ -37,12 +37,12 @@
  * Functions
  ***************************************************************************/
 
-Boolean ADrawOpen(unsigned int    w,
-                  unsigned int    h,
-                  const char     *file,
-                  const char     *fontName,
-                  ADrawOutputType type,
-                  struct ADrawTag *outContext)
+bool ADrawOpen(unsigned int     w,
+               unsigned int     h,
+               const char      *file,
+               const char      *fontName,
+               ADrawOutputType  type,
+               struct ADrawTag *outContext)
 {
     assert(outContext);
 
@@ -56,7 +56,7 @@ Boolean ADrawOpen(unsigned int    w,
             return GdoInit(w, h, file, fontName, outContext);
 #else
             fprintf(stderr, "Built with REMOVE_PNG_OUPUT; PNG output is not supported\n");
-            return FALSE;
+            return false;
 #endif
         case ADRAW_FMT_EPS:
             return PsInit(w, h, file, outContext);
@@ -65,7 +65,7 @@ Boolean ADrawOpen(unsigned int    w,
             return SvgInit(w, h, file, outContext);
 
         default:
-            return FALSE;
+            return false;
     }
 }
 

@@ -10,6 +10,8 @@
        output (issue #67).
       Fix compile issue with newer version of Bison (>=3.0?) (issue #83).
        Thanks Niels Thykier for the patch.
+      Replace bool.h with stdbool.h and use bool/true/false inplace of hand
+       rolled Boolean/TRUE/FALSE.  Thanks sternenfeuer for the patches.
 
 0.20: 05/03/2011
       Fix spelling errors (issue #58)

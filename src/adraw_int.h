@@ -42,23 +42,23 @@
  * Functions
  ***************************************************************************/
 
-Boolean NullInit(struct ADrawTag *outContext);
+bool NullInit(struct ADrawTag *outContext);
 
-Boolean GdoInit(unsigned int     w,
-                unsigned int     h,
-                const char      *file,
-                const char      *fontName,
-                struct ADrawTag *outContext);
+bool GdoInit(unsigned int     w,
+             unsigned int     h,
+             const char      *file,
+             const char      *fontName,
+             struct ADrawTag *outContext);
 
-Boolean PsInit(unsigned int     w,
-               unsigned int     h,
-               const char      *file,
-               struct ADrawTag *outContext);
+bool PsInit(unsigned int     w,
+            unsigned int     h,
+            const char      *file,
+            struct ADrawTag *outContext);
 
-Boolean SvgInit(unsigned int     w,
-                unsigned int     h,
-                const char      *file,
-                struct ADrawTag *outContext);
+bool SvgInit(unsigned int     w,
+             unsigned int     h,
+             const char      *file,
+             struct ADrawTag *outContext);
 
 #endif /* ADRAW_INT_H */
 

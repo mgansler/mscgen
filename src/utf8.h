@@ -27,7 +27,7 @@
  * Includes
  **************************************************************************/
 
-#include "bool.h"
+#include <stdbool.h>
 
 /**************************************************************************
  * Macros
@@ -41,7 +41,7 @@
  * Prototypes
  **************************************************************************/
 
-Boolean Utf8Decode(const char *s, unsigned int *r, unsigned int *bytes);
+bool Utf8Decode(const char *s, unsigned int *r, unsigned int *bytes);
 
 #endif
 

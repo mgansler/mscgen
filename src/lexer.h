@@ -27,7 +27,7 @@
  * Header Files
  *****************************************************************************/
 
-#include "bool.h"
+#include <stdbool.h>
 
 /*****************************************************************************
  * Preprocessor Macros & Constants
@@ -48,7 +48,7 @@
 
 unsigned long  lex_getlinenum(void);
 char          *lex_getline(void);
-Boolean        lex_getutf8(void);
+bool           lex_getutf8(void);
 void           lex_destroy(void);
 
 #endif /* LEXER_H */
